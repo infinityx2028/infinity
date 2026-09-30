@@ -167,34 +167,34 @@ const Navbar = ({ cartCount = 0 }) => {
     <>
       <header
         style={{
-          transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1), height 300ms ease',
+          transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
           transitionDelay: isIntroActive ? '200ms' : '0ms'
         }}
-        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#071A2F]/6 ${
-          isScrolled ? 'h-[72px] shadow-[0_4px_20px_rgba(7,26,47,0.04)]' : 'h-[76px] sm:h-[80px]'
+        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#071A2F]/8 h-16 sm:h-[72px] ${
+          isScrolled ? 'shadow-[0_2px_12px_rgba(7,26,47,0.03)]' : 'shadow-none'
         } ${
           isIntroInitial ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0'
         } flex items-center`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-4 sm:gap-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 w-full flex items-center justify-between gap-2 sm:gap-6">
           
-          {/* ================= LEFT: LOGO & MOBILE HAMBURGER ================= */}
-          <div className="flex items-center gap-3">
+          {/* ================= LEFT: MENU & LOGO ================= */}
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(prev => !prev)}
-              className="lg:hidden p-2 text-[#071A2F] hover:bg-[#FAF8F4] rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              className="lg:hidden w-11 h-11 text-[#071A2F] hover:bg-[#FAF8F4] rounded-xl transition-colors flex items-center justify-center cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
 
-            <Link to="/" className="flex items-center gap-2 group py-1">
-              <div className="h-12 sm:h-14 w-auto flex items-center">
+            <Link to="/" className="flex items-center py-1 group">
+              <div className="h-9 sm:h-12 w-auto flex items-center">
                 <img 
                   src="/images/logo.png" 
                   alt="Infinity Customizations" 
-                  className="h-11 sm:h-13 w-auto object-contain object-left group-hover:scale-105 transition-transform duration-200"
+                  className="h-8 sm:h-10 w-auto max-w-[135px] sm:max-w-none object-contain object-left group-hover:scale-105 transition-transform duration-200"
                 />
               </div>
             </Link>
@@ -502,11 +502,11 @@ const Navbar = ({ cartCount = 0 }) => {
               )}
             </div>
 
-            {/* Mobile 1-Tap Search Toggle */}
+            {/* Mobile 1-Tap Search Toggle (44x44 min touch target) */}
             <button
               type="button"
               onClick={() => setShowSearchModal(true)}
-              className="md:hidden p-2 text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              className="md:hidden w-11 h-11 text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors flex items-center justify-center cursor-pointer"
               aria-label="Search gifts"
             >
               <Search size={20} />
@@ -517,7 +517,7 @@ const Navbar = ({ cartCount = 0 }) => {
               <Link
                 to="/profile"
                 title="Wishlisted items"
-                className="hidden sm:flex p-2 text-[#071A2F]/80 hover:text-red-500 rounded-full transition-colors min-h-[44px] min-w-[44px] items-center justify-center relative cursor-pointer"
+                className="hidden sm:flex w-11 h-11 text-[#071A2F]/80 hover:text-red-500 rounded-full transition-colors items-center justify-center relative cursor-pointer"
               >
                 <Heart size={18} className="text-red-500 fill-red-500" />
                 <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-red-500 text-white font-black text-[9px] flex items-center justify-center">
@@ -526,17 +526,17 @@ const Navbar = ({ cartCount = 0 }) => {
               </Link>
             )}
 
-            {/* User Account */}
+            {/* User Account (44x44 min touch target) */}
             <div className="relative" ref={profileRef}>
               {isAuthenticated ? (
                 <div>
                   <button
                     type="button"
                     onClick={() => setProfileOpen(prev => !prev)}
-                    className="p-2 text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors flex items-center relative min-h-[44px] min-w-[44px] justify-center cursor-pointer"
+                    className="w-11 h-11 text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors flex items-center justify-center relative cursor-pointer"
                     aria-label="User Account"
                   >
-                    <User size={18} />
+                    <User size={19} />
                     {Number(user?.loyaltyPoints || 0) > 0 && (
                       <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#C5A46D]"></span>
                     )}
@@ -578,25 +578,27 @@ const Navbar = ({ cartCount = 0 }) => {
                 <Link
                   to="/login"
                   title="Sign In"
-                  className="p-2 text-[#071A2F]/80 hover:text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+                  className="w-11 h-11 text-[#071A2F]/80 hover:text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors flex items-center justify-center cursor-pointer"
                 >
-                  <User size={18} />
+                  <User size={19} />
                 </Link>
               )}
             </div>
 
-            {/* Shopping Bag Button with Actual Quantity - Opens Cart Drawer */}
+            {/* Shopping Bag Button with Non-Distorting Badge */}
             <button
               type="button"
               onClick={openCartDrawer}
               title="Shopping Bag"
-              className="flex items-center gap-2 bg-[#071A2F] hover:bg-[#0B2748] text-white px-3 sm:px-4 py-2 rounded-full transition-all duration-200 min-h-[44px] shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+              className="relative flex items-center justify-center min-w-[44px] h-11 px-2.5 sm:px-4 bg-[#071A2F] hover:bg-[#0B2748] text-white rounded-full transition-all duration-200 shadow-xs hover:shadow active:scale-95 cursor-pointer"
             >
-              <ShoppingBag size={16} />
-              <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider">BAG</span>
-              <span className="w-5 h-5 rounded-full bg-[#C5A46D] text-[#071A2F] font-black text-[11px] flex items-center justify-center">
-                {cartCount}
-              </span>
+              <ShoppingBag size={17} />
+              <span className="hidden sm:inline ml-1.5 text-xs font-bold uppercase tracking-wider">BAG</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 sm:static sm:ml-2 w-5 h-5 rounded-full bg-[#C5A46D] text-[#071A2F] font-black text-[10px] sm:text-[11px] flex items-center justify-center shadow-xs flex-shrink-0">
+                  {cartCount}
+                </span>
+              )}
             </button>
 
           </div>

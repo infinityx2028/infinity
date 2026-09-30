@@ -95,7 +95,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  // Auto-scroll every 1.5 seconds — only starts AFTER intro is completed
+  // Auto-scroll every 3 seconds for mobile / desktop
   useEffect(() => {
     if (isReducedMotion || isIntroActive || introPhase === 'initial') {
       if (autoRotateTimerRef.current) clearInterval(autoRotateTimerRef.current);
@@ -108,7 +108,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       if (!isDocumentHiddenRef.current) {
         setActiveIndex(prev => (prev + 1) % HERO_PRODUCTS.length);
       }
-    }, 1500);
+    }, 2800);
 
     return () => {
       if (autoRotateTimerRef.current) clearInterval(autoRotateTimerRef.current);
@@ -122,11 +122,11 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
         if (!isDocumentHiddenRef.current) {
           setActiveIndex(prev => (prev + 1) % HERO_PRODUCTS.length);
         }
-      }, 1500);
+      }, 2800);
     }
   };
 
-  // 60fps Hardware-Accelerated Mouse Parallax (ZERO React re-renders)
+  // Desktop Mouse Parallax (ZERO React re-renders)
   const handleMouseMove = (e) => {
     if (isReducedMotion || window.innerWidth < 1024 || !containerRef.current) return;
     if (rafIdRef.current) return;
@@ -141,7 +141,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       const x = ((clientX - rect.left) / rect.width - 0.5) * 2;
       const y = ((clientY - rect.top) / rect.height - 0.5) * 2;
 
-      // Restrained micro-movement: X: ±4px, Y: ±3px, Rotations: ±1.5deg
       const px = (x * 4).toFixed(1);
       const py = (y * 3).toFixed(1);
       const rx = (-y * 1.2).toFixed(1);
@@ -169,7 +168,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     setHoveredSideIndex(null);
   };
 
-  // Hover Intent: 140ms delay before rotating to front to prevent accidental cursor flickers
   const handleCardMouseEnter = (index) => {
     if (index === activeIndex) return;
     setHoveredSideIndex(index);
@@ -188,7 +186,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     if (hoverIntentTimerRef.current) clearTimeout(hoverIntentTimerRef.current);
   };
 
-  // Click on active card goes to product; click on side card immediately brings it forward
   const handleCardClick = (e, index) => {
     if (index !== activeIndex) {
       e.preventDefault();
@@ -223,8 +220,8 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     touchStartYRef.current = null;
   };
 
-  // Compute 3D Transform, Z-Index, and Depth Style for each card in the rotating stack
-  const getCardStyle = (index) => {
+  // Desktop 3D Stack Styling
+  const getDesktopCardStyle = (index) => {
     const total = HERO_PRODUCTS.length;
     const diff = (index - activeIndex + total) % total;
     const isHoveredSide = hoveredSideIndex === index;
@@ -239,11 +236,9 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       };
     }
 
-    // During initial intro phase: hide secondary products to avoid 5 simultaneous decodes/animations
     const isIntroInitial = isIntroActive && introPhase === 'initial';
 
     if (diff === 0) {
-      // ===== FRONT (ACTIVE) CARD =====
       return {
         zIndex: 40,
         opacity: 1,
@@ -253,7 +248,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
         transition: 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1)'
       };
     } else if (diff === 1) {
-      // ===== RIGHT / BACK CARD =====
       const liftY = isHoveredSide ? -4 : 0;
       const liftScale = isHoveredSide ? 1.015 : 1;
       return {
@@ -267,7 +261,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
         transition: 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1)'
       };
     } else if (diff === 2) {
-      // ===== FAR BACK / TOP CENTER CARD =====
       const liftY = isHoveredSide ? -4 : 0;
       return {
         zIndex: 10,
@@ -280,7 +273,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
         transition: 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.8s cubic-bezier(0.22, 1, 0.36, 1)'
       };
     } else {
-      // ===== LEFT / BACK CARD (diff === 3 or 4) =====
       const liftY = isHoveredSide ? -4 : 0;
       const liftScale = isHoveredSide ? 1.015 : 1;
       return {
@@ -296,31 +288,225 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     }
   };
 
-  // Sequential Reveal Styling during Intro
   const isIntroInitial = isIntroActive && introPhase === 'initial';
+  const activeProduct = HERO_PRODUCTS[activeIndex] || HERO_PRODUCTS[0];
 
   return (
     <section 
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleContainerMouseLeave}
-      className="relative min-h-[85vh] lg:min-h-[88vh] flex items-center bg-[#FAF8F4] overflow-hidden py-14 lg:py-20 border-b border-[#071A2F]/6 select-none"
+      className="relative flex items-center bg-[#FAF8F4] overflow-hidden py-8 sm:py-12 lg:py-20 border-b border-[#071A2F]/6 select-none"
     >
-      {/* Warm Ambient Studio Lighting */}
+      {/* Ambient Lighting */}
       <div 
         aria-hidden="true" 
-        className="absolute top-1/4 left-1/3 w-[520px] h-[520px] bg-white/70 rounded-full blur-3xl pointer-events-none" 
+        className="absolute top-1/4 left-1/3 w-[300px] sm:w-[520px] h-[300px] sm:h-[520px] bg-white/70 rounded-full blur-3xl pointer-events-none" 
       />
       <div 
         aria-hidden="true" 
-        className="absolute bottom-10 right-1/4 w-[440px] h-[440px] bg-[#C5A46D]/8 rounded-full blur-3xl pointer-events-none" 
+        className="absolute bottom-10 right-1/4 w-[260px] sm:w-[440px] h-[260px] sm:h-[440px] bg-[#C5A46D]/8 rounded-full blur-3xl pointer-events-none" 
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+
+        {/* ======================================================== */}
+        {/* MOBILE PRESENTATION (Order: Eyebrow, Headline, Desc, CTA, Trust, Carousel) */}
+        {/* ======================================================== */}
+        <div className="lg:hidden flex flex-col space-y-6 sm:space-y-8">
           
-          {/* ================= LEFT COLUMN: CLARITY FIRST TYPOGRAPHY & CTAS ================= */}
-          <div className="lg:col-span-6 xl:col-span-5 flex flex-col justify-center text-left">
+          {/* 1. Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#071A2F]/10 shadow-[0_2px_8px_rgba(7,26,47,0.04)] w-fit">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A46D]"></span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#071A2F]">
+              PERSONALIZED • MADE FOR YOU
+            </span>
+          </div>
+
+          {/* 2. Headline */}
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#071A2F] leading-[1.1]">
+            YOUR MEMORIES. <br />
+            <span className="text-[#123C69]">MADE PERSONAL.</span>
+          </h1>
+
+          {/* 3. Description */}
+          <p className="text-sm sm:text-base text-[#687386] font-normal leading-relaxed">
+            Turn your favorite photos and moments into personalized frames, apparel, polaroids, magazines and meaningful gifts.
+          </p>
+
+          {/* 4. SHOP GIFTS CTA */}
+          <div className="flex flex-col sm:flex-row items-stretch gap-3">
+            <Link
+              to="/shop/frames"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#071A2F] active:bg-[#0B2748] text-white px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider shadow-md min-h-[46px] transition-transform active:scale-[0.98]"
+            >
+              <span>SHOP PERSONALIZED GIFTS</span>
+              <ArrowRight size={14} />
+            </Link>
+
+            <a
+              href="#collections-section"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-white text-[#071A2F] border border-[#071A2F]/15 px-5 py-3 rounded-full font-bold text-xs uppercase tracking-wider min-h-[44px] transition-colors"
+            >
+              <span>EXPLORE COLLECTIONS</span>
+              <span className="text-[#C5A46D]">→</span>
+            </a>
+          </div>
+
+          {/* 5. Trust Indicators (Clean, uncompressed mobile stack) */}
+          <div className="py-4 border-y border-[#071A2F]/8 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div className="flex items-start gap-2">
+              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
+              <div>
+                <p className="font-bold text-xs text-[#071A2F] leading-tight">Easy Personalization</p>
+                <p className="text-[11px] text-[#687386] mt-0.5">Send photos through WhatsApp</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
+              <div>
+                <p className="font-bold text-xs text-[#071A2F] leading-tight">Made With Care</p>
+                <p className="text-[11px] text-[#687386] mt-0.5">Verified before print</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2">
+              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
+              <div>
+                <p className="font-bold text-xs text-[#071A2F] leading-tight">Secure Checkout</p>
+                <p className="text-[11px] text-[#687386] mt-0.5">Safe payment experience</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 6. Mobile Product Carousel (Only ONE dominant card, calc(100vw - 32px) max, NO horizontal overflow) */}
+          <div 
+            className="w-full pt-2"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="w-full max-w-[360px] mx-auto bg-white rounded-3xl p-3.5 border border-[#071A2F]/10 shadow-[0_12px_32px_rgba(7,26,47,0.08)] flex flex-col">
+              
+              {/* Product Image */}
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#FAF8F4] border border-[#071A2F]/8">
+                <img 
+                  src={activeProduct.image} 
+                  alt={activeProduct.name}
+                  loading="eager"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Badge */}
+                <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2.5 py-0.5 rounded-full shadow-xs">
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#071A2F]">
+                    {activeProduct.badge}
+                  </span>
+                </div>
+              </div>
+
+              {/* Product Info & Action (Strict Hierarchy in Normal Document Flow) */}
+              <div className="pt-3.5 flex flex-col space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#C5A46D] block">
+                  {activeProduct.category}
+                </span>
+
+                <div className="flex items-baseline justify-between gap-2">
+                  <h3 className="font-bold text-base text-[#071A2F] leading-tight truncate">
+                    {activeProduct.name}
+                  </h3>
+                  <span className="font-black text-base text-[#071A2F] flex-shrink-0">
+                    {activeProduct.price}
+                  </span>
+                </div>
+
+                <p className="text-xs text-[#687386] font-normal line-clamp-1">
+                  {activeProduct.subtitle}
+                </p>
+
+                {/* Primary CTA in Normal Document Flow */}
+                <div className="pt-2 flex flex-col gap-1.5">
+                  <Link 
+                    to={activeProduct.link}
+                    className="w-full min-h-[46px] px-4 rounded-xl bg-[#071A2F] active:bg-[#0B2748] text-white font-bold text-xs tracking-wider uppercase shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>CUSTOMIZE & BUY</span>
+                    <ArrowRight size={14} />
+                  </Link>
+
+                  <Link
+                    to={activeProduct.link}
+                    className="text-center text-[11px] font-semibold text-[#687386] hover:text-[#071A2F] py-1 cursor-pointer"
+                  >
+                    View Details →
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Carousel Controls */}
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveIndex(prev => (prev - 1 + HERO_PRODUCTS.length) % HERO_PRODUCTS.length);
+                  resetAutoScroll();
+                }}
+                className="w-11 h-11 rounded-full bg-white text-[#071A2F] shadow-xs border border-[#071A2F]/10 flex items-center justify-center active:scale-95 cursor-pointer"
+                aria-label="Previous product"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#071A2F]/10 text-xs font-mono font-bold text-[#071A2F]">
+                <span>0{activeIndex + 1}</span>
+                <span className="text-[#687386]/60">/</span>
+                <span className="text-[#687386]">0{HERO_PRODUCTS.length}</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                {HERO_PRODUCTS.map((prod, idx) => (
+                  <button
+                    key={prod.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveIndex(idx);
+                      resetAutoScroll();
+                    }}
+                    aria-label={`View ${prod.name}`}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      idx === activeIndex 
+                        ? 'w-6 bg-[#071A2F]' 
+                        : 'w-2 bg-[#071A2F]/20'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveIndex(prev => (prev + 1) % HERO_PRODUCTS.length);
+                  resetAutoScroll();
+                }}
+                className="w-11 h-11 rounded-full bg-white text-[#071A2F] shadow-xs border border-[#071A2F]/10 flex items-center justify-center active:scale-95 cursor-pointer"
+                aria-label="Next product"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ======================================================== */}
+        {/* DESKTOP PRESENTATION (Rich 3D Rotating Stage & Parallax) */}
+        {/* ======================================================== */}
+        <div className="hidden lg:grid grid-cols-12 gap-8 items-center">
+          
+          {/* LEFT COLUMN: DESKTOP TYPOGRAPHY & CTAS */}
+          <div className="col-span-5 flex flex-col justify-center text-left">
             
             {/* Eyebrow */}
             <div 
@@ -338,13 +524,13 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               </span>
             </div>
 
-            {/* Main Headline */}
+            {/* Headline */}
             <h1 
               style={{
                 transition: 'opacity 550ms cubic-bezier(0.16, 1, 0.3, 1), transform 550ms cubic-bezier(0.16, 1, 0.3, 1)',
                 transitionDelay: isIntroActive ? '200ms' : '0ms'
               }}
-              className={`text-4xl sm:text-5xl lg:text-[62px] xl:text-[72px] font-extrabold tracking-tight text-[#071A2F] leading-[1.04] mb-6 ${
+              className={`text-5xl xl:text-[68px] font-extrabold tracking-tight text-[#071A2F] leading-[1.04] mb-6 ${
                 isIntroInitial ? 'opacity-0 translate-y-6' : 'opacity-100 translate-y-0'
               }`}
             >
@@ -358,7 +544,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                 transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
                 transitionDelay: isIntroActive ? '280ms' : '0ms'
               }}
-              className={`text-base sm:text-lg text-[#687386] font-normal leading-relaxed max-w-lg mb-8 ${
+              className={`text-lg text-[#687386] font-normal leading-relaxed max-w-lg mb-8 ${
                 isIntroInitial ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
               }`}
             >
@@ -371,7 +557,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                 transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
                 transitionDelay: isIntroActive ? '350ms' : '0ms'
               }}
-              className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 mb-10 ${
+              className={`flex items-center gap-3.5 mb-10 ${
                 isIntroInitial ? 'opacity-0 translate-y-3' : 'opacity-100 translate-y-0'
               }`}
             >
@@ -392,7 +578,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               </a>
             </div>
 
-            {/* Truthful Trust Signals */}
+            {/* Trust Signals */}
             <div 
               style={{
                 transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -403,7 +589,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               }`}
             >
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-sm">
                   <span className="text-emerald-600 font-black">✓</span>
                   <span>Easy Personalization</span>
                 </div>
@@ -411,7 +597,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               </div>
 
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-sm">
                   <span className="text-emerald-600 font-black">✓</span>
                   <span>Made With Care</span>
                 </div>
@@ -419,7 +605,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               </div>
 
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-xs sm:text-sm">
+                <div className="flex items-center gap-1.5 text-[#071A2F] font-bold text-sm">
                   <span className="text-emerald-600 font-black">✓</span>
                   <span>Secure Checkout</span>
                 </div>
@@ -429,21 +615,15 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
 
           </div>
 
-          {/* ================= RIGHT COLUMN: INTERACTIVE 3D PRODUCT CAROUSEL STACK ================= */}
-          <div 
-            className="lg:col-span-6 xl:col-span-7 relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[580px] lg:min-h-[630px]"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            
-            {/* 3D Floating Stage with Studio Depth (Perspective: 1400px) */}
+          {/* RIGHT COLUMN: 3D PRODUCT CAROUSEL STACK */}
+          <div className="col-span-7 relative flex flex-col items-center justify-center min-h-[600px]">
             <div 
               style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
-              className="relative w-full max-w-[540px] h-[470px] sm:h-[510px] lg:h-[530px] flex items-center justify-center"
+              className="relative w-full max-w-[540px] h-[520px] flex items-center justify-center"
             >
               {HERO_PRODUCTS.map((product, index) => {
                 const isActive = index === activeIndex;
-                const style = getCardStyle(index);
+                const style = getDesktopCardStyle(index);
 
                 return (
                   <div
@@ -452,13 +632,12 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                     onMouseEnter={() => handleCardMouseEnter(index)}
                     onMouseLeave={handleCardMouseLeave}
                     onClick={(e) => handleCardClick(e, index)}
-                    className={`absolute w-[280px] sm:w-[320px] lg:w-[340px] bg-white rounded-3xl p-3.5 sm:p-4 border-2 transition-all cursor-pointer ${
+                    className={`absolute w-[330px] bg-white rounded-3xl p-4 border-2 transition-all cursor-pointer ${
                       isActive 
                         ? 'border-white ring-1 ring-[#071A2F]/10' 
                         : 'border-white/80 hover:border-[#071A2F]/20'
                     }`}
                   >
-                    {/* Product Image Container with Reserved Dimensions */}
                     <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#FAF8F4] border border-[#071A2F]/10 group">
                       <img 
                         src={product.image} 
@@ -467,32 +646,27 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                         height="425"
                         loading={isActive ? "eager" : "lazy"}
                         fetchPriority={isActive ? "high" : "low"}
-                        decoding={isActive ? "sync" : "async"}
                         className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                       />
 
-                      {/* Scrim Overlay when inactive for depth layering */}
                       {!isActive && (
                         <div className="absolute inset-0 bg-[#071A2F]/15 backdrop-blur-[0.5px] transition-opacity" />
                       )}
 
-                      {/* Corner Badge */}
                       <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-xs">
                         <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#071A2F]">
                           {product.badge}
                         </span>
                       </div>
 
-                      {/* Bottom Info Ribbon */}
                       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#071A2F]/90 via-[#071A2F]/40 to-transparent p-4 text-white">
-                        <p className="text-[10px] sm:text-[11px] font-medium text-white/80">{product.subtitle}</p>
-                        <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
+                        <p className="text-[11px] font-medium text-white/80">{product.subtitle}</p>
+                        <h3 className="text-lg font-bold text-white leading-tight">
                           {product.name}
                         </h3>
                       </div>
                     </div>
 
-                    {/* Subtitle & Action Area Below Image */}
                     {isActive ? (
                       <div className="mt-3.5 space-y-2.5">
                         <div className="flex items-start justify-between gap-2 px-1">
@@ -519,7 +693,6 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                           </div>
                         </div>
 
-                        {/* Prominent High-Contrast Navy CTA & Secondary Link */}
                         <div className="pt-1 flex flex-col gap-1.5">
                           <Link 
                             to={product.link}
@@ -545,7 +718,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                           <span className="font-black text-sm text-[#071A2F]">{product.price}</span>
                           <span className="block text-[10px] text-[#687386]">{product.category}</span>
                         </div>
-                        <span className="text-[11px] font-bold text-[#123C69] hover:underline flex items-center gap-1">
+                        <span className="text-[11px] font-bold text-[#123C69] flex items-center gap-1">
                           <span>Click to view</span>
                           <span>→</span>
                         </span>
@@ -556,8 +729,8 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               })}
             </div>
 
-            {/* Pagination Controls & Discoverability: Chevrons + 01 / 05 Indicator + Dots */}
-            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-8 z-30">
+            {/* Desktop Controls */}
+            <div className="flex items-center justify-center gap-4 mt-8 z-30">
               <button
                 type="button"
                 onClick={() => {
@@ -570,15 +743,13 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                 <ChevronLeft size={18} />
               </button>
               
-              {/* 01 / 05 Step Indicator */}
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 border border-[#071A2F]/10 shadow-xs text-xs font-mono font-bold text-[#071A2F]">
                 <span>0{activeIndex + 1}</span>
                 <span className="text-[#687386]/60">/</span>
                 <span className="text-[#687386]">0{HERO_PRODUCTS.length}</span>
               </div>
 
-              {/* Pagination Dots */}
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-2">
                 {HERO_PRODUCTS.map((prod, idx) => (
                   <button
                     key={prod.id}
@@ -609,10 +780,10 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                 <ChevronRight size={18} />
               </button>
             </div>
-
           </div>
 
         </div>
+
       </div>
     </section>
   );

@@ -2173,9 +2173,17 @@ const NotFoundPage = () => (
 
 const AppContent = () => {
   const { cart, addToCart, updateQuantity, removeFromCart, isCartDrawerOpen, closeCartDrawer } = useCart();
+  const location = useLocation();
+
+  const isNavHidden = 
+    location.pathname.startsWith('/checkout') ||
+    location.pathname.startsWith('/product/') ||
+    location.pathname.startsWith('/admin');
 
   return (
-    <div className="min-h-screen font-sans bg-[#F7F8FA] text-[#071A2F] flex flex-col">
+    <div className={`min-h-screen font-sans bg-[#F7F8FA] text-[#071A2F] flex flex-col ${
+      isNavHidden ? '' : 'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom,0px)+16px)] md:pb-0'
+    }`}>
       <AnnouncementBar />
       <Navbar cartCount={cart.length} />
       <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />

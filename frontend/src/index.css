@@ -2,14 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --mobile-nav-height: 64px;
+}
+
 /* Base Styles */
 html, body, #root {
   background-color: #FAF8F4;
+  max-width: 100%;
 }
 
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {

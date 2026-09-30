@@ -801,6 +801,7 @@ const Checkout = () => {
                 amount={upiData?.amount || orderDetails?.totalAmount || total}
                 serverUpiLink={upiData?.upiLink || orderDetails?.upiDeepLink}
                 onConfirmPayment={handlePaymentConfirmed}
+                onChangePaymentMethod={() => setStep('details')}
               />
             </div>
 

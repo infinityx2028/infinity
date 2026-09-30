@@ -1,4 +1,4 @@
-﻿// --- 1. TOP STORY CIRCLES (13+ Circles) ---
+// --- 1. TOP STORY CIRCLES (13+ Circles) ---
 export const storyCategories = [
   { id: "frames", name: "Frames", image: "/images/4 x 6 white frame 199.jpg" },
   { id: "magazines", name: "Magazines", image: "/images/MAG design2.jpg" },
@@ -104,12 +104,12 @@ export const products = [
   { id: "pol1", categoryId: "memories", name: "Mini Polaroids Set", price: 60, image: "/images/polaroids.jpg", images: ["/images/polaroids.jpg", "/images/polaroids.jpg", "/images/polaroids.jpg"] },
   { id: "pol2", categoryId: "memories", name: "Medium Polaroids Set", price: 64, image: "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", images: ["/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/POLAROIDS MEDIUM 8 PER EACH.jpg"] },
   { id: "pol3", categoryId: "memories", name: "Large Polaroids Set", price: 60, image: "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", images: ["/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/polaroids.jpg", "/images/polaroids.jpg"] },
-  { id: "mem1", categoryId: "memories", name: "Memory Storage Set", price: 299, image: "/images/photo book 269.jpg", images: ["/images/photo book 269.jpg", "/images/photo book 269.jpg", "/images/photo book 269.jpg"] },
+  { id: "mem1", categoryId: "memories", name: "Memory Storage Set", price: 299, image: "/images/polaroids album 169.jpg", images: ["/images/polaroids album 169.jpg", "/images/pol album 169.jpg", "/images/polaroids album 169.jpg"] },
 
   // ===== CATEGORY 4: FLOWERS & BOUQUETS (8 Products) =====
   { id: "bou1", categoryId: "flowers", name: "Real Flower Bouquet 249", price: 249, image: "/images/real flower boq 249.jpg", images: ["/images/real flower boq 249.jpg", "/images/real flower boq 249(1).jpg", "/images/real flower boq 249.jpg"] },
   { id: "bou2", categoryId: "flowers", name: "Real Flowers Bouquet 249", price: 249, image: "/images/real flwr 249.jpg", images: ["/images/real flwr 249.jpg", "/images/real flwrs 249 p2.jpg", "/images/real flwrs p3 249.jpg"] },
-  { id: "bou3", categoryId: "flowers", name: "Premium Rose Bouquet 899", price: 899, image: "/images/real flwr boq 899.jpg", images: ["/images/real flwr boq 899.jpg", "/images/real flwr boq 899.jpg", "/images/real flwr boq 899.jpg"], isBestSeller: true },
+  { id: "bou3", categoryId: "flowers", name: "Premium Rose Bouquet 899", price: 899, image: "/images/artboqwith,pol,flow,choc 899.jpg", images: ["/images/artboqwith,pol,flow,choc 899.jpg", "/images/artboqwith,pol,flow,cktpr, 899.jpg", "/images/artboqwith,pol,flow,choc 899.jpg"], isBestSeller: true },
   { id: "bou4", categoryId: "flowers", name: "Artificial Single Flower Bouquet 199", price: 199, image: "/images/artificial single flower boq 199.jpg", images: ["/images/artificial single flower boq 199.jpg", "/images/artificial single flower boq 199 p2.jpg", "/images/artificial single flower boq 199.jpg"] },
   { id: "bou5", categoryId: "flowers", name: "Red Bouquet Arrangement", price: 249, image: "/images/red boq p2.jpg", images: ["/images/red boq p2.jpg", "/images/red boq p3.jpg", "/images/red boq p2.jpg"] },
   { id: "bou6", categoryId: "flowers", name: "Art Bouquet with Flowers", price: 899, image: "/images/artboqwith,pol,flow,choc 899.jpg", images: ["/images/artboqwith,pol,flow,choc 899.jpg", "/images/artboqwith,pol,flow,cktpr, 899.jpg", "/images/artboqwith,pol,flow,choc 899.jpg"] },
@@ -117,10 +117,10 @@ export const products = [
   { id: "bou8", categoryId: "flowers", name: "Natural Roses 20 Flowers 499", price: 499, image: "/images/real flwr 249.jpg", images: ["/images/real flwr 249.jpg", "/images/real flwrs p3 249.jpg", "/images/real flower boq 249.jpg"] },
 
   // ===== CATEGORY 5: HAMPERS & GIFT COMBOS (4 Products) =====
-  { id: "ham1", categoryId: "hampers", name: "Premium Hamper", price: 999, image: "/images/hamper.jpg", images: ["/images/hamper.jpg", "/images/hamper .jpg", "/images/HAMPER.jpg"] },
+  { id: "ham1", categoryId: "hampers", name: "Premium Hamper", price: 999, image: "/images/HAMPER.jpg", images: ["/images/HAMPER.jpg", "/images/hamper .jpg", "/images/HAMPER(1).jpg"] },
   { id: "ham2", categoryId: "hampers", name: "Premium Hamper Edition", price: 599, image: "/images/HAMPER(1).jpg", images: ["/images/HAMPER(1).jpg", "/images/HAMPER(1).jpg", "/images/HAMPER(1).jpg"] },
-  { id: "ham3", categoryId: "hampers", name: "Artistic Hamper Combo", price: 999, image: "/images/hamperc.jpeg", images: ["/images/hamperc.jpeg", "/images/hamperc.jpeg", "/images/hamper.jpg"] },
-  { id: "ham4", categoryId: "hampers", name: "Hamper with Sweets", price: 1249, image: "/images/HAMPER.jpg", images: ["/images/HAMPER.jpg", "/images/hamper.jpg", "/images/hamper .jpg"] },
+  { id: "ham3", categoryId: "hampers", name: "Artistic Hamper Combo", price: 999, image: "/images/hamperc.jpeg", images: ["/images/hamperc.jpeg", "/images/hamperc.jpeg", "/images/HAMPER.jpg"] },
+  { id: "ham4", categoryId: "hampers", name: "Hamper with Sweets", price: 1249, image: "/images/HAMPER.jpg", images: ["/images/HAMPER.jpg", "/images/HAMPER.jpg", "/images/hamper .jpg"] },
 
   // ===== CATEGORY 6: APPAREL (T-SHIRTS) (5 Products) =====
   { id: "t1", categoryId: "apparel", name: "Customized T-Shirt 499", price: 499, image: "/images/CUSTOMIZED T-SHIRTS 499.jpg", images: ["/images/CUSTOMIZED T-SHIRTS 499.jpg", "/images/CUSTOMIZED T-SHIRTS P2 499.jpg", "/images/CUSTOMIZED T-SHIRTS P3 499.jpg"], isBestSeller: true, pricingType: "standard" },
@@ -148,14 +148,14 @@ export const products = [
   // ===== CATEGORY 10: SMART & DIGITAL SERVICES (9 Products) =====
   { id: "nfc1", categoryId: "smart-digital", name: "NFC Review Board 799", price: 799, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/REVIEW BOARD NFC 799.jpg", "/images/REVIEW BOARD NFC 799.jpg"] },
   { id: "id1", categoryId: "smart-digital", name: "ID Card PVC 149", price: 149, image: "/images/ID.jpeg", images: ["/images/ID.jpeg", "/images/ID.jpeg", "/images/ID.jpeg"] },
-  { id: "d1", categoryId: "smart-digital", name: "Digital Invitation", price: 299, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/DI1.JPG", "/images/DI2.JPG"] },
+  { id: "d1", categoryId: "smart-digital", name: "Digital Invitation", price: 299, image: "/images/DI1.JPG", images: ["/images/DI1.JPG", "/images/DI2.JPG", "/images/digital invitation p2.JPG"] },
   { id: "d2", categoryId: "smart-digital", name: "Photo Restoration", price: 199, image: "/images/photo restoration (after).JPEG", images: ["/images/photo restoration (after).JPEG", "/images/photo restoration (before).jpg", "/images/photo restoration (after).JPEG"] },
   { id: "d4", categoryId: "smart-digital", name: "Digital Video Invitation", price: 399, image: "/images/reel1.jpeg", images: ["/images/reel1.jpeg", "/images/reel2.jpeg", "/images/reel3.jpeg", "/images/reel4.jpeg"], instagramLinks: ["https://www.instagram.com/reel/DGTDnYoSW0X/?igsh=YzFtZmNxY2h6djF5", "https://www.instagram.com/reel/DJfx-NCy9o-/?igsh=cWZkemk1NjJ0dDBk", "https://www.instagram.com/reel/DJZPJJdSvhA/?igsh=MTNjazVnaDJ4cW9vdg==", "https://www.instagram.com/reel/DUJDSZRktXE/?igsh=NjVoZzV4amhoMzR0"] },
   { id: "sd5", categoryId: "smart-digital", name: "Smart Digital Package", price: 999, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/REVIEW BOARD NFC 799.jpg"] },
-  { id: "sd6", categoryId: "smart-digital", name: "Digital Services Suite", price: 1299, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/photo restoration (after).JPEG", "/images/DI1.JPG"] },
+  { id: "sd6", categoryId: "smart-digital", name: "Digital Services Suite", price: 1299, image: "/images/DI1.JPG", images: ["/images/DI1.JPG", "/images/photo restoration (after).JPEG", "/images/DI2.JPG"] },
   { id: "sd7", categoryId: "smart-digital", name: "NFC & ID Combo", price: 899, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/REVIEW BOARD NFC 799.jpg"] },
-  { id: "sd8", categoryId: "smart-digital", name: "Digital Experience Package", price: 1499, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/REVIEW BOARD NFC 799.jpg", "/images/photo restoration (after).JPEG"] },
-  { id: "sd9", categoryId: "smart-digital", name: "Smart Memory Management", price: 599, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/digital invitation.jpg"] }
+  { id: "sd8", categoryId: "smart-digital", name: "Digital Experience Package", price: 1499, image: "/images/DI1.JPG", images: ["/images/DI1.JPG", "/images/REVIEW BOARD NFC 799.jpg", "/images/photo restoration (after).JPEG"] },
+  { id: "sd9", categoryId: "smart-digital", name: "Smart Memory Management", price: 599, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/DI1.JPG"] }
 ];
 
 // --- 4. SHOWCASE DATA (10 SECTIONS - 2 PRODUCTS PER CATEGORY) ---

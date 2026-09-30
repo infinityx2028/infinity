@@ -13,13 +13,15 @@ const generateOrderId = () => {
 const generateUpiDeepLink = (orderId, amount) => {
   const numAmount = Number(amount);
   const formattedAmount = Number.isFinite(numAmount) ? numAmount.toFixed(2) : String(amount);
-  const encodedName = encodeURIComponent(MERCHANT_NAME);
-  const encodedNote = encodeURIComponent(`Order ${orderId}`);
-  const encodedRef = encodeURIComponent(orderId);
+  const cleanUpiId = MERCHANT_UPI_ID.trim();
+  const cleanOrderId = String(orderId || '').trim();
+  const cleanNote = `Order-${cleanOrderId}`.replace(/[^a-zA-Z0-9_-]/g, '');
+  const encodedName = encodeURIComponent(MERCHANT_NAME.trim());
+  const encodedNote = encodeURIComponent(cleanNote);
 
-  // Standard UPI URI specification:
-  // upi://pay?pa=Q489570312@ybl&pn=Infinity%20Customizations&am=1299.00&cu=INR&tn=Order%20INF-...&tr=INF-...
-  return `upi://pay?pa=${MERCHANT_UPI_ID}&pn=${encodedName}&am=${formattedAmount}&cu=INR&tn=${encodedNote}&tr=${encodedRef}`;
+  // Standard UPI URI specification for VPA (P2P/VPA intent):
+  // Omit 'tr' without merchant code to avoid UPI bank rejection ("Technical issue" / "Payment failed")
+  return `upi://pay?pa=${cleanUpiId}&pn=${encodedName}&am=${formattedAmount}&cu=INR&tn=${encodedNote}`;
 };
 
 const generateQRCodeData = (upiDeepLink) => {
@@ -33,4 +35,3 @@ module.exports = {
   generateUpiDeepLink,
   generateQRCodeData
 };
-
