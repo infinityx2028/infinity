@@ -87,7 +87,7 @@ const CategoryGrid = () => {
               </h2>
             </div>
             <Link 
-              to="/shop/frames"
+              to="/shop"
               className="text-xs font-bold text-[#071A2F] hover:text-[#C5A46D] transition-colors pb-0.5"
             >
               All →
@@ -148,7 +148,7 @@ const CategoryGrid = () => {
           <div className="w-full overflow-hidden mb-8 sm:mb-10">
             <div className="flex items-center gap-2 overflow-x-auto pb-2 pt-1 scrollbar-hide">
               {[
-                { label: 'All Gifts', path: '/shop/frames' },
+                { label: 'All Gifts', path: '/shop' },
                 { label: 'Photo Frames', path: '/shop/frames' },
                 { label: 'Polaroids', path: '/shop/memories' },
                 { label: 'Custom Apparel', path: '/shop/apparel' },
@@ -220,7 +220,7 @@ const CategoryGrid = () => {
           {/* View All Collections Button */}
           <div className="mt-10 sm:mt-12 text-center">
             <Link
-              to="/shop/frames"
+              to="/shop"
               className="inline-flex items-center gap-2 bg-[#FAF8F4] hover:bg-white text-[#071A2F] border border-[#071A2F]/15 px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md min-h-[44px]"
             >
               <span>VIEW ALL COLLECTIONS</span>

@@ -4,7 +4,7 @@ import { ArrowRight, Check } from 'lucide-react';
 
 const MomentsStorySection = () => {
   return (
-    <section id="made-around-your-story" className="py-6 sm:py-20 md:py-28 bg-[#FAF8F4] border-b border-[#071A2F]/5">
+    <section id="made-around-your-story" className="py-6 sm:py-20 md:py-28 bg-[#F5F6F8] border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* MOBILE VIEW: Compact Editorial Banner (~280px height) */}
@@ -37,7 +37,7 @@ const MomentsStorySection = () => {
 
               <div>
                 <Link
-                  to="/shop/frames"
+                  to="/shop"
                   className="inline-flex items-center gap-1.5 bg-[#071A2F] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xs hover:bg-[#0B2748] active:scale-95 transition-all"
                 >
                   <span>EXPLORE GIFTS</span>
@@ -150,7 +150,7 @@ const MomentsStorySection = () => {
             {/* Physical CTA */}
             <div>
               <Link
-                to="/shop/frames"
+                to="/shop"
                 className="btn-physical-3d group inline-flex items-center gap-3 bg-[#071A2F] text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider min-h-[46px]"
               >
                 <span>EXPLORE PERSONALIZED GIFTS</span>

@@ -10,16 +10,16 @@ const WhatsAppIcon = ({ size = 18, className = "" }) => (
 
 const PremiumCTA = () => {
   return (
-    <section className="py-6 sm:py-20 md:py-28 bg-[#FAF8F4] border-t border-[#071A2F]/5">
+    <section className="py-8 sm:py-16 md:py-24 bg-[#FAF8F4] border-t border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* MOBILE VIEW: Compact Final CTA (~280-320px) */}
-        <div className="sm:hidden relative rounded-2xl bg-[#071A2F] p-5 text-white overflow-hidden shadow-xl text-center flex flex-col items-center justify-between min-h-[280px]">
+        {/* MOBILE VIEW: Clean White Luxury Card (~280-300px) */}
+        <div className="sm:hidden relative rounded-2xl bg-white p-5 text-[#071A2F] border border-[#071A2F]/8 shadow-[0_4px_20px_rgba(7,26,47,0.05)] text-center flex flex-col items-center justify-between min-h-[270px]">
           {/* Subtle Warm Highlight in Corner */}
-          <div className="absolute top-0 right-0 w-60 h-60 bg-[#C5A46D]/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#C5A46D]/10 rounded-full blur-2xl pointer-events-none" />
 
-          {/* One Compact Product Visual */}
-          <div className="relative z-10 w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/20 shadow-md mb-2">
+          {/* Compact Product Visual */}
+          <div className="relative z-10 w-13 h-13 rounded-2xl overflow-hidden border border-[#071A2F]/10 shadow-xs mb-1.5">
             <img 
               src="/images/4 x 6 black frame 199.jpg" 
               alt="Infinity Custom Gifts" 
@@ -28,25 +28,25 @@ const PremiumCTA = () => {
           </div>
 
           <div className="relative z-10">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-[#C5A46D] block mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#C5A46D] block mb-1">
               GIFTING REDEFINED
             </span>
 
-            <h2 className="text-lg font-extrabold tracking-tight text-white leading-snug mb-1.5">
+            <h2 className="text-lg font-extrabold tracking-tight text-[#071A2F] leading-snug mb-1.5">
               Some gifts are opened. <br />
-              <span className="text-[#C5A46D]">The best ones are remembered.</span>
+              <span className="font-serif italic font-normal text-[#C5A46D]">The best ones are remembered.</span>
             </h2>
 
-            <p className="text-[11px] text-gray-300 font-light leading-relaxed mb-4 max-w-xs mx-auto">
+            <p className="text-[12px] text-[#687386] font-normal leading-relaxed mb-4 max-w-xs mx-auto">
               Start personalizing a keepsake today with WhatsApp preview confirmation.
             </p>
           </div>
 
-          {/* One Dominant CTA */}
+          {/* Dominant Navy CTA */}
           <div className="relative z-10 w-full">
             <Link
-              to="/shop/frames"
-              className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-[#071A2F] py-3 rounded-full font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all"
+              to="/shop"
+              className="w-full inline-flex items-center justify-center gap-2 bg-[#071A2F] hover:bg-[#0B2748] text-white py-3 rounded-full font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all"
             >
               <span>FIND THEIR GIFT</span>
               <ArrowRight size={14} />
@@ -54,31 +54,31 @@ const PremiumCTA = () => {
           </div>
         </div>
 
-        {/* DESKTOP VIEW: Full Heroic CTA (sm+) */}
-        <div className="hidden sm:block relative rounded-[36px] bg-[#071A2F] p-10 sm:p-14 lg:p-20 text-white overflow-hidden shadow-2xl">
+        {/* DESKTOP VIEW: Clean Ivory/White Editorial Card (sm+) */}
+        <div className="hidden sm:block relative rounded-[32px] bg-white p-10 sm:p-14 lg:p-16 text-[#071A2F] border border-[#071A2F]/8 shadow-[0_8px_32px_rgba(7,26,47,0.06)] overflow-hidden">
           
           {/* Subtle Warm Highlight in Corner */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#C5A46D]/8 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#C5A46D]/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-2xl mx-auto text-center flex flex-col items-center">
             
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#C5A46D] mb-4 block">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#C5A46D] mb-3 block">
               GIFTING REDEFINED
             </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight mb-5">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#071A2F] leading-tight mb-4">
               Some gifts are opened. <br />
-              <span className="text-[#C5A46D]">The best ones are remembered.</span>
+              <span className="font-serif italic font-normal text-[#C5A46D]">The best ones are remembered.</span>
             </h2>
 
-            <p className="text-sm sm:text-base text-gray-300 font-light leading-relaxed mb-8 max-w-lg">
+            <p className="text-sm sm:text-base text-[#687386] font-normal leading-relaxed mb-8 max-w-lg">
               Start personalizing a keepsake today. Need help with design or photo selection? Our studio team assists you directly on WhatsApp.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto">
               <Link
-                to="/shop/frames"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-white hover:bg-gray-100 text-[#071A2F] px-8 py-4 rounded-full font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-200"
+                to="/shop"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#071A2F] hover:bg-[#0B2748] text-white px-8 py-4 rounded-full font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-200"
               >
                 <span>FIND THEIR GIFT</span>
                 <ArrowRight size={15} />
@@ -88,14 +88,14 @@ const PremiumCTA = () => {
                 href="https://wa.me/918985993948"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-transparent hover:bg-white/10 text-white border border-white/20 px-7 py-4 rounded-full font-bold text-sm tracking-wide transition-all duration-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-transparent hover:bg-[#FAF8F4] text-[#071A2F] border border-[#071A2F]/20 px-7 py-4 rounded-full font-bold text-sm tracking-wide transition-all duration-200"
               >
                 <WhatsAppIcon size={18} />
                 <span>Chat on WhatsApp</span>
               </a>
             </div>
 
-            <p className="text-[11px] text-gray-400 mt-6 font-light">
+            <p className="text-[11px] text-[#687386] mt-6 font-light">
               Archival quality • WhatsApp preview confirmation • Handcrafted in India
             </p>
 

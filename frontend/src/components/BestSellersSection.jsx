@@ -43,7 +43,7 @@ const BestSellersSection = () => {
   }, []);
 
   return (
-    <section id="best-sellers" className="py-7 sm:py-16 md:py-24 bg-white border-b border-[#071A2F]/5">
+    <section id="best-sellers" className="py-7 sm:py-16 md:py-24 bg-[#FAF8F4] border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
@@ -57,7 +57,7 @@ const BestSellersSection = () => {
             </h2>
           </div>
           <Link
-            to="/shop/frames"
+            to="/shop"
             className="text-xs sm:text-sm font-bold text-[#071A2F] hover:text-[#C5A46D] transition-colors pb-0.5"
           >
             <span>View All</span>

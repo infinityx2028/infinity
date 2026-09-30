@@ -20,7 +20,7 @@ const STEPS = [
 
 const PersonalizationProcess = () => {
   return (
-    <section className="py-7 sm:py-16 md:py-24 bg-white border-b border-[#071A2F]/5">
+    <section className="py-7 sm:py-16 md:py-24 bg-[#FAF8F4] border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Header */}
@@ -37,7 +37,7 @@ const PersonalizationProcess = () => {
         </div>
 
         {/* MOBILE VIEW: Ultra-compact 3 Steps in 1 sleek container (< sm) */}
-        <div className="sm:hidden bg-[#FAF8F4] rounded-2xl p-3.5 border border-[#071A2F]/8 divide-y divide-[#071A2F]/8">
+        <div className="sm:hidden bg-white rounded-2xl p-4 border border-[#071A2F]/8 divide-y divide-[#071A2F]/8 shadow-xs">
           {STEPS.map((step, idx) => (
             <div key={idx} className={`flex items-start gap-3 ${idx === 0 ? 'pb-2.5' : idx === STEPS.length - 1 ? 'pt-2.5' : 'py-2.5'}`}>
               <span className="text-xs font-mono font-black text-[#C5A46D] tracking-wider pt-0.5 w-6 flex-shrink-0">

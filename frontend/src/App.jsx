@@ -37,6 +37,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 import IntroOverlay from './components/IntroOverlay';
 import { IntroContext } from './contexts/IntroContext';
 import InfinityLoader from './components/InfinityLoader';
+import { CANONICAL_CATEGORIES, resolveCategorySlug, getCategoryMeta } from './utils/categoryUtils';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
 const LoaderContext = createContext();
@@ -126,33 +127,38 @@ const WhatsAppIcon = ({ size = 22, className = "" }) => (
 
 const CategoryPage = () => {
   const { id } = useParams();
-  const currentCategory = id || 'all';
-  const details = categoryDetails[currentCategory] || { 
-    title: currentCategory === 'all' ? "All Personalized Gifts" : "Personalized Collection", 
-    desc: "Discover handcrafted pieces made around your favorite memories." 
-  };
+  const resolvedCategory = resolveCategorySlug(id);
+  const isInvalidCategory = Boolean(id && resolvedCategory === null);
+  const currentCategory = isInvalidCategory ? null : (resolvedCategory || 'all');
+
+  const meta = getCategoryMeta(currentCategory);
+  const details = meta ? { title: meta.title, desc: meta.desc } : (
+    isInvalidCategory ? {
+      title: "Collection Not Found",
+      desc: "The category you are looking for does not exist or has been moved."
+    } : { 
+      title: "All Personalized Gifts", 
+      desc: "Discover handcrafted pieces made around your favorite memories." 
+    }
+  );
   
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('featured');
   const [priceFilter, setPriceFilter] = useState('all'); // all, under-300, 300-600, above-600
 
-  const CATEGORY_TABS = [
-    { id: 'all', name: 'All Gifts' },
-    { id: 'frames', name: 'Photo Frames' },
-    { id: 'memories', name: 'Polaroids' },
-    { id: 'apparel', name: 'Apparel' },
-    { id: 'magazines', name: 'Magazines' },
-    { id: 'essentials', name: 'Phone Cases' },
-    { id: 'hampers', name: 'Hampers' },
-    { id: 'flowers', name: 'Flowers' },
-    { id: 'vintage', name: 'Vintage' }
-  ];
-
   useEffect(() => {
     let isMounted = true;
     const fetchProducts = async () => {
       setLoading(true);
+      if (isInvalidCategory) {
+        if (isMounted) {
+          setAllProducts([]);
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         const url = (currentCategory && currentCategory !== 'all')
           ? `${API_BASE_URL}/products/category/${currentCategory}`
@@ -182,7 +188,7 @@ const CategoryPage = () => {
     };
     fetchProducts();
     return () => { isMounted = false; };
-  }, [currentCategory]);
+  }, [currentCategory, isInvalidCategory]);
 
   // Filter products by price
   const filteredProducts = allProducts.filter(p => {
@@ -210,20 +216,20 @@ const CategoryPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         
         {/* Simple Breadcrumbs: Home / Shop / Collection */}
-        <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-xs text-[#687386]">
+        <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-2 text-xs text-[#687386]">
           <Link to="/" className="hover:text-[#071A2F] transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop/frames" className="hover:text-[#071A2F] transition-colors">Shop</Link>
+          <Link to="/shop" className="hover:text-[#071A2F] transition-colors font-medium">Shop</Link>
           <span>/</span>
-          <span className="font-semibold text-[#071A2F] capitalize">
+          <span className="font-bold text-[#071A2F] capitalize">
             {details.title}
           </span>
         </nav>
 
-        {/* Compact, Non-Obtrusive Header — No Giant Hero */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 mb-6 border-b border-[#071A2F]/10 gap-3">
+        {/* Compact Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between pb-5 mb-5 border-b border-[#071A2F]/10 gap-2">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#687386] mb-1 block">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#687386] mb-0.5 block">
               Infinity Store
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#071A2F] tracking-tight">
@@ -236,18 +242,18 @@ const CategoryPage = () => {
         </div>
 
         {/* Filter & Sort Controls Bar */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-3.5 mb-8">
           {/* Quick Category Chips */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-            {CATEGORY_TABS.map((tab) => {
+            {CANONICAL_CATEGORIES.map((tab) => {
               const isActive = (tab.id === 'all' && currentCategory === 'all') || (tab.id === currentCategory);
               return (
                 <Link
                   key={tab.id}
-                  to={`/shop/${tab.id === 'all' ? 'frames' : tab.id}`}
-                  className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-all shadow-2xs ${
+                  to={tab.id === 'all' ? '/shop' : `/shop/${tab.slug}`}
+                  className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide whitespace-nowrap transition-all shadow-2xs ${
                     isActive
-                      ? 'bg-[#071A2F] text-white'
+                      ? 'bg-[#071A2F] text-white shadow-xs'
                       : 'bg-white text-[#071A2F] hover:bg-[#FAF8F4] border border-[#071A2F]/10'
                   }`}
                 >
@@ -258,7 +264,7 @@ const CategoryPage = () => {
           </div>
 
           {/* Secondary Controls: Price Pills + Sorting Dropdown */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#071A2F]/8 shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-[#071A2F]/8 shadow-xs">
             {/* Price Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
               <span className="text-[#687386] font-medium mr-1 hidden sm:inline">Price:</span>
@@ -309,42 +315,43 @@ const CategoryPage = () => {
 
         {/* Product Grid / Loading / Empty States */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl p-4 border border-gray-100 flex flex-col justify-between">
-                <div className="aspect-[4/5] bg-[#FAF8F4] rounded-2xl mb-4 flex items-center justify-center">
-                  <InfinityLoader size="sm" />
-                </div>
-                <div className="h-4 bg-gray-100 rounded w-3/4 mb-2 animate-pulse" />
-                <div className="h-4 bg-gray-100 rounded w-1/3 animate-pulse" />
+              <div key={i} className="bg-white rounded-2xl p-2.5 border border-[#071A2F]/6 animate-pulse">
+                <div className="aspect-square bg-gray-100 rounded-xl mb-2" />
+                <div className="h-3.5 bg-gray-100 rounded w-3/4 mb-1.5" />
+                <div className="h-3 bg-gray-100 rounded w-1/3" />
               </div>
             ))}
           </div>
         ) : sortedProducts.length > 0 ? (
           <div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
               {sortedProducts.map(p => (
                 <ProductCard key={p._id || p.id} product={p} />
               ))}
             </div>
-            <p className="text-center text-xs text-[#687386] mt-12">
-              Showing all {sortedProducts.length} personalized gifts
+            <p className="text-center text-xs text-[#687386] mt-10">
+              Showing {sortedProducts.length} personalized gifts
             </p>
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 p-8 max-w-md mx-auto shadow-xs">
-            <h3 className="font-bold text-lg text-[#071A2F] mb-2">
-              WE COULDN'T FIND THAT GIFT.
+          <div className="text-center py-12 sm:py-16 bg-white rounded-3xl border border-[#071A2F]/8 p-8 max-w-md mx-auto shadow-xs">
+            <h3 className="font-extrabold text-base sm:text-lg text-[#071A2F] mb-2 tracking-tight">
+              {isInvalidCategory ? "COLLECTION NOT FOUND" : "NO PRODUCTS AVAILABLE IN THIS COLLECTION YET."}
             </h3>
-            <p className="text-xs text-[#687386] mb-6">
-              Try adjusting your price filter or explore one of our other collections.
+            <p className="text-xs text-[#687386] mb-6 font-light leading-relaxed">
+              {isInvalidCategory 
+                ? "The category you navigated to was not recognized. Explore our full catalog below."
+                : "We are handcrafting pieces for this collection. Explore all our available gifts below."
+              }
             </p>
-            <button
-              onClick={() => setPriceFilter('all')}
-              className="inline-block bg-[#071A2F] text-white px-7 py-3 rounded-full text-xs font-bold tracking-wide shadow-sm hover:bg-[#0B2748]"
+            <Link
+              to="/shop"
+              className="btn-physical-3d inline-block bg-[#071A2F] hover:bg-[#0B2748] text-white px-7 py-3 rounded-full text-xs font-bold tracking-wide shadow-sm"
             >
-              Reset Filters
-            </button>
+              VIEW ALL PRODUCTS
+            </Link>
           </div>
         )}
       </div>
@@ -1999,7 +2006,7 @@ const Cart = ({ items, updateQuantity, removeItem }) => {
             Turn your favorite memories into custom frames, keepsake polaroids, printed apparel, or bespoke magazines.
           </p>
           <Link 
-            to="/shop/frames" 
+            to="/shop" 
             className="inline-flex items-center gap-2 bg-[#071A2F] hover:bg-[#0B2748] text-white px-8 py-3.5 rounded-full font-bold text-xs sm:text-sm tracking-wide shadow-md hover:shadow-lg transition-all"
           >
             <span>SHOP GIFTS</span>
@@ -2161,7 +2168,7 @@ const NotFoundPage = () => (
         BACK HOME
       </Link>
       <Link
-        to="/shop/frames"
+        to="/shop"
         className="bg-white hover:bg-[#FAF8F4] text-[#071A2F] border border-[#071A2F]/15 px-7 py-3 rounded-full font-bold text-xs sm:text-sm tracking-wide shadow-xs transition-all"
       >
         SHOP GIFTS →

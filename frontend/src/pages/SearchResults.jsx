@@ -103,7 +103,7 @@ export default function SearchResults() {
                   ))}
                 </div>
 
-                <Link to="/shop/frames" className="inline-block bg-[#071A2F] hover:bg-[#0B2748] text-white px-7 py-3 rounded-full text-xs font-bold tracking-wide shadow-md transition-all">
+                <Link to="/shop" className="inline-block bg-[#071A2F] hover:bg-[#0B2748] text-white px-7 py-3 rounded-full text-xs font-bold tracking-wide shadow-md transition-all">
                   Explore All Collections →
                 </Link>
               </div>

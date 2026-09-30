@@ -34,7 +34,7 @@ const MobileBottomNav = () => {
       id: 'shop',
       label: 'Shop',
       icon: Compass,
-      action: () => navigate('/shop/frames'),
+      action: () => navigate('/shop'),
       isActive: location.pathname.startsWith('/shop'),
     },
     {

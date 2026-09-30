@@ -115,7 +115,7 @@ const ProductStoryScroll = () => {
                     <Icon size={14} className="text-[#C5A46D]" /> Step {idx + 1} of 3
                   </span>
                   <Link 
-                    to="/shop/frames" 
+                    to="/shop" 
                     className="hover:text-[#123C69] flex items-center gap-1 text-[11px] group-hover:translate-x-1 transition-transform"
                   >
                     Start Creating <ArrowRight size={12} />

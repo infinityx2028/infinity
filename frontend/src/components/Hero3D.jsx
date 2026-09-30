@@ -422,7 +422,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
             {/* Buttons on one compact row */}
             <div className="flex items-center gap-2 pt-1">
               <Link
-                to="/shop/frames"
+                to="/shop"
                 className="btn-physical-3d inline-flex items-center justify-center gap-1.5 bg-[#071A2F] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] flex-1 text-center"
               >
                 <span>SHOP GIFTS</span>
@@ -629,7 +629,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               }`}
             >
               <Link
-                to="/shop/frames"
+                to="/shop"
                 className="group inline-flex items-center justify-center gap-3 bg-[#071A2F] hover:bg-[#0B2748] text-white px-8 py-4 rounded-full font-bold text-sm tracking-wide shadow-md hover:shadow-xl hover:shadow-[#071A2F]/15 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
               >
                 <span>SHOP PERSONALIZED GIFTS</span>

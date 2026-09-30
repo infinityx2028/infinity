@@ -4,6 +4,14 @@
 
 :root {
   --mobile-nav-height: 64px;
+  --navy: #071A2F;
+  --midnight: #03101D;
+  --navy-secondary: #0B2748;
+  --ivory: #FAF8F4;
+  --surface: #FFFFFF;
+  --soft-bg: #F5F6F8;
+  --muted: #687386;
+  --champagne: #C5A46D;
 }
 
 /* Base Styles */
@@ -87,6 +95,52 @@ h4, h5, h6 {
 .surface-card {
   background: #FFFFFF;
   border: 1px solid rgba(7, 26, 47, 0.06);
+}
+
+/* Standardized Button System */
+.btn-primary {
+  background-color: #071A2F;
+  color: #FFFFFF;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-primary:hover {
+  background-color: #0B2748;
+}
+
+.btn-secondary {
+  background-color: #FFFFFF;
+  color: #071A2F;
+  border: 1px solid rgba(7, 26, 47, 0.15);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-secondary:hover {
+  background-color: #FAF8F4;
+  border-color: rgba(7, 26, 47, 0.3);
+}
+
+.btn-action {
+  color: #071A2F;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: all 0.2s ease;
+}
+.btn-action:hover {
+  color: #C5A46D;
 }
 
 /* 3D Perspective & Cinematic Motion Utilities */

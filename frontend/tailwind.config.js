@@ -55,7 +55,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"Manrope"', '"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Manrope"', 'sans-serif'],
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       letterSpacing: {

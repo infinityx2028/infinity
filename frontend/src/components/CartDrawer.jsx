@@ -60,7 +60,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   </p>
                 </div>
                 <Link
-                  to="/shop/frames"
+                  to="/shop"
                   onClick={onClose}
                   className="inline-block bg-[#071A2F] hover:bg-[#0B2748] text-white text-xs font-bold py-3 px-6 rounded-full shadow-sm hover:shadow transition-all"
                 >

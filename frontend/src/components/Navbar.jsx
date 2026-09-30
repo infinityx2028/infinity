@@ -206,7 +206,7 @@ const Navbar = ({ cartCount = 0 }) => {
           <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold tracking-tight text-[#071A2F]/85">
             {/* SHOP ALL (Prominent & Unmissable) */}
             <Link 
-              to="/shop/frames" 
+              to="/shop" 
               className="bg-[#071A2F] hover:bg-[#0B2748] text-white px-4 py-2 rounded-full transition-all duration-200 font-bold text-xs tracking-wider uppercase shadow-xs hover:shadow"
             >
               SHOP ALL
@@ -239,7 +239,7 @@ const Navbar = ({ cartCount = 0 }) => {
                         </p>
                         <ul className="space-y-1.5 text-xs text-[#687386]">
                           <li>
-                            <Link to="/shop/frames" onClick={() => setCollectionsOpen(false)} className="hover:text-[#071A2F] font-medium block py-0.5">
+                            <Link to="/shop" onClick={() => setCollectionsOpen(false)} className="hover:text-[#071A2F] font-medium block py-0.5">
                               All Products
                             </Link>
                           </li>
@@ -449,7 +449,7 @@ const Navbar = ({ cartCount = 0 }) => {
                           <p className="text-xs font-bold text-[#071A2F]">We couldn't find that gift.</p>
                           <p className="text-[11px] text-[#6B7280]">Try another keyword or browse our collections.</p>
                           <Link 
-                            to="/shop/frames"
+                            to="/shop"
                             onClick={() => setSearchFocused(false)}
                             className="inline-block mt-2 bg-[#071A2F] text-white text-[11px] font-bold px-4 py-1.5 rounded-full"
                           >
@@ -652,7 +652,7 @@ const Navbar = ({ cartCount = 0 }) => {
           <div className="relative z-10 px-6 py-8 flex-1 flex flex-col justify-center space-y-4 overflow-y-auto">
             {[
               { label: 'HOME', to: '/' },
-              { label: 'SHOP', to: '/shop/frames' },
+              { label: 'SHOP', to: '/shop' },
               { label: 'COLLECTIONS', href: '/#collections-section' },
               { label: 'BEST SELLERS', href: '/#best-sellers' },
               { label: 'GIFTS', href: '/#made-for-you' },
