@@ -38,6 +38,8 @@ import IntroOverlay from './components/IntroOverlay';
 import { IntroContext } from './contexts/IntroContext';
 import InfinityLoader from './components/InfinityLoader';
 import { CANONICAL_CATEGORIES, resolveCategorySlug, getCategoryMeta } from './utils/categoryUtils';
+import { InfinityAIProvider } from './contexts/InfinityAIContext';
+import InfinityAIModal from './components/InfinityAI/InfinityAIModal';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
 const LoaderContext = createContext();
@@ -2272,18 +2274,21 @@ export default function App() {
       <IntroContext.Provider value={{ isIntroActive: showIntroOverlay, introPhase }}>
         <AuthProvider>
           <CartProvider>
-            <Router>
-              <ScrollToTop />
-              {/* Homepage renders immediately underneath — Intro is an overlay */}
-              {loading && <GlobalLoader />}
-              <AppContent />
-              {showIntroOverlay && (
-                <IntroOverlay 
-                  onTransitionStart={handleTransitionStart}
-                  onComplete={handleIntroComplete} 
-                />
-              )}
-            </Router>
+            <InfinityAIProvider>
+              <Router>
+                <ScrollToTop />
+                {/* Homepage renders immediately underneath — Intro is an overlay */}
+                {loading && <GlobalLoader />}
+                <AppContent />
+                <InfinityAIModal />
+                {showIntroOverlay && (
+                  <IntroOverlay 
+                    onTransitionStart={handleTransitionStart}
+                    onComplete={handleIntroComplete} 
+                  />
+                )}
+              </Router>
+            </InfinityAIProvider>
           </CartProvider>
         </AuthProvider>
       </IntroContext.Provider>

@@ -86,6 +86,7 @@ const adminAuthRoutes = require('./routes/adminAuth');
 const orderRoutes = require('./routes/orders');
 const loyaltyRoutes = require('./routes/loyalty');
 const phoneModelsRoutes = require('./routes/phoneModels');
+const giftAssistantRoutes = require('./routes/giftAssistant');
 
 // MIDDLEWARE
 const { authAdmin, authorize } = require('./middleware/auth');
@@ -102,6 +103,9 @@ app.use('/api/user', loyaltyRoutes);
 
 // Phone Models Routes
 app.use('/api/phone-models', phoneModelsRoutes);
+
+// Infinity AI Gift Assistant Route
+app.use('/api/gift-assistant', giftAssistantRoutes);
 
 // Product Routes (Public)
 app.get('/api/products', async (req, res) => {

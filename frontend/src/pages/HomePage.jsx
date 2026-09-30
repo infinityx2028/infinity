@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Hero3D from '../components/Hero3D';
 import CategoryGrid from '../components/CategoryGrid';
+import InfinityAISection from '../components/InfinityAI/InfinityAISection';
 import BestSellersSection from '../components/BestSellersSection';
 import MomentsStorySection from '../components/MomentsStorySection';
 import FeaturedProducts from '../components/FeaturedProducts';
@@ -21,6 +22,9 @@ const HomePage = () => {
 
       {/* 2. PERSONALIZED CATEGORIES (What Are You Looking For?) */}
       <CategoryGrid />
+
+      {/* 2.5 INFINITY AI — PERSONALIZED GIFT FINDER */}
+      <InfinityAISection />
 
       {/* 3. BEST SELLERS */}
       <BestSellersSection />

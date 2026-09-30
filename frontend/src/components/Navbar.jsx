@@ -18,6 +18,7 @@ import { useCart } from '../contexts/CartContext';
 import { useIntro } from '../contexts/IntroContext';
 import { products } from '../data';
 import { getImageSrc } from '../utils/imageUtils';
+import { useInfinityAI } from '../contexts/InfinityAIContext';
 
 const WhatsAppIcon = ({ size = 18, className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -36,6 +37,7 @@ const POPULAR_SEARCH_CHIPS = [
 const Navbar = ({ cartCount = 0 }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const { openCartDrawer } = useCart();
+  const { openInfinityAI } = useInfinityAI();
   const navigate = useNavigate();
   const { isIntroActive, introPhase } = useIntro();
   const isIntroInitial = Boolean(isIntroActive && introPhase === 'initial');
@@ -399,6 +401,33 @@ const Navbar = ({ cartCount = 0 }) => {
               {/* Predictive Search Dropdown: Matches OR Recent & Popular Chips */}
               {searchFocused && (
                 <div className="absolute right-0 top-full mt-2 w-88 bg-white rounded-2xl shadow-[0_16px_40px_rgba(7,26,47,0.12)] border border-[#071A2F]/8 p-4 z-50 animate-hero-assemble">
+                  {/* ASK INFINITY AI Entry Point inside Search */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchFocused(false);
+                      openInfinityAI(searchTerm.trim() || '');
+                    }}
+                    className="w-full flex items-center justify-between p-2.5 mb-3 rounded-xl bg-[#071A2F] text-white hover:bg-[#0B2748] transition-all cursor-pointer group shadow-xs"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-[#C5A46D]/20 flex items-center justify-center text-[#C5A46D]">
+                        <Sparkles size={13} />
+                      </div>
+                      <div className="text-left">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#C5A46D] block leading-none mb-0.5">
+                          MEET INFINITY AI
+                        </span>
+                        <span className="text-xs font-semibold text-white">
+                          {searchTerm.trim() ? `Ask AI for "${searchTerm.trim()}"` : 'Ask Infinity AI for gift ideas'}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A46D] group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                      ASK AI →
+                    </span>
+                  </button>
+
                   {searchTerm.trim().length > 0 ? (
                     <div>
                       <div className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] px-1 mb-2">
@@ -763,6 +792,31 @@ const Navbar = ({ cartCount = 0 }) => {
                 <Search size={16} className="absolute left-3.5 text-gray-400" />
               </div>
             </form>
+
+            {/* ASK INFINITY AI mobile entry point inside search */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSearchModal(false);
+                openInfinityAI(searchTerm.trim() || '');
+              }}
+              className="w-full mt-3 flex items-center justify-between p-2.5 rounded-2xl bg-[#FAF8F4] border border-[#C5A46D]/30 hover:border-[#C5A46D] transition-all cursor-pointer group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#071A2F] text-[#C5A46D] flex items-center justify-center flex-shrink-0">
+                  <Sparkles size={14} />
+                </div>
+                <div className="text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C5A46D] block leading-none mb-0.5">
+                    ASK INFINITY AI
+                  </span>
+                  <span className="text-xs font-bold text-[#071A2F]">
+                    {searchTerm.trim() ? `Ask AI for "${searchTerm.trim()}"` : 'Not sure what to gift? Let AI recommend'}
+                  </span>
+                </div>
+              </div>
+              <ArrowRight size={14} className="text-[#071A2F] group-hover:translate-x-0.5 transition-transform" />
+            </button>
 
             {/* If query entered: matching product items */}
             {searchTerm.trim().length > 0 ? (
