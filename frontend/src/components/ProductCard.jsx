@@ -189,7 +189,7 @@ const ProductCard = ({ product, showCategory = true }) => {
 
           {/* Product Title (Max 2 lines, line-clamp-2) */}
           <Link to={`/product/${productId}`} className="block">
-            <h3 className="font-bold text-[13px] sm:text-sm text-[#071A2F] hover:text-[#123C69] transition-colors line-clamp-2 leading-snug">
+            <h3 className="font-bold text-[14px] sm:text-[15px] text-[#071A2F] hover:text-[#123C69] transition-colors line-clamp-2 leading-snug">
               {product.name}
             </h3>
           </Link>
@@ -208,7 +208,7 @@ const ProductCard = ({ product, showCategory = true }) => {
             {requiresPersonalization ? 'From' : 'Price'}
           </span>
           <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className="text-[14px] sm:text-base font-extrabold text-[#071A2F] leading-none">
+            <span className="text-[16px] font-extrabold text-[#071A2F] leading-none">
               ₹{price.toLocaleString('en-IN')}
             </span>
             {hasRealDiscount && (
@@ -220,12 +220,12 @@ const ProductCard = ({ product, showCategory = true }) => {
         </div>
       </div>
 
-      {/* 3. CTA IN NORMAL DOCUMENT FLOW (40-44px height, full width) */}
+      {/* 3. CTA IN NORMAL DOCUMENT FLOW (44px height, full width) */}
       <div className="w-full mt-auto pt-1">
         {requiresPersonalization ? (
           <Link
             to={`/product/${productId}`}
-            className="btn-physical-3d w-full min-h-[40px] sm:min-h-[44px] px-2 bg-[#071A2F] hover:bg-[#0B2748] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 text-center whitespace-nowrap cursor-pointer transition-colors"
+            className="btn-physical-3d w-full h-[44px] min-h-[44px] px-2 bg-[#071A2F] hover:bg-[#0B2748] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1 text-center whitespace-nowrap cursor-pointer transition-colors"
           >
             <span>CUSTOMIZE</span>
             <ArrowRight size={13} className="flex-shrink-0" />
@@ -234,7 +234,7 @@ const ProductCard = ({ product, showCategory = true }) => {
           <button
             type="button"
             onClick={handleQuickAdd}
-            className={`btn-physical-3d w-full min-h-[40px] sm:min-h-[44px] px-2 text-xs font-bold rounded-xl flex items-center justify-center gap-1 text-center whitespace-nowrap cursor-pointer transition-colors ${
+            className={`btn-physical-3d w-full h-[44px] min-h-[44px] px-2 text-xs font-bold rounded-xl flex items-center justify-center gap-1 text-center whitespace-nowrap cursor-pointer transition-colors ${
               added 
                 ? 'bg-emerald-600 text-white' 
                 : 'bg-[#071A2F] hover:bg-[#0B2748] text-white'

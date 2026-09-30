@@ -4,17 +4,17 @@ const PILLARS = [
   {
     num: '01',
     title: 'PERSONALIZED',
-    desc: 'Uniquely crafted around your photos, names, dates and memories.'
+    desc: 'Made around your photos, stories and memories.'
   },
   {
     num: '02',
     title: 'MADE WITH CARE',
-    desc: 'Thoughtfully produced with attention to every detail.'
+    desc: 'Thoughtfully created with attention to every detail.'
   },
   {
     num: '03',
     title: 'MADE TO MEAN MORE',
-    desc: 'Personal gifts created to become lasting memories.'
+    desc: 'Gifts designed to become memories you keep.'
   }
 ];
 

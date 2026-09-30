@@ -25,13 +25,13 @@ const MomentsStorySection = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-              {/* Emerging keepsake frame */}
+              {/* Emerging keepsake magazine cover */}
               <div className="absolute top-10 right-2 w-32 aspect-[4/5] rounded-xl bg-white/10 backdrop-blur-md p-1 shadow-2xl transform -rotate-3 border border-white/30">
                 <img
                   loading="lazy"
                   decoding="async"
-                  src="/images/anniversary MAG.jpg"
-                  alt="Personalized Keepsake"
+                  src="/images/MAG design2.jpg"
+                  alt="Personalized Magazine"
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
@@ -48,7 +48,7 @@ const MomentsStorySection = () => {
                   <span className="text-[#C5A46D]">TO SOMETHING REAL.</span>
                 </h3>
                 <p className="text-[11.5px] text-gray-300 font-light leading-snug">
-                  Turn ordinary phone photos into tangible keepsakes they will hold onto forever.
+                  Turn the photos on your phone into something you can hold, gift and remember.
                 </p>
               </div>
 
@@ -90,8 +90,8 @@ const MomentsStorySection = () => {
               <img
                 loading="lazy"
                 decoding="async"
-                src="/images/anniversary MAG.jpg"
-                alt="Personalized Anniversary Story"
+                src="/images/MAG design2.jpg"
+                alt="Personalized Magazine Story"
                 className="w-full h-full object-cover"
               />
               {/* Subtle caption badge */}

@@ -694,63 +694,80 @@ const Navbar = ({ cartCount = 0 }) => {
             />
           </div>
 
-          {/* Drawer Header */}
-          <div className="relative z-10 px-6 py-5 border-b border-white/10 flex items-center justify-between">
+          {/* Drawer Header: Text branding + small line */}
+          <div className="relative z-10 px-6 pt-6 pb-4 border-b border-white/10 flex items-start justify-between">
             <Link 
               to="/" 
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center"
+              className="block group"
             >
-              <img 
-                src="/images/logo.png" 
-                alt="Infinity Customizations" 
-                className="h-9 w-auto brightness-0 invert object-contain" 
-              />
+              <span className="text-2xl font-extrabold tracking-tight text-white block leading-none">
+                Infinity
+              </span>
+              <span className="text-[10px] font-bold tracking-[0.28em] text-[#C5A46D] uppercase block mt-1">
+                CUSTOMIZATIONS
+              </span>
+              <span className="text-[9.5px] font-semibold tracking-wider text-gray-400 uppercase block mt-1">
+                PERSONALIZED GIFTS, MADE FOR YOU.
+              </span>
             </Link>
             <button 
               onClick={() => setMobileMenuOpen(false)}
-              className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
               aria-label="Close navigation menu"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           </div>
 
-          {/* Drawer Navigation Links with Staggered Fade Up */}
-          <div className="relative z-10 px-6 py-8 flex-1 flex flex-col justify-center space-y-4 overflow-y-auto">
+          {/* Drawer Navigation Links (Start immediately, 54-60px rows, 22-25px font) */}
+          <div className="relative z-10 px-6 py-4 flex-1 flex flex-col justify-start overflow-y-auto divide-y divide-white/10">
             {[
               { label: 'HOME', to: '/' },
               { label: 'SHOP', to: '/shop' },
               { label: 'COLLECTIONS', href: '/#collections-section' },
+              { label: 'INFINITY AI ✦', isAI: true },
               { label: 'BEST SELLERS', href: '/#best-sellers' },
-              { label: 'GIFTS', href: '/#made-for-you' },
               { label: 'ABOUT', to: '/about' }
             ].map((link, idx) => {
-              const animStyle = {
-                animation: `heroFadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${idx * 60 + 80}ms both`
-              };
+              const rowClasses = "group flex items-center justify-between h-[56px] text-[23px] font-bold tracking-tight text-white hover:text-[#C5A46D] transition-colors cursor-pointer";
+              
+              if (link.isAI) {
+                return (
+                  <button
+                    key={link.label}
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openInfinityAI();
+                    }}
+                    className={rowClasses}
+                  >
+                    <span className="text-[#C5A46D] flex items-center gap-1.5">{link.label}</span>
+                    <Sparkles size={18} className="text-[#C5A46D]" />
+                  </button>
+                );
+              }
 
               return link.to ? (
                 <Link
                   key={link.label}
                   to={link.to}
-                  style={animStyle}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-center justify-between py-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white hover:text-[#C5A46D] transition-colors"
+                  className={rowClasses}
                 >
                   <span>{link.label}</span>
-                  <ArrowRight size={20} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
+                  <ArrowRight size={18} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
                 </Link>
               ) : (
                 <a
                   key={link.label}
                   href={link.href}
-                  style={animStyle}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-center justify-between py-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white hover:text-[#C5A46D] transition-colors"
+                  className={rowClasses}
                 >
                   <span>{link.label}</span>
-                  <ArrowRight size={20} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
+                  <ArrowRight size={18} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
                 </a>
               );
             })}
