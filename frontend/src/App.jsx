@@ -40,6 +40,9 @@ import InfinityLoader from './components/InfinityLoader';
 import { CANONICAL_CATEGORIES, resolveCategorySlug, getCategoryMeta } from './utils/categoryUtils';
 import { InfinityAIProvider } from './contexts/InfinityAIContext';
 import InfinityAIModal from './components/InfinityAI/InfinityAIModal';
+import { QuickViewProvider } from './contexts/QuickViewContext';
+import QuickViewModal from './components/QuickViewModal';
+import { getProductFullDescription } from './data/productDescriptions';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
 const LoaderContext = createContext();
@@ -1082,11 +1085,14 @@ const ProductPage = ({ addToCart }) => {
                 <span className="text-xs text-[#687386]">Taxes included</span>
               </div>
 
-              {product.description && (
-                <p className="text-sm text-[#687386] leading-relaxed font-light mb-4">
-                  {product.description}
-                </p>
-              )}
+              {(() => {
+                const fullDesc = getProductFullDescription(product);
+                return fullDesc ? (
+                  <p className="text-sm text-[#687386] leading-relaxed font-light mb-4">
+                    {fullDesc}
+                  </p>
+                ) : null;
+              })()}
 
               {flowerShortText && (
                 <div className="text-xs font-semibold text-[#123C69] bg-white p-3 rounded-xl border border-gray-100 mb-3">{flowerShortText}</div>
@@ -2275,19 +2281,22 @@ export default function App() {
         <AuthProvider>
           <CartProvider>
             <InfinityAIProvider>
-              <Router>
-                <ScrollToTop />
-                {/* Homepage renders immediately underneath — Intro is an overlay */}
-                {loading && <GlobalLoader />}
-                <AppContent />
-                <InfinityAIModal />
-                {showIntroOverlay && (
-                  <IntroOverlay 
-                    onTransitionStart={handleTransitionStart}
-                    onComplete={handleIntroComplete} 
-                  />
-                )}
-              </Router>
+              <QuickViewProvider>
+                <Router>
+                  <ScrollToTop />
+                  {/* Homepage renders immediately underneath — Intro is an overlay */}
+                  {loading && <GlobalLoader />}
+                  <AppContent />
+                  <QuickViewModal />
+                  <InfinityAIModal />
+                  {showIntroOverlay && (
+                    <IntroOverlay 
+                      onTransitionStart={handleTransitionStart}
+                      onComplete={handleIntroComplete} 
+                    />
+                  )}
+                </Router>
+              </QuickViewProvider>
             </InfinityAIProvider>
           </CartProvider>
         </AuthProvider>

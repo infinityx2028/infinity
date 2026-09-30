@@ -15,7 +15,7 @@ const products = [
     price: 199, 
     image: "/images/4 x 6 black frame 199.jpg", 
     images: ["/images/4 x 6 black frame 199.jpg", "/images/4 x 6 p2.jpg", "/images/4 x 6 p3.jpg", "/images/4 x 6 p4.jpg"],
-    description: "Classic black wooden frame perfect for 4x6 photos. Premium quality with glass protection.",
+    description: "Keep a special moment close with a clean black 4x6 frame. Perfectly sized for desks, bedside tables, or memory walls, it comes with clear glass protection to keep your photo looking crisp and fresh every day.",
     inStock: true 
   },
   { 
@@ -25,7 +25,7 @@ const products = [
     price: 199, 
     image: "/images/4 x 6 white frame 199.jpg", 
     images: ["/images/4 x 6 white frame 199.jpg"],
-    description: "Elegant white frame for 4x6 prints. Modern and minimalist design.",
+    description: "Brighten your space with a minimalist white 4x6 frame. Its modern border adds a clean aesthetic to everyday snapshots, couple photos, and family moments, making it a thoughtful and easy personalized gift.",
     inStock: true,
     isBestSeller: true
   },
@@ -36,7 +36,7 @@ const products = [
     price: 60,
     image: "/images/mini.jpeg", 
     images: ["/images/mini.jpeg", "/images/pmini.jpg", "/images/polaroids.jpg"],
-    description: "Instant-style mini polaroid prints. Starting with 12 pieces at ₹5 each. Add 6 more with each click.",
+    description: "Turn your camera-roll memories into compact mini polaroid prints. Designed for sharing, memory walls, and pocket keepsakes, starting at 12 prints with easy quantity additions to capture all your favourite little moments.",
     inStock: true,
     pricingType: "standard",
     pricePerUnit: 5,
@@ -51,7 +51,7 @@ const products = [
     price: 64,
     image: "/images/medp.jpg", 
     images: ["/images/medp.jpg", "/images/POLAROIDS MEDIUM 8 PER EACH.jpg",],
-    description: "Premium medium polaroid prints at ₹8 each. Minimum order 8 pieces (₹64). Add 4 more with each click (₹32).",
+    description: "Give your best photos a nostalgic physical feel with classic medium polaroids. Printed with clean borders on durable matte stock, they are ideal for fairy-light clips, scrapbook pages, and meaningful anniversary or friendship surprises.",
     inStock: true,
     pricingType: "standard",
     pricePerUnit: 8,
@@ -66,7 +66,7 @@ const products = [
     price: 60,
     image: "/images/largep.jpg", 
     images: ["/images/largep.jpg", "/images/polaroids.jpg"],
-    description: "Beautiful large format polaroid prints at ₹15 each. Minimum order 5 pieces (₹75). Add 2 more with each click (₹30).",
+    description: "Showcase your favourite moments in a larger format that lets details shine. These prints combine vintage polaroid aesthetics with generous sizing, making them a standout choice for bedroom displays, gifting bundles, and photo collages.",
     inStock: true,
     pricingType: "standard",
     pricePerUnit: 15,
@@ -81,7 +81,7 @@ const products = [
     price: 169, 
     image: "/images/polaroids album 169.jpg", 
     images: ["/images/polaroids album 169.jpg", "/images/pol album 169.jpg"],
-    description: "Beautiful leather-bound album for preserving your polaroid collection.",
+    description: "Keep your growing polaroid collection safe in one charming album. With structured slip-in sleeves and a neat cover, it allows you to flip through personal memories, trips, and celebrations whenever you want.",
     inStock: true 
   },
   { 
@@ -91,7 +91,7 @@ const products = [
     price: 149, 
     image: "/images/4 x 4 149.jpg", 
     images: ["/images/4 x 4 149.jpg"],
-    description: "Small square frame for miniature photos or artwork. Perfect for desks.",
+    description: "Bring square photos to life with a compact 4x4 frame. Perfectly proportioned for desk setups, cozy corners, and subtle gifting, it offers a neat and charming way to highlight a single meaningful snapshot.",
     inStock: true 
   },
   { 
@@ -101,7 +101,7 @@ const products = [
     price: 299, 
     image: "/images/white frame1.jpg", 
     images: ["/images/white frame1.jpg", "/images/white frame2.jpg"],
-    description: "Beautiful 5x7 wooden frame in black or white. Perfect for shelves and walls.",
+    description: "A well-balanced 5x7 frame that gives portraits and couple photos plenty of room to breathe. Available with classic border styling, it effortlessly complements bedroom shelves, living room consoles, and family gifting moments.",
     inStock: true 
   },
  
@@ -112,7 +112,7 @@ const products = [
     price: 599, 
     image: "/images/modi.jpg", 
     images: ["/images/modi.jpg", "/images/1nch.jpg"],
-    description: "Premium 8x12 black frame with 1 inch border. Perfect for large photo displays.",
+    description: "Give larger portraits and cherished memories strong visual presence. Featuring a substantial 1-inch black border, this 8x12 frame creates a defined focal point on feature walls, office desks, and gifting arrangements.",
     inStock: true 
   },
   { 
@@ -122,7 +122,7 @@ const products = [
     price: 499, 
     image: "/images/half inch2.jpg", 
     images: ["/images/half inch2.jpg", "/images/8 x 12 (1_2 inch) 499.jpg", "/images/8 x 12 599(1_2 inch).jpg"],
-    description: "Elegant 8x12 black frame with half inch border. Slim and modern design.",
+    description: "Emphasize your photograph with a sleek half-inch slim black border. Its minimalist profile gives full attention to the image, making it ideal for contemporary interiors, candid portraits, and artistic prints.",
     inStock: true 
   },
   { 
@@ -132,7 +132,7 @@ const products = [
     price: 699, 
     image: "/images/8x12 mount.jpg", 
     images: ["/images/8 x 12 mount.jpg"],
-    description: "Premium 8x12 mount frame with professional finish. Perfect for gallery walls.",
+    description: "Elevate your photography with a professional inner mount that frames your picture with balanced breathing space. Perfect for graduation pictures, couple portraits, and anniversary memories that deserve a sophisticated touch.",
     inStock: true 
   },
   { 
@@ -142,7 +142,7 @@ const products = [
     price: 1299, 
     image: "/images/10 x 12 frame 1299.jpg", 
     images: ["/images/10 x 12 frame 1299.jpg"],
-    description: "Contemporary 10x12 frame for statement wall displays.",
+    description: "Make a strong impression with a contemporary 10x12 frame. Built for prominent wall placement, it turns milestone portraits and family gatherings into a centerpiece you will enjoy every day.",
     inStock: true 
   },
   { 
@@ -152,7 +152,7 @@ const products = [
     price: 1999, 
     image: "/images/12x18 main.jpg", 
     images: ["/images/12x18 main.jpg", "/images/12 x 18 mount 2199(1).jpg", "/images/12 x 18 mount 2199(2).jpg"],
-    description: "Large premium 12x18 frame with professional mount. Perfect for gallery walls.",
+    description: "Designed for standout memories that deserve central attention. This large 12x18 frame incorporates an interior mount border to create visual depth, making wedding photographs, anniversary milestones, and family portraits look truly cinematic on your wall.",
     inStock: true 
   },
   { 
@@ -162,7 +162,7 @@ const products = [
     price: 1499, 
     image: "/images/frame brown.jpeg", 
     images: ["/images/frame brown.jpeg", "/images/12 x 18 1499 .jpg"],
-    description: "Elegant 12x18 frame available in warm brown and classic styles. Perfect for all photo types.",
+    description: "Add natural warmth to your living room or bedroom with a rich brown 12x18 frame. Its organic tones complement candid outdoor photos, anniversary moments, and warm-toned memories beautifully.",
     inStock: true 
   },
   { 
@@ -172,7 +172,7 @@ const products = [
     price: 1599, 
     image: "/images/12 x 18 milestone .jpg", 
     images: ["/images/12 x 18 milestone .jpg"],
-    description: "Special milestone frame for celebrating important moments.",
+    description: "Celebrate birthdays, anniversaries, and personal milestones with a dedicated 12x18 keepsake frame. Pair your chosen picture with dates and memorable details to honor a milestone someone will treasure for years.",
     inStock: true 
   },
  
@@ -183,7 +183,7 @@ const products = [
     price: 3999, 
     image: "/images/collage frame 3999.jpg", 
     images: ["/images/collage frame 3999.jpg"],
-    description: "Large collage frame perfect for displaying multiple photos. Holds multiple pictures.",
+    description: "When one picture is not enough, this 12x18 collage frame allows you to showcase multiple moments in a harmonious layout. Perfect for relationship timelines, year-in-review stories, and group celebrations.",
     inStock: true 
   },
   { 
@@ -193,7 +193,7 @@ const products = [
     price: 399, 
     image: "/images/vintage frame.jpg", 
     images: ["/images/vintage frame.jpg", "/images/vintage frames p2.jpg", "/images/vintage frames p3.jpg", "/images/vintage frames p4.jpg"],
-    description: "Charming vintage-style frame for a nostalgic touch to any space.",
+    description: "Add character to your bedside table or shelf with this antique-inspired vintage frame. Its distinctive styling pairs wonderfully with nostalgic black-and-white snaps or sepia memories.",
     inStock: true 
   },
   { 
@@ -203,7 +203,7 @@ const products = [
     price: 1499, 
     image: "/images/12x18 new.jpg", 
     images: ["/images/12x18 new.jpg"],
-    description: "Premium 12x18 frame for showcasing your favorite memories and artwork.",
+    description: "Transform your favourite high-resolution snapshot into wall art with this 12x18 display frame. Its generous dimensions make it an impressive option for home living rooms, hallway galleries, and couple gifts.",
     inStock: true 
   },
   { 
@@ -213,7 +213,7 @@ const products = [
     price: 499, 
     image: "/images/wed frame.jpg", 
     images: ["/images/wed frame.jpg"],
-    description: "Beautiful 8x12 wedding frame perfect for displaying your special moments and cherished wedding memories.",
+    description: "Celebrate your wedding day or give an unforgettable anniversary gift with this 8x12 wedding frame. It provides a romantic, elegant border to showcase your favorite bridal portrait or vows moment.",
     inStock: true 
   },
   {
@@ -223,7 +223,7 @@ const products = [
     price: 2899,
     image: "/images/Lf.jpeg",
     images: ["/images/Lf.jpeg", "/images/Lf1.jpeg"],
-    description: "Premium 12x18 lighting frame with illuminated design for standout display.",
+    description: "Add a warm ambient glow to your favourite memory. This 12x18 lighting frame features gentle illumination that highlights your photograph after dark, creating a magical bedroom or living room atmosphere.",
     inStock: true
   },
 
@@ -235,7 +235,7 @@ const products = [
     price: 499, 
     image: "/images/aniv1.jpeg", 
     images: ["/images/aniv1.jpeg", "/images/aniv2.jpeg", "/images/aniv3.jpeg", "/images/aniv4.jpeg", "/images/aniv5.jpeg"],
-    description: "Premium hardcover anniversary magazine with custom photos and personalized layouts.",
+    description: "Celebrate your journey together with a personalized anniversary magazine. Custom-printed with your relationship photos, dates, and sweet memories, it feels like an authentic editorial storybook dedicated entirely to the two of you.",
     inStock: true,
     pageOptions: [
       { pages: 8, priceAddition: 0 },
@@ -249,7 +249,7 @@ const products = [
     price: 599, 
     image: "/images/mag 12pgs 599.jpg", 
     images: ["/images/mag 12pgs 599.jpg", "/images/mag 12pgs 599 p3.jpg", "/images/mag 12pgs 599 p4.jpg", "/images/mag 12pgs 599 p5.jpg", "/images/mag 12pgs 599 p6.jpg", "/images/mag 12pgs 599 p7.jpg", "/images/mag 12pgs 599 p8.jpg"],
-    description: "Beautiful hardcover magazine with 12 premium pages for your special memories.",
+    description: "Tell a complete visual story across 12 custom pages. Perfect for long vacations, college memories, and milestone birthdays, this magazine gives you space to combine dozens of photos with dates and personal captions.",
     inStock: true,
     pageOptions: [
       { pages: 8, priceAddition: 0 },
@@ -263,7 +263,7 @@ const products = [
     price: 499, 
     image: "/images/MAG design2.jpg", 
     images: ["/images/MAG design2.jpg", "/images/MAG design2 p6.jpg", "/images/MAG design2 p7.jpg", "/images/MAG design2 p8.jpg", "/images/MAG design2 p9.jpg"],
-    description: "Stylish magazine with alternative design layout. Perfect for modern memories.",
+    description: "Designed with a fashion-forward editorial aesthetic, Magazine Design 2 pairs bold typographic headings with candid photo collages. It is an exciting way to spotlight a best friend, partner, or sibling on their special day.",
     inStock: true,
     isBestSeller: true,
     pageOptions: [
@@ -281,7 +281,7 @@ const products = [
     price: 249,
     image: "/images/nf.jpeg",
     images: ["/images/nf.jpeg"],
-    description: "Fresh and beautiful natural flower bouquet. Perfect for all occasions.",
+    description: "Brighten someone's day with a fresh natural flower bouquet. Hand-wrapped with care and ready to bring natural fragrance and color to birthdays, anniversaries, graduations, and surprise doorstep deliveries.'s day with a fresh natural flower bouquet. Hand-wrapped with care and ready to bring natural fragrance and color to birthdays, anniversaries, graduations, and surprise doorstep deliveries.",
     inStock: true,
     isBestSeller: true,
     deliveryCharge: 249
@@ -293,7 +293,7 @@ const products = [
     price: 199,
     image: "/images/artificial single flower boq 199.jpg",
     images: ["/images/artificial single flower boq 199.jpg", "/images/single.jpeg"],
-    description: "Single high-quality artificial flower. Long-lasting and maintenance free.",
+    description: "A lasting symbolic keepsake that never wilts. This single artificial flower adds a delicate romantic touch when tucked into gift boxes, paired with letters, or placed on study desks as a permanent reminder.",
     inStock: true,
     deliveryCharge: 249
   },
@@ -304,7 +304,7 @@ const products = [
     price: 899,
     image: "/images/artboqwith,pol,flow,choc 899.jpg",
     images: ["/images/artboqwith,pol,flow,choc 899.jpg", "/images/ds1.jpeg"],
-    description: "Artificial bouquet design 1: includes 12 medium polaroids, 12 artificial flowers, 6 chocolates. Optional addon: decorative lights for +₹50.",
+    description: "An all-in-one celebration bouquet that bundles 12 everlasting artificial flowers, 12 personalized medium polaroids of your memories, and 6 sweet chocolates into a single wrapped surprise. Optional warm fairy lights are available to add an extra glow.",
     inStock: true,
     deliveryCharge: 249,
     components: [
@@ -321,7 +321,7 @@ const products = [
     price: 899,
     image: "/images/aflower2.jpeg",
     images: ["/images/aflower2.jpeg", "/images/artf1.jpeg", "/images/artf.jpeg"], 
-    description: "Artificial bouquet design 2: same as design 1 but chocolates are replaced by a cake topper. Optional addon: decorative lights for +₹50.",
+    description: "Created especially for birthday parties and celebrations, this arrangement features 12 artificial flowers, 12 custom polaroid memories, and a celebratory cake topper. An expressive, lasting alternative to conventional flowers that keeps the memories alive.",
     inStock: true,
     deliveryCharge: 249,
     components: [
@@ -338,7 +338,7 @@ const products = [
     price: 999,
     image: "/images/artboqwith,pol,flow,cktpr,choc 999.jpg",
     images: ["/images/artboqwith,pol,flow,cktpr,choc 999.jpg", "/images/artboqwith,pol,flow,cktpr,choc 999 p2.jpg", "/images/artboqwith,pol,flow,cktpr,choc 999 p3.jpg"],
-    description: "Deluxe artificial bouquet: includes polaroids, chocolates, artificial flowers and a cake topper. Best for premium gifting.",
+    description: "The ultimate gifting arrangement that has it all. Includes 12 artificial flowers, 12 personalized polaroids, 6 delicious chocolates, and a festive cake topper. Perfectly styled for milestone birthdays, anniversaries, and grand surprise moments.",
     inStock: true,
     deliveryCharge: 249,
     components: [
@@ -356,7 +356,7 @@ const products = [
     price: 499,
     image: "/images/rose.jpeg",
     images: ["/images/rose.jpeg"],
-    description: "Fresh natural roses bouquet with 20 flowers. Perfect for gifting and celebrations.",
+    description: "Make a classic romantic statement with a fresh bunch of 20 hand-selected natural roses. Wrapped with clean wrapping paper and ribbon, it is an iconic gesture for anniversaries, Valentine's surprises, and birthdays.'s surprises, and birthdays.",
     inStock: true,
     deliveryCharge: 249
   },
@@ -369,7 +369,7 @@ const products = [
     price: 599, 
     image: "/images/HAMPER(1).jpg", 
     images: ["/images/HAMPER(1).jpg"],
-    description: "Exclusive hamper edition with curated luxury items.",
+    description: "A sleek transparent gift hamper that puts your curated keepsakes on full display. Packaged with ribbon and designed for clean aesthetics, it creates an exciting unboxing experience for birthdays, friendships, and celebrations.",
     inStock: true 
   },
   { 
@@ -379,7 +379,7 @@ const products = [
     price: 999, 
     image: "/images/hamperc.jpeg", 
     images: ["/images/hamperc.jpeg", "/images/phc.jpg", "/images/phc1.jpg", "/images/phc2.jpg"],
-    description: "Artistic combination hamper with flowers, polaroids, and special gifts.",
+    description: "Why choose just one gift when you can combine them? This premium combo hamper brings together floral touches, custom polaroid prints, and curated gifts in an artful presentation box ready for gifting.",
     inStock: true 
   },
   {
@@ -389,7 +389,7 @@ const products = [
     price: 1249,
     image: "/images/sweet.jpeg",
     images: ["/images/sweet.jpeg", "/images/box.jpeg"],
-    description: "Premium hamper with sweets and curated gift elements for special occasions.",
+    description: "Celebrate sweet moments with a rich festive hamper featuring quality sweets and personalized keepsakes. Specially arranged for family gatherings, festival celebrations, and heartwarming surprises delivered to their doorstep.",
     inStock: true
   },
 
@@ -403,7 +403,7 @@ const products = [
     price: 99, 
     image: "/images/cap1.jpeg", 
     images: ["/images/cap1.jpeg"],
-    description: "Personalized cap with custom design. Great gift for any season.",
+    description: "Top off your outfit with a personalized baseball cap. Featuring an adjustable strap and clean front embroidery or print area, it makes a fun custom accessory for personal wear, group trips, and college squads.",
     inStock: true 
   },
 
@@ -417,7 +417,7 @@ const products = [
     price: 499,
     image: "/images/ct.jpeg",
     images: ["/images/ct.jpeg", "/images/ct1.jpg", "/images/ct2.jpeg", "/images/ct3.jpg", "/images/ct4.jpeg", "/images/ct5.jpeg"],
-    description: "Premium collared t-shirts available in poly cotton and pure cotton. Choose your fabric and color from our amazing collection. Sizes S to XXL. Bulk discounts available at 5, 10, and 20+ pieces.",
+    description: "Look sharp with a custom-printed polo t-shirt. Select your preferred fabric (Poly Cotton or Pure Cotton), pick your color, and add your custom crest, company logo, or personal design. Available with volume savings for group and corporate orders.",
     inStock: true,
     isBestSeller: true,
     pricingType: "fabric-based",
@@ -443,7 +443,7 @@ const products = [
     price: 399,
     image: "/images/cless2.jpg",
     images: ["/images/cless2.jpg", "/images/cless3.jpeg", "/images/cless4.jpeg", "/images/cless5.jpeg", "/images/cless6.jpeg", "/images/cless8.jpeg","/images/cless9.jpeg","/images/cless1.jpeg","/images/cless.jpeg"],
-    description: "Comfortable collarless t-shirts in nylon and pure cotton options. Sizes S to XXL. Perfect for casual wear with vibrant colors. Bulk discounts available at 5, 10, and 20+ pieces.",
+    description: "A versatile everyday round-neck tee customized with your photo, graphic, or slogan. Available in breathable Nylon or Pure Cotton in sizes S to XXL, it is a favorite choice for birthday squads, college fests, and casual personal wear.",
     inStock: true,
     pricingType: "fabric-based",
     fabrics: [
@@ -468,7 +468,7 @@ const products = [
     price: 179,
     image: "/images/st.jpg",
     images: ["/images/st.jpg", "/images/st1.jpeg"],
-    description: "Premium signature polyester t-shirts with minimum order of 10 pieces. Bulk discounts available. Perfect for corporate gifting and events.",
+    description: "The quintessential tee for college signature days, sports meets, and farewell celebrations. Made from lightweight white polyester that easily takes markers and prints, with tiered volume pricing for orders of 10 or more.",
     inStock: true,
     pricingType: "quantity-based",
     fabrics: [
@@ -493,7 +493,7 @@ const products = [
     price: 199, 
     image: "/images/phonec.jpeg", 
     images: ["/images/phonec.jpeg"],
-    description: "Durable custom phone case with your favorite photo or design.",
+    description: "Make your smartphone uniquely yours with a personalized photo case. Tailored to fit your specific phone model with precision cutouts for camera and ports, it transforms everyday phone handling into a personal statement.",
     inStock: true 
   },
 
@@ -503,7 +503,7 @@ const products = [
     price: 199,
     image: "/images/phonec2.jpeg",
     images: ["/images/phonec2.jpeg", "/images/phonec3.jpeg", "/images/phonec1.jpeg"],
-    description: "Premium customized phone case with protective design and vibrant prints.",
+    description: "Showcase your favourite memory with a sleek custom case designed for vibrant color reproduction. Just select your phone brand and model during order details, and our studio crafts your case to fit your device accurately.",
     inStock: true
   },
 
@@ -513,7 +513,7 @@ const products = [
     price: 199,
     image: "/images/phonec4.jpeg",
     images: ["/images/phonec4.jpeg", "/images/phonec3.jpeg"],
-    description: "Premium customized phone case with protective design and vibrant prints.",
+    description: "Turn your device into an eye-catching canvas with edge-to-edge custom printing. Great for couples, pet photos, and travel memories, with verified camera alignment for popular iPhone and Android models.",
     inStock: true,
     isBestSeller: true
   },
@@ -524,7 +524,7 @@ const products = [
     price: 199,
     image: "/images/phonec5.jpeg",
     images: ["/images/phonec5.jpeg", "/images/phonec6.jpeg", "/images/phonec7.jpeg"],
-    description: "Premium customized phone case with protective design and vibrant prints.",
+    description: "Protect your phone in personal style. This customized cover features high-fidelity printing tailored to your specific handset model. Simply specify your phone model when ordering, and review your proof easily on WhatsApp.",
     inStock: true
   },
 
@@ -536,7 +536,7 @@ const products = [
     price: 299, 
     image: "/images/photo cup 299.jpg", 
     images: ["/images/photo cup 299.jpg"],
-    description: "Premium ceramic cup with custom photo print. Perfect daily essential.",
+    description: "Start every morning with a smile. This glossy white ceramic mug features a wrap-around custom photo print that withstands daily tea or coffee routines, making it a timeless gift for parents, partners, and coworkers.",
     inStock: true 
   },
   { 
@@ -546,7 +546,7 @@ const products = [
     price: 299, 
     image: "/images/photo cup p2 299.jpg", 
     images: ["/images/photo cup p2 299.jpg"],
-    description: "High-quality photo cup ideal for tea, coffee, or as a gift.",
+    description: "A delightful personalized drinkware staple for home or office. Crafted from sturdy ceramic with a smooth comfortable handle, your photo wraps cleanly around the mug for a constant reminder of warm moments.",
     inStock: true 
   },
   { 
@@ -556,7 +556,7 @@ const products = [
     price: 279, 
     image: "/images/exam.jpeg", 
     images: ["/images/exam.jpeg", "/images/exam1.jpeg"],
-    description: "Premium customized exam pads with personalized designs. Perfect for students and professionals.",
+    description: "Stay inspired during test season and study sessions. This sturdy customized writing pad features a firm metal clip and a personalized glossy printed board with your name, photo, or motivating message.",
     inStock: true,
     isBestSeller: true
   },
@@ -569,7 +569,7 @@ const products = [
     price: 199, 
     image: "/images/calender 199.jpg", 
     images: ["/images/calender 199.jpg"],
-    description: "Beautiful calendar with your favorite photos. Perfect for walls or desks.",
+    description: "Enjoy your fondest memories all year round. Each page features a clear monthly date grid accompanied by your selected seasonal photos, making it a wonderful New Year or birthday gift for family and desks.",
     inStock: true 
   },
   { 
@@ -579,7 +579,7 @@ const products = [
     price: 179, 
     image: "/images/fridge magents 179.jpg", 
     images: ["/images/fridge magents 179.jpg"],
-    description: "Set of decorative fridge magnets with custom photo designs.",
+    description: "Transform your refrigerator into a gallery of smiles. These lightweight decorative photo magnets stick securely to metal surfaces, keeping vacation memories, couple photos, and cute reminders in daily view.",
     inStock: true 
   },
 
@@ -592,7 +592,7 @@ const products = [
     price: 99, 
     image: "/images/vintage frame.jpg", 
     images: ["/images/vintage frame.jpg", "/images/vintage frames p2.jpg", "/images/vintage frames p3.jpg", "/images/vintage frames p4.jpg"],
-    description: "Charming vintage-style frame that adds nostalgic elegance to any space.",
+    description: "Add an antique aesthetic to your home decor with this miniature vintage frame. Its ornate border detailing provides a quaint setting for old-school portraits, love notes, and nostalgic photos.",
     inStock: true 
   },
   { 
@@ -602,7 +602,7 @@ const products = [
     price: 119, 
     image: "/images/vintage letter 119.JPG", 
     images: ["/images/vintage letter 119.JPG"],
-    description: "Authentic vintage letter style prints for personalized messages.",
+    description: "Say what you feel in timeless fashion. This vintage-styled letter is printed on textured paper with antique typographic accents, perfect for love confessions, anniversary vows, birthday notes, or heartfelt farewells.",
     inStock: true 
   },
 
@@ -614,7 +614,7 @@ const products = [
     price: 799, 
     image: "/images/nfc.jpeg", 
     images: ["/images/nfc.jpeg"],
-    description: "Smart NFC review board for interactive memories and feedback.",
+    description: "Boost your business ratings effortlessly. Customers simply tap their smartphone against this sleek acrylic board or scan the backup QR code to open your Google Review link directly in seconds—no app installation needed.",
     inStock: true 
   },
   { 
@@ -624,7 +624,7 @@ const products = [
     price: 149, 
     image: "/images/ID.jpeg", 
     images: ["/images/ID.jpeg"],
-    description: "Professional PVC ID card with high-quality printing and durability.",
+    description: "Professional PVC card printing for businesses, schools, organizations, and events. Made on durable waterproof plastic stock with sharp text, clean photo reproduction, and standard wallet card dimensions.",
     inStock: true 
   },
   { 
@@ -634,7 +634,7 @@ const products = [
     price: 299, 
     image: "/images/DI2.JPG", 
     images: ["/images/DI2.JPG", "/images/DI1.JPG", "/images/DI3.JPG", "/images/digital invitation p2.JPG"],
-    description: "Beautiful digital invitation designs for your special events.",
+    description: "Announce your wedding, birthday, housewarming, or celebration with a stylish digital invitation. Custom-crafted with your event dates, venue map links, and names, ready to send instantly to all your guests without printing costs.",
     inStock: true 
   },
   { 
@@ -644,7 +644,7 @@ const products = [
     price: 399,
     image: "/images/reel1.jpeg",
     images: ["/images/reel1.jpeg", "/images/reel2.jpeg", "/images/reel3.jpeg", "/images/reel4.jpeg"],
-    description: "Animated digital video invitations with custom music and motion graphics. Shareable via WhatsApp and Instagram. Watch sample reels in the product section.",
+    description: "Make your celebration announcement unforgettable with an animated video invitation. Features custom motion graphics, music, and your photos and event details in a dynamic vertical video format that is ready to share.",
     instagramLinks: [
       "https://www.instagram.com/reel/DGTDnYoSW0X/?igsh=YzFtZmNxY2h6djF5",
       "https://www.instagram.com/reel/DJfx-NCy9o-/?igsh=cWZkemk1NjJ0dDBk",
@@ -660,7 +660,7 @@ const products = [
     price: 199, 
     image: "/images/photo restoration (after).JPEG", 
     images: ["/images/photo restoration (after).JPEG", "/images/photo restoration (before).jpg"],
-    description: "Professional photo restoration service bringing old photos back to life.",
+    description: "Rescue fading family treasures. Our digital restoration process carefully removes dust spots, light creases, and minor scratches from your scanned or photographed original, delivering a refreshed digital copy ready for reprinting.",
     inStock: true 
   },
   {
@@ -670,7 +670,7 @@ const products = [
   price: 299,
   image: "/images/photo restore.png",
   images: ["/images/prp.jpg", "/images/prp1.jpg", "/images/prp2.jpg"],
-  description: "Premium photo restoration service - restore old, damaged, or faded photographs with professional editing and colorization.",
+  description: "Breathe vibrant new life into heirloom photographs. Includes deep scratch and tear repair, facial detail reconstruction, and realistic digital colorization to transform aged black-and-white portraits into lifelike full-color memories.",
   inStock: true
   }
   

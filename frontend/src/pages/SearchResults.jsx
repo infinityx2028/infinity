@@ -8,6 +8,8 @@ import { products as localProducts } from '../data';
 import { Search, Sparkles, ArrowRight } from 'lucide-react';
 import { useInfinityAI } from '../contexts/InfinityAIContext';
 
+import { getProductFullDescription } from '../data/productDescriptions';
+
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 export default function SearchResults() {
@@ -25,19 +27,49 @@ export default function SearchResults() {
         if (isMounted) { setResults([]); setLoading(false); }
         return; 
       }
+
+      const qLower = q.toLowerCase().trim();
+      const qWords = qLower.split(/\s+/).filter(w => w.length > 2 && !['with', 'lots', 'and', 'the', 'for', 'item', 'gift'].includes(w));
+
+      const filterAndRank = (list) => {
+        return list
+          .map(p => {
+            const name = (p.name || '').toLowerCase();
+            const cat = (p.categoryId || '').toLowerCase();
+            const desc = (p.description || getProductFullDescription(p) || '').toLowerCase();
+            const fullText = `${name} ${cat} ${desc}`;
+
+            let score = 0;
+            if (name.includes(qLower)) score += 100;
+            else if (cat.includes(qLower)) score += 60;
+            else if (desc.includes(qLower)) score += 40;
+
+            qWords.forEach(w => {
+              if (name.includes(w)) score += 30;
+              if (cat.includes(w)) score += 20;
+              if (desc.includes(w)) score += 15;
+            });
+
+            return { product: p, score };
+          })
+          .filter(item => item.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .map(item => item.product);
+      };
+
       try {
         const res = await fetch(`${API_BASE_URL}/products?q=${encodeURIComponent(q)}`);
         if (res.ok) {
           const all = await res.json();
-          const filtered = Array.isArray(all) 
-            ? all.filter(p => (p.name || '').toLowerCase().includes(q.toLowerCase()))
-            : [];
-          if (isMounted) setResults(filtered.length > 0 ? filtered : localProducts.filter(p => (p.name || '').toLowerCase().includes(q.toLowerCase())));
+          const ranked = Array.isArray(all) ? filterAndRank(all) : [];
+          if (isMounted) {
+            setResults(ranked.length > 0 ? ranked : filterAndRank(localProducts));
+          }
         } else {
-          if (isMounted) setResults(localProducts.filter(p => (p.name || '').toLowerCase().includes(q.toLowerCase())));
+          if (isMounted) setResults(filterAndRank(localProducts));
         }
       } catch (err) {
-        if (isMounted) setResults(localProducts.filter(p => (p.name || '').toLowerCase().includes(q.toLowerCase())));
+        if (isMounted) setResults(filterAndRank(localProducts));
       } finally {
         if (isMounted) setLoading(false);
       }

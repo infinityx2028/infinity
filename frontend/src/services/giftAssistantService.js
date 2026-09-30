@@ -1,6 +1,7 @@
 // Infinity AI — Client & Fallback Recommendation Engine
 import { API_BASE_URL } from './api.js';
 import { products as fallbackProducts } from '../data.js';
+import { getProductShortDescription } from '../data/productDescriptions.js';
 
 // --- 1. NATURAL LANGUAGE INTENT EXTRACTION ---
 export function extractIntent(query = '') {
@@ -91,43 +92,44 @@ export function extractIntent(query = '') {
 export function generateExplanation(product, intent) {
   const name = product.name || 'Personalized Gift';
   const cat = product.categoryId || '';
-  const recipientLabel = intent.recipient ? `your ${intent.recipient}` : 'them';
+  const recipientLabel = intent.recipient ? `your ${intent.recipient.replace('-', ' ')}` : 'them';
+  const occasionLabel = intent.occasion ? `${intent.occasion}` : 'special moments';
 
   if (intent.interests.includes('music') && name.toLowerCase().includes('song')) {
     return `Features their favourite song and code, making it an emotional keepsake for ${recipientLabel}.`;
   }
   if (cat === 'magazines') {
-    return `A custom 12-page editorial magazine celebrating ${recipientLabel}'s journey in glossy print.`;
+    return `Custom multi-page magazine celebrating ${recipientLabel}'s journey through personal photos and milestones.`;
   }
   if (cat === 'frames') {
     if (intent.budgetMax) {
-      return `Fits your ₹${intent.budgetMax} budget and turns treasured photos into handcrafted wall or desk art.`;
+      return `Good match for a photo-focused ${occasionLabel} gift within your ₹${intent.budgetMax} budget.`;
     }
-    return `Handcrafted solid frame designed to preserve cherished memories of ${recipientLabel}.`;
+    return `Clean personalized frame tailored to keep your favourite memory of ${recipientLabel} on display.`;
   }
   if (cat === 'memories') {
-    return `An aesthetic retro collection of prints, perfect for photo lovers on a friendly budget.`;
+    return `Compact set of memory prints, ideal for photo lovers celebrating ${occasionLabel}.`;
   }
   if (cat === 'apparel') {
     if (intent.interests.includes('bikes')) {
-      return `Custom-printed cotton tee you can personalize with bike graphics or memorable text.`;
+      return `Personalized wearable tee you can customize with custom bike graphics or text.`;
     }
-    return `High-quality custom printed cotton tee tailored with your personal design for ${recipientLabel}.`;
+    return `Comfortable custom t-shirt tailored with your personal photo or print for ${recipientLabel}.`;
   }
   if (cat === 'hampers') {
-    return `A grand luxury gift box loaded with personalized surprises for a milestone ${intent.occasion || 'occasion'}.`;
+    return `Celebration gift bundle loaded with personalized surprises for ${recipientLabel}.`;
   }
   if (cat === 'flowers') {
-    return `Everlasting floral arrangement paired with a heartfelt personalized message card.`;
+    return `Thoughtful floral arrangement paired with personalized keepsake elements.`;
   }
   if (cat === 'essentials') {
-    return `Durable daily accessory customized with photos or name for a practical yet personal gift.`;
+    return `Daily essential personalized with your photo or design for a practical yet thoughtful gift.`;
   }
   if (cat === 'vintage') {
-    return `Nostalgic retro wooden piece with antique wax-sealed styling for an emotional touch.`;
+    return `Nostalgic retro-styled keepsake for a heartfelt personal gesture.`;
   }
 
-  return `Thoughtfully crafted personalized gift customized around your memories.`;
+  return `Thoughtful personalized keepsake tailored around your favourite memories.`;
 }
 
 // --- 3. PRODUCT SCORING ALGORITHM ---

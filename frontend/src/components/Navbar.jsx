@@ -19,6 +19,7 @@ import { useIntro } from '../contexts/IntroContext';
 import { products } from '../data';
 import { getImageSrc } from '../utils/imageUtils';
 import { useInfinityAI } from '../contexts/InfinityAIContext';
+import { getProductFullDescription } from '../data/productDescriptions';
 
 const WhatsAppIcon = ({ size = 18, className = "" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -92,17 +93,40 @@ const Navbar = ({ cartCount = 0 }) => {
     return () => window.removeEventListener('storage', updateWishlist);
   }, []);
 
-  // Filter real product search results
+  // Filter real product search results with description awareness
   useEffect(() => {
     if (!searchTerm.trim()) {
       setSearchResults([]);
       return;
     }
-    const q = searchTerm.toLowerCase().trim();
-    const matches = products.filter(p => 
-      (p.name && p.name.toLowerCase().includes(q)) || 
-      (p.categoryId && p.categoryId.toLowerCase().includes(q))
-    ).slice(0, 5);
+    const qLower = searchTerm.toLowerCase().trim();
+    const qWords = qLower.split(/\s+/).filter(w => w.length > 2 && !['with', 'lots', 'and', 'the', 'for', 'item', 'gift'].includes(w));
+
+    const matches = products
+      .map(p => {
+        const name = (p.name || '').toLowerCase();
+        const cat = (p.categoryId || '').toLowerCase();
+        const desc = (p.description || getProductFullDescription(p) || '').toLowerCase();
+        const fullText = `${name} ${cat} ${desc}`;
+
+        let score = 0;
+        if (name.includes(qLower)) score += 100;
+        else if (cat.includes(qLower)) score += 60;
+        else if (desc.includes(qLower)) score += 40;
+
+        qWords.forEach(w => {
+          if (name.includes(w)) score += 30;
+          if (cat.includes(w)) score += 20;
+          if (desc.includes(w)) score += 15;
+        });
+
+        return { product: p, score };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6)
+      .map(item => item.product);
+
     setSearchResults(matches);
   }, [searchTerm]);
 

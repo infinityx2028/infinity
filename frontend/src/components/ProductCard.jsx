@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Check, ArrowRight, Eye } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { useQuickView } from '../contexts/QuickViewContext';
 import { getImageSrc } from '../utils/imageUtils';
-import QuickViewModal from './QuickViewModal';
+import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
 
 const ProductCard = ({ product, showCategory = true }) => {
   const { addToCart, openCartDrawer } = useCart();
+  const { openQuickView } = useQuickView();
   const [added, setAdded] = useState(false);
-  const [showQuickView, setShowQuickView] = useState(false);
   const [isImgLoaded, setIsImgLoaded] = useState(false);
   const [isImgError, setIsImgError] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(() => {
@@ -51,6 +52,8 @@ const ProductCard = ({ product, showCategory = true }) => {
   const isPolaroid =
     product.categoryId === 'memories' ||
     (product.name && product.name.toLowerCase().includes('polaroid'));
+
+  const shortDescription = getProductShortDescription(product);
 
   const toggleWishlist = (e) => {
     e.preventDefault();
@@ -124,16 +127,16 @@ const ProductCard = ({ product, showCategory = true }) => {
           />
         </button>
 
-        {/* Desktop Quick View Button (hover only on sm+) */}
-        <div className="absolute inset-x-3 bottom-3 z-10 hidden sm:flex justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+        {/* Quick View Button (hover on desktop, subtle pill on mobile) */}
+        <div className="absolute inset-x-2 sm:inset-x-3 bottom-2 sm:bottom-3 z-10 flex justify-center opacity-95 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto sm:pointer-events-none sm:group-hover:pointer-events-auto">
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setShowQuickView(true);
+              openQuickView(product);
             }}
-            className="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-[#071A2F] text-[11px] font-bold py-1.5 px-3 rounded-full shadow-md backdrop-blur-md transition-all hover:scale-105 cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-[#071A2F] text-[10.5px] sm:text-[11px] font-bold py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-full shadow-md backdrop-blur-md transition-all active:scale-95 sm:hover:scale-105 cursor-pointer"
           >
             <Eye size={12} className="text-[#071A2F]" />
             <span>Quick View</span>
@@ -192,9 +195,9 @@ const ProductCard = ({ product, showCategory = true }) => {
           </Link>
 
           {/* Short Description (Hidden on mobile to save space, visible on tablet+) */}
-          {product.description && (
+          {shortDescription && (
             <p className="hidden sm:block text-[11px] text-[#687386] line-clamp-2 mt-1 font-light leading-snug">
-              {product.description}
+              {shortDescription}
             </p>
           )}
         </div>
@@ -251,13 +254,6 @@ const ProductCard = ({ product, showCategory = true }) => {
           </button>
         )}
       </div>
-
-      {/* Quick View Modal */}
-      <QuickViewModal
-        product={product}
-        isOpen={showQuickView}
-        onClose={() => setShowQuickView(false)}
-      />
     </div>
   );
 };

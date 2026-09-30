@@ -1,28 +1,45 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { X, ArrowRight, ShoppingBag, Check, ShieldCheck, Sparkles } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, ArrowRight, MessageCircle } from 'lucide-react';
 import { getImageSrc } from '../utils/imageUtils';
-import { useCart } from '../contexts/CartContext';
+import { useQuickView } from '../contexts/QuickViewContext';
+import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
 
-const QuickViewModal = ({ product, isOpen, onClose }) => {
-  const { addToCart, openCartDrawer } = useCart();
-  const [added, setAdded] = React.useState(false);
+const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: propOnClose }) => {
+  const navigate = useNavigate();
+  const context = useQuickView();
   const [isImgLoaded, setIsImgLoaded] = React.useState(false);
+  const scrollPositionRef = useRef(0);
 
+  // Support both single-context and direct props (if any)
+  const product = propProduct || context?.quickViewProduct;
+  const isOpen = propIsOpen !== undefined ? propIsOpen : context?.isOpen;
+  const handleClose = propOnClose || context?.closeQuickView;
+
+  // Lock background scrolling and restore position on close
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
     if (isOpen) {
+      scrollPositionRef.current = window.scrollY;
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape' && handleClose) handleClose();
+      };
       window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalOverflow || 'unset';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
+
+  // Reset image loaded state when product changes
+  useEffect(() => {
+    setIsImgLoaded(false);
+  }, [product?._id, product?.id]);
 
   if (!isOpen || !product) return null;
 
@@ -34,152 +51,155 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
     ? Math.round(((Number(product.originalPrice) - price) / Number(product.originalPrice)) * 100)
     : null;
 
-  const requiresPersonalization = product.requiresCustomization !== false && (
-    Boolean(product.categoryId) || 
-    Boolean(product.variants?.length) || 
-    Boolean(product.fabrics?.length) ||
-    Boolean(product.isCustomized) ||
-    !product.canDirectBuy
-  );
+  const isCase = 
+    product.categoryId === 'cases' || 
+    product.categoryId === 'essentials' || 
+    (product.name && product.name.toLowerCase().includes('case'));
 
-  const handleQuickAdd = () => {
-    addToCart({
-      ...product,
-      id: productId,
-      price: price,
-      quantity: 1,
-    });
-    setAdded(true);
-    setTimeout(() => {
-      setAdded(false);
-      onClose();
-      if (openCartDrawer) openCartDrawer();
-    }, 600);
+  const isPolaroid =
+    product.categoryId === 'memories' ||
+    (product.name && product.name.toLowerCase().includes('polaroid'));
+
+  const shortDescription = getProductShortDescription(product);
+
+  const handleCustomizeAndBuy = (e) => {
+    e.preventDefault();
+    if (handleClose) handleClose();
+    navigate(`/product/${productId}`);
+  };
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget && handleClose) {
+      handleClose();
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#03101D]/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-[#03101D]/55 backdrop-blur-xs transition-opacity duration-300"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="quickview-title"
+    >
+      {/* 
+        Modal Container:
+        Mobile (<768px): Width calc(100vw - 16px), Max Width 430px, Max Height calc(100dvh - 16px), Margin 8px, Radius 22px
+        Desktop (>=768px): Max Width 960px, Two Columns (Image Left, Details Right)
+      */}
       <div 
-        className="relative w-full max-w-2xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-[#071A2F]/10 flex flex-col sm:flex-row max-h-[90vh]"
+        className="relative w-[calc(100vw-16px)] max-w-[430px] md:max-w-4xl max-h-[calc(100dvh-16px)] sm:max-h-[90vh] bg-white rounded-[22px] sm:rounded-3xl shadow-[0_20px_60px_rgba(3,16,29,0.28)] border border-[#071A2F]/10 flex flex-col md:flex-row overflow-hidden animate-quickview-open select-none"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* [ X ] Close Button: Fixed top-right, clearly visible, never overlaps content */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
+          type="button"
           aria-label="Close Quick View"
-          className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-[#071A2F] flex items-center justify-center shadow-md transition-transform hover:scale-105"
+          className="absolute top-3 right-3 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 hover:bg-white text-[#071A2F] flex items-center justify-center shadow-md border border-[#071A2F]/10 transition-transform active:scale-90 hover:scale-105 cursor-pointer"
         >
-          <X size={18} />
+          <X size={17} />
         </button>
 
-        {/* Left: Product Image with Horizontal 8 Infinity Loader */}
-        <div className="sm:w-1/2 aspect-square sm:aspect-auto bg-[#FAF8F4] relative overflow-hidden flex-shrink-0 flex items-center justify-center">
+        {/* 1. PRODUCT IMAGE CONTAINER (1:1 Ratio, max-height 300-340px) */}
+        <div className="w-full md:w-1/2 aspect-square max-h-[300px] sm:max-h-[340px] md:max-h-none bg-[#FAF8F4] relative overflow-hidden flex-shrink-0 flex items-center justify-center border-b md:border-b-0 md:border-r border-[#071A2F]/8">
           {!isImgLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F4] z-0">
               <InfinityLoader size="md" />
             </div>
           )}
+
+          {/* Clean image without scaleX/scaleY/rotate transforms */}
           <img
             src={imageSrc}
             alt={product.name}
             onLoad={() => setIsImgLoaded(true)}
-            className={`w-full h-full object-cover object-center transition-opacity duration-300 ${
+            className={`w-full h-full ${
+              isCase ? 'object-contain p-4' : isPolaroid ? 'object-cover p-2 bg-white' : 'object-cover'
+            } transition-opacity duration-300 ${
               isImgLoaded ? 'opacity-100' : 'opacity-0'
             }`}
           />
+
           {product.isBestSeller && (
-            <span className="absolute top-3 left-3 bg-[#071A2F] text-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xs z-10">
+            <span className="absolute top-3 left-3 bg-[#071A2F] text-white text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-xs z-10">
               Best Seller
             </span>
           )}
         </div>
 
-        {/* Right: Details & CTA */}
-        <div className="sm:w-1/2 p-5 sm:p-7 flex flex-col justify-between overflow-y-auto">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#687386] block mb-1.5">
-              Personalized Gifting
+        {/* 2. PRODUCT DETAILS CONTAINER (Strict information order, vertical scroll only) */}
+        <div className="w-full md:w-1/2 p-4 sm:p-7 flex flex-col justify-between overflow-y-auto overflow-x-hidden min-h-0">
+          
+          <div className="space-y-2.5">
+            {/* CATEGORY (10-11px) */}
+            <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#C5A46D] block leading-none">
+              {product.categoryId || 'Personalized Keepsake'}
             </span>
-            <h2 className="font-semibold text-xl sm:text-2xl text-[#071A2F] tracking-tight leading-snug mb-2">
+
+            {/* PRODUCT NAME (22-26px, Manrope 700) */}
+            <h2 
+              id="quickview-title"
+              className="text-[22px] sm:text-[25px] font-bold text-[#071A2F] tracking-tight leading-snug break-words"
+            >
               {product.name}
             </h2>
 
-            {/* Price Row */}
-            <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-xl sm:text-2xl font-black text-[#071A2F]">
+            {/* REAL PRICE (20-22px, Manrope 700) */}
+            <div className="flex items-baseline gap-2.5 flex-wrap pt-0.5">
+              <span className="text-[20px] sm:text-[22px] font-bold text-[#071A2F] leading-none">
                 ₹{price.toLocaleString('en-IN')}
               </span>
               {hasRealDiscount && (
                 <>
-                  <span className="text-xs text-[#687386] line-through">
+                  <span className="text-xs text-[#687386] line-through leading-none">
                     ₹{Number(product.originalPrice).toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[10px] font-bold text-[#C5A46D] bg-[#FAF8F4] px-2 py-0.5 rounded-full border border-[#C5A46D]/30">
+                  <span className="text-[10px] font-extrabold text-[#071A2F] bg-[#C5A46D]/20 px-2 py-0.5 rounded-full">
                     {discountPercent}% OFF
                   </span>
                 </>
               )}
             </div>
 
-            {/* Short Description */}
-            <p className="text-xs text-[#687386] font-light leading-relaxed mb-5">
-              {product.description || 'Handcrafted to order with archival printing, premium materials, and personalized attention.'}
+            {/* PRODUCT-SPECIFIC DESCRIPTION (14px, line-height 1.5-1.6, full-width lines) */}
+            <p className="text-[14px] text-[#4A5568] leading-[1.55] font-normal pt-1">
+              {shortDescription}
             </p>
 
-            {/* Highlights */}
-            <div className="space-y-2 mb-6 border-t border-b border-gray-100 py-3 text-xs text-[#071A2F]/80">
-              <div className="flex items-center gap-2">
-                <Sparkles size={14} className="text-[#C5A46D]" />
-                <span>Custom photos & messages supported</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck size={14} className="text-[#071A2F]" />
-                <span>Verified layout before printing</span>
-              </div>
+            {/* CUSTOMIZATION / ORDER NOTE (Clear, NO in-app photo upload) */}
+            <div className="bg-[#FAF8F4] border border-[#071A2F]/8 rounded-xl p-3 flex items-start gap-2.5 my-2">
+              <MessageCircle size={16} className="text-[#25D366] flex-shrink-0 mt-0.5" />
+              <p className="text-[11.5px] sm:text-xs text-[#071A2F]/85 font-medium leading-relaxed">
+                After placing your order, send your photos and personalization details to us on WhatsApp.
+              </p>
             </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="pt-2">
-            {requiresPersonalization ? (
-              <Link
-                to={`/product/${productId}`}
-                onClick={onClose}
-                className="w-full inline-flex items-center justify-center gap-2 bg-[#071A2F] hover:bg-[#0B2748] text-white py-3 px-6 rounded-full font-bold text-xs sm:text-sm tracking-wide shadow-md hover:shadow-lg transition-all"
-              >
-                <span>CUSTOMIZE & BUY</span>
-                <ArrowRight size={14} />
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={handleQuickAdd}
-                className={`w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-full font-bold text-xs sm:text-sm tracking-wide transition-all shadow-md ${
-                  added
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-[#071A2F] hover:bg-[#0B2748] text-white'
-                }`}
-              >
-                {added ? (
-                  <>
-                    <Check size={16} /> Added to Bag
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag size={16} /> ADD TO BAG
-                  </>
-                )}
-              </button>
-            )}
-            <Link
-              to={`/product/${productId}`}
-              onClick={onClose}
-              className="block text-center text-xs text-[#687386] hover:text-[#071A2F] font-semibold mt-3 transition-colors"
+          {/* ACTIONS: CUSTOMIZE & BUY (48-52px height) + VIEW FULL PRODUCT */}
+          <div className="pt-3 sm:pt-4 space-y-2 mt-auto">
+            {/* Primary: CUSTOMIZE & BUY (Deep Navy, 48-52px) */}
+            <button
+              type="button"
+              onClick={handleCustomizeAndBuy}
+              className="w-full h-[50px] min-h-[48px] bg-[#071A2F] hover:bg-[#0B2748] active:scale-[0.99] text-white font-bold text-[14px] sm:text-[15px] rounded-xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer"
             >
-              View Full Product Details →
-            </Link>
+              <span>CUSTOMIZE & BUY</span>
+              <ArrowRight size={15} />
+            </button>
+
+            {/* Secondary: VIEW FULL PRODUCT → */}
+            <button
+              type="button"
+              onClick={handleCustomizeAndBuy}
+              className="w-full py-2 text-center text-[13px] sm:text-[14px] font-semibold text-[#071A2F] hover:text-[#C5A46D] transition-colors cursor-pointer"
+            >
+              VIEW FULL PRODUCT →
+            </button>
           </div>
+
         </div>
+
       </div>
     </div>
   );
