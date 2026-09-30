@@ -1,0 +1,412 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { LogOut, Package, ShoppingCart, TrendingUp, ChevronRight, AlertCircle, Settings, BarChart3, Trash2 } from 'lucide-react';
+import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+// 1. Import the dynamic API URL from your service file
+import { API_BASE_URL } from '../services/api'; 
+
+const AdminDashboard = () => {
+  const { admin, logoutAdmin, adminToken } = useAuth();
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    todayOrders: 0,
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    totalCategories: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    if (admin) {
+      fetchStats();
+    }
+  }, [admin]);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // 2. Use template literals with API_BASE_URL instead of 'http://localhost:5000'
+      const ordersRes = await fetch(`${API_BASE_URL}/orders/admin/orders`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+      });
+      const orders = ordersRes.ok ? await ordersRes.json() : [];
+
+      let categories = [];
+      try {
+        const categoriesRes = await fetch(`${API_BASE_URL}/categories`);
+        if (categoriesRes.ok) categories = await categoriesRes.json();
+      } catch (_) {
+        categories = [];
+      }
+      if (!Array.isArray(categories)) categories = [];
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const todayOrders = orders.filter(order => {
+        const orderDate = new Date(order.createdAt);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime();
+      }).length;
+
+      const pendingOrders = orders.filter(order => 
+        ['pending', 'confirmed', 'processing'].includes(order.status?.toLowerCase())
+      ).length;
+
+      const deliveredOrders = orders.filter(order => 
+        order.status?.toLowerCase() === 'delivered'
+      ).length;
+
+      setStats({
+        totalOrders: orders.length,
+        todayOrders: todayOrders,
+        pendingOrders: pendingOrders,
+        deliveredOrders: deliveredOrders,
+        totalCategories: categories.length
+      });
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      setError('Failed to load dashboard statistics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // load products list for best-seller management
+    const loadAll = async () => {
+      try {
+        const prods = await api.products.getAll();
+        setAllProducts(Array.isArray(prods) ? prods : []);
+      } catch (err) {
+        console.error('Failed to load products for admin dashboard:', err);
+      }
+    };
+    loadAll();
+  }, []);
+
+  const toggleBestSeller = async (product) => {
+    if (!adminToken) return alert('Not authenticated');
+    try {
+      const updated = { ...product, isBestSeller: !product.isBestSeller };
+      await api.products.update(product._id || product.id, updated, adminToken);
+      setAllProducts(prev => prev.map(p => p._id === product._id ? { ...p, isBestSeller: !p.isBestSeller } : p));
+      setSuccess('Updated best seller status');
+      setTimeout(() => setSuccess(''), 2500);
+    } catch (err) {
+      console.error('Error toggling best seller:', err);
+      setError(err.message || 'Failed to update');
+      setTimeout(() => setError(''), 3000);
+    }
+  };
+
+  const deleteProduct = async (product) => {
+    if (!adminToken) return alert('Not authenticated');
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) return;
+    try {
+      await api.products.delete(product._id || product.id, adminToken);
+      setAllProducts(prev => prev.filter(p => (p._id || p.id) !== (product._id || product.id)));
+      setSuccess('Product deleted successfully');
+      setTimeout(() => setSuccess(''), 2500);
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      setError(err.message || 'Failed to delete product');
+      setTimeout(() => setError(''), 3000);
+    }
+  };
+
+  const handleLogout = () => {
+    logoutAdmin();
+  };
+
+  const dashboardCards = [
+    {
+      title: 'Total Orders',
+      value: stats.totalOrders,
+      icon: <ShoppingCart className="w-8 h-8" />,
+      bgGradient: 'from-blue-500 to-blue-600',
+      textColor: 'text-blue-600',
+      link: '/admin/orders'
+    },
+    {
+      title: "Today's Orders",
+      value: stats.todayOrders,
+      icon: <TrendingUp className="w-8 h-8" />,
+      bgGradient: 'from-green-500 to-green-600',
+      textColor: 'text-green-600',
+      link: '/admin/orders'
+    },
+    {
+      title: 'Pending Orders',
+      value: stats.pendingOrders,
+      icon: <Package className="w-8 h-8" />,
+      bgGradient: 'from-orange-500 to-orange-600',
+      textColor: 'text-orange-600',
+      link: '/admin/orders'
+    },
+    {
+      title: 'Delivered Orders',
+      value: stats.deliveredOrders,
+      icon: <ShoppingCart className="w-8 h-8" />,
+      bgGradient: 'from-purple-500 to-purple-600',
+      textColor: 'text-purple-600',
+      link: '/admin/orders'
+    }
+  ];
+
+  const menuItems = [
+    { label: 'Orders', icon: <ShoppingCart size={24} />, link: '/admin/orders', desc: 'Manage orders & delivery' },
+    { label: 'Products', icon: <Package size={24} />, link: '/admin/products', desc: 'Add & manage products' },
+    { label: 'Categories', icon: <BarChart3 size={24} />, link: '/admin/categories', desc: 'Manage categories & showcase' },
+    { label: 'Phone Models', icon: <Settings size={24} />, link: '/admin/phone-models', desc: 'Manage phone companies & models' },
+    { label: 'Settings', icon: <Settings size={24} />, link: '/admin/settings', desc: 'Admin settings' },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header */}
+      <div className="bg-white border-b border-border-light shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-brand-primary">
+              Administration Panel
+            </h1>
+            <p className="text-brand-primary/70 text-sm mt-1 font-light">Logged in as <span className="font-semibold text-brand-primary">{admin?.email}</span></p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-lg transition-all duration-200 hover:shadow-md"
+          >
+            <LogOut size={20} />
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-red-800">Error</h3>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          {loading ? (
+            [1, 2, 3, 4].map((index) => (
+              <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-border-light animate-pulse">
+                <div className="h-4 bg-border-light rounded w-24 mb-4"></div>
+                <div className="h-10 bg-border-light rounded w-16"></div>
+              </div>
+            ))
+          ) : (
+            dashboardCards.map((card, index) => (
+              <Link key={index} to={card.link}>
+                <div className="group relative bg-white rounded-xl shadow-md hover:shadow-xl border border-border-light transition-all duration-300 overflow-hidden">
+                  {/* Gradient Background */}
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${card.bgGradient} opacity-5 rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500`}></div>
+                  
+                  {/* Content */}
+                  <div className="relative p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <p className="text-brand-primary/70 font-medium text-sm uppercase tracking-wide">{card.title}</p>
+                        <h3 className={`text-4xl font-bold mt-2 ${card.textColor}`}>{card.value}</h3>
+                      </div>
+                    </div>
+                    <div className="flex items-center text-xs text-brand-primary/70 group-hover:text-brand-secondary transition-colors duration-200">
+                      View details <ChevronRight size={14} className="ml-1" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))
+          )}
+        </div>
+
+        {/* Main Menu */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl shadow-md p-8 border border-border-light">
+            <h2 className="text-2xl font-semibold text-brand-primary mb-6">Quick Navigation</h2>
+            <div className="space-y-3">
+              {menuItems.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.link}
+                  className="group flex items-center gap-4 p-4 rounded-lg hover:bg-surface-elevated transition-all duration-200 border border-border-light hover:border-brand-secondary"
+                >
+                  <div className="p-2.5 rounded-lg bg-surface-elevated group-hover:bg-brand-secondary/10 transition-colors duration-200">
+                    {item.icon}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-brand-primary group-hover:text-brand-secondary transition-colors duration-200">{item.label}</h3>
+                    <p className="text-xs text-brand-primary/60 font-light">{item.desc}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-brand-primary/30 group-hover:text-brand-secondary group-hover:translate-x-1 transition-all duration-200" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Dashboard Info */}
+          <div className="bg-gradient-to-br from-brand-secondary to-brand-secondary/80 rounded-xl shadow-md p-8 text-white border border-brand-secondary/30">
+            <h2 className="text-2xl font-semibold mb-6">Dashboard Summary</h2>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pb-4 border-b border-white/20">
+                <span className="text-white/90 font-light">Total Orders</span>
+                <span className="text-2xl font-bold">{stats.totalOrders}</span>
+              </div>
+              <div className="flex justify-between items-center pb-4 border-b border-white/20">
+                <span className="text-white/90 font-light">Product Categories</span>
+                <span className="text-2xl font-bold">{stats.totalCategories}</span>
+              </div>
+              <div className="flex justify-between items-center pb-4 border-b border-white/20">
+                <span className="text-white/90 font-light">Pending Orders</span>
+                <span className="text-2xl font-bold text-amber-300">{stats.pendingOrders}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-white/90 font-light">Delivered Orders</span>
+                <span className="text-2xl font-bold text-green-300">{stats.deliveredOrders}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Highlight */}
+        <div className="bg-white rounded-xl shadow-md p-8 border border-border-light">
+          <h2 className="text-2xl font-semibold text-brand-primary mb-6">Platform Capabilities</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex gap-4">
+              <div className="p-2.5 rounded-lg bg-blue-50 flex-shrink-0">
+                <ShoppingCart className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-brand-primary">Order Management</h3>
+                <p className="text-sm text-brand-primary/70 mt-1 font-light">Complete order oversight with customer details, shipping addresses, and delivery tracking</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="p-2.5 rounded-lg bg-purple-50 flex-shrink-0">
+                <Package className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-brand-primary">Product Curation</h3>
+                <p className="text-sm text-brand-primary/70 mt-1 font-light">Manage showcase products and featured items for each category on the storefront</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="p-2.5 rounded-lg bg-orange-50 flex-shrink-0">
+                <BarChart3 className="w-5 h-5 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-brand-primary">Analytics</h3>
+                <p className="text-sm text-brand-primary/70 mt-1 font-light">Real-time insights into orders, customer activity, and business performance</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Homepage Controls: Best Sellers */}
+        <div className="mt-10">
+          <div className="bg-white rounded-xl shadow-md p-8 border border-border-light">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-brand-primary flex items-center gap-2">
+                  <span className="text-yellow-500">★</span> Manage Best Sellers
+                </h2>
+                <p className="text-sm text-brand-primary/70 mt-2 font-light">Toggle products to feature in the homepage Best Sellers section. Active best sellers will appear highlighted.</p>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-yellow-500">{allProducts.filter(p => p.isBestSeller).length}</div>
+                <div className="text-xs text-brand-primary/60">Products Featured</div>
+              </div>
+            </div>
+
+            {success && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2">
+                <span className="text-lg">✓</span> {success}
+              </div>
+            )}
+
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+              {allProducts.length === 0 ? (
+                <div className="py-8 text-center text-brand-primary/60">
+                  <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p>No products available. Add products first.</p>
+                </div>
+              ) : (
+                allProducts.map(p => (
+                  <div 
+                    key={p._id || p.id} 
+                    className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${
+                      p.isBestSeller 
+                        ? 'bg-yellow-50 border-yellow-300 shadow-sm' 
+                        : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {/* Product Image */}
+                    <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200 border border-gray-300">
+                      {(p.images?.[0] || p.image) ? (
+                        <img src={p.images?.[0] || p.image} alt={p.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center">No Image</div>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm text-brand-primary line-clamp-2" title={p.name}>
+                        {p.name}
+                      </h3>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-sm font-bold text-brand-secondary">₹{p.price}</span>
+                        <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">{p.categoryId}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex-shrink-0 flex items-center gap-2">
+                      <button 
+                        onClick={() => toggleBestSeller(p)} 
+                        className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all transform hover:scale-105 ${
+                          p.isBestSeller 
+                            ? 'bg-yellow-500 text-white hover:bg-yellow-600 shadow-md' 
+                            : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                        }`}
+                      >
+                        {p.isBestSeller ? '★ Active' : '☆ Inactive'}
+                      </button>
+                      <button
+                        onClick={() => deleteProduct(p)}
+                        className="px-3 py-2 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+                        title="Delete Product"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
+

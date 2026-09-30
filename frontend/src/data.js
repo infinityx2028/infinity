@@ -1,0 +1,324 @@
+﻿// --- 1. TOP STORY CIRCLES (13+ Circles) ---
+export const storyCategories = [
+  { id: "frames", name: "Frames", image: "/images/4 x 6 white frame 199.jpg" },
+  { id: "magazines", name: "Magazines", image: "/images/MAG design2.jpg" },
+  { id: "memories", name: "Polaroids", image: "/images/POLAROIDS MEDIUM 8 PER EACH.jpg" },
+  { id: "flowers", name: "Flowers & Bouquets", image: "/images/nf.jpeg" },
+  { id: "hampers", name: "Hampers", image: "/images/HAMPER(1).jpg" },
+  { id: "apparel", name: "T-Shirts", image: "/images/ct.jpeg" },
+  { id: "apparel", name: "Caps", image: "/images/cap1.jpeg" },
+  { id: "essentials", name: "Phone Cases", image: "/images/CUSTOMIZED PHONE CASE P2.jpg" },
+  { id: "essentials", name: "Photo Cups", image: "/images/photo cup p2 299.jpg" },
+  { id: "vintage", name: "Vintage Frames & Letters", image: "/images/vintage frames p2.jpg" },
+  { id: "addons", name: "Calendars", image: "/images/calender 199.jpg" },
+  { id: "addons", name: "Magnets", image: "/images/fridge magents 179.jpg" },
+  { id: "smart-digital", name: "ID Cards", image: "/images/ID.jpeg" },
+  { id: "smart-digital", name: "NFC Boards", image: "/images/nfc.jpeg" },
+  { id: "smart-digital", name: "Digital Invites", image: "/images/digital invitation p2.JPG" },
+];
+
+// --- 2. CATEGORY PAGE HEADERS WITH DETAILED INFO ---
+export const categoryDetails = {
+  "frames": { 
+    title: "Photo Frames", 
+    desc: "Premium wooden, wall & table frames (including customized frames) to cherish your memories.",
+    subCategories: ["Wooden photo frames", "Wall frames", "Table frames", "Customized frames"]
+  },
+  "magazines": { 
+    title: "Magazines", 
+    desc: "Customized magazines - Birthday, Anniversary, Memory & Story editions.",
+    subCategories: ["Customized magazines", "Birthday magazines", "Anniversary magazines", "Memory/story magazines"]
+  },
+  "memories": { 
+    title: "Polaroids & Photo Books", 
+    desc: "Small, medium & large polaroids plus premium photo books & mini albums.",
+    subCategories: ["Small Polaroids (₹5)", "Medium Polaroids (₹8)", "Large Polaroids (₹15)", "Photo books / mini albums"]
+  },
+  "flowers": { 
+    title: "Flowers & Bouquets", 
+    desc: "Fresh bouquets, artificial arrangements, rose boxes & flowers with message cards.",
+    subCategories: ["Fresh flower bouquets", "Artificial bouquets", "Rose boxes", "Flowers with message cards"]
+  },
+  "hampers": { 
+    title: "Hampers & Gift Combos", 
+    desc: "Birthday, anniversary, couple & custom gift hampers for every occasion.",
+    subCategories: ["Birthday hampers", "Anniversary hampers", "Couple gift combos", "Custom gift boxes"]
+  },
+  "apparel": { 
+    title: "T-Shirts & Accessories", 
+    desc: "Customized & printed t-shirts, keychains & pouches with your designs.",
+    subCategories: ["Customized T-shirts", "Printed T-shirts", "Keychains", "Customized pouches"]
+  },
+  "essentials": { 
+    title: "Phone Cases & Cups", 
+    desc: "Custom phone cases, photo mugs & personalized cups with high-quality prints.",
+    subCategories: ["Customized phone cases", "Photo phone cases", "Name phone cases", "Customized mugs / cups"]
+  },
+  "vintage": { 
+    title: "Vintage Collection", 
+    desc: "Aesthetic vintage frames, retro letters & old-style prints with warm nostalgic tones.",
+    subCategories: ["Vintage photo frames", "Vintage letters", "Retro-style prints", "Aesthetic vintage setup"]
+  },
+  "addons": { 
+    title: "Calendars & Magnets", 
+    desc: "Customized calendars, photo calendars & fridge magnets for your space.",
+    subCategories: ["Customized calendars", "Photo calendars", "Fridge magnets", "Photo magnets"]
+  },
+  "smart-digital": { 
+    title: "Smart & Digital Services", 
+    desc: "NFC cards, review boards, poster design, photo & video editing services.",
+    subCategories: ["NFC cards", "Review cards", "Poster design", "Photo editing", "Video editing"]
+  },
+};
+
+// --- 3. ALL PRODUCTS (60+ Complete Products) ---
+export const products = [
+  // ===== CATEGORY 1: PHOTO FRAMES (14 Products) =====
+  { id: "f1", categoryId: "frames", name: "4x6 Black Premium Frame", price: 199, image: "/images/4 x 6 black frame 199.jpg", images: ["/images/4 x 6 black frame 199.jpg", "/images/4 x 6 p2.jpg", "/images/4 x 6 p3.jpg"], isBestSeller: true },
+  { id: "f1b", categoryId: "frames", name: "4x6 White Premium Frame", price: 199, image: "/images/4 x 6 white frame 199.jpg", images: ["/images/4 x 6 white frame 199.jpg", "/images/4 x 6 white frame 199.jpg", "/images/5 x 7 white 299.jpg"] },
+  { id: "f2", categoryId: "frames", name: "4x4 Compact Frame", price: 149, image: "/images/4 x 4 149.jpg", images: ["/images/4 x 4 149.jpg", "/images/4 x 4 149.jpg", "/images/4 x 4 149.jpg"] },
+  { id: "f3", categoryId: "frames", name: "5x7 Frame", price: 299, image: "/images/5 x 7 white 299.jpg", images: ["/images/5 x 7 white 299.jpg", "/images/5 x 7 299.jpg", "/images/5 x 7 white 299.jpg"] },
+  { id: "f4", categoryId: "frames", name: "8x12 Wall Mount Frame", price: 599, image: "/images/8 x 12 599.jpg", images: ["/images/8 x 12 599.jpg", "/images/8 x 12 (1_2 inch) 499.jpg", "/images/8 x 12 mount.jpg"] },
+  { id: "f5", categoryId: "frames", name: "10x12 Modern Frame", price: 1299, image: "/images/10 x 12 frame 1299.jpg", images: ["/images/10 x 12 frame 1299.jpg", "/images/10 x 12 frame 1299.jpg", "/images/10 x 12 frame 1299.jpg"] },
+  { id: "f6", categoryId: "frames", name: "12x18 Premium Mount Frame", price: 2199, image: "/images/12 x 18 mount 2199.jpg", images: ["/images/12 x 18 mount 2199.jpg", "/images/12 x 18 mount 2199(1).jpg", "/images/12 x 18 mount 2199(2).jpg"] },
+  { id: "f7", categoryId: "frames", name: "12x18 Brown Wooden Frame", price: 1499, image: "/images/12 x 18 brown frame 1499.jpg", images: ["/images/12 x 18 brown frame 1499.jpg", "/images/12 x 18 brown p2 1499.jpg", "/images/12 x 18 brown frame 1499.jpg"] },
+  { id: "f8", categoryId: "frames", name: "12x18 Classic Frame", price: 1499, image: "/images/12 x 18 1499 .jpg", images: ["/images/12 x 18 1499 .jpg", "/images/12 x 18 1499 .jpg", "/images/12 x 18 1499 .jpg"] },
+  { id: "f9", categoryId: "frames", name: "12x18 Milestone Frame", price: 1499, image: "/images/12 x 18 milestone .jpg", images: ["/images/12 x 18 milestone .jpg", "/images/12 x 18 milestone .jpg", "/images/12 x 18 milestone .jpg"] },
+  { id: "f10", categoryId: "frames", name: "Customized Photo Frame 199", price: 199, image: "/images/customized song frame 199.jpg", images: ["/images/customized song frame 199.jpg", "/images/customized song frame 199.jpg", "/images/customized song frame 199.jpg"] },
+  { id: "f11", categoryId: "frames", name: "12x18 Collage Frame", price: 3999, image: "/images/collage frame 3999.jpg", images: ["/images/collage frame 3999.jpg", "/images/collage frame 3999.jpg", "/images/collage frame 3999.jpg"] },
+  { id: "f12", categoryId: "frames", name: "Vintage Photo Frame", price: 399, image: "/images/vintage frame.jpg", images: ["/images/vintage frame.jpg", "/images/vintage frames p2.jpg", "/images/vintage frames p3.jpg"] },
+  { id: "f13", categoryId: "frames", name: "12x18 Lighting Frame", price: 2899, image: "/images/12x18 main.jpg", images: ["/images/12x18 main.jpg", "/images/12x18 new.jpg"] },
+
+  // ===== CATEGORY 2: MAGAZINES & PHOTOBOOKS (9 Products) =====
+  { id: "m1", categoryId: "magazines", name: "Anniversary Magazine", price: 499, image: "/images/anniversary MAG.jpg", images: ["/images/anniversary MAG.jpg", "/images/anniversary MAG p2.jpg", "/images/anniversary MAG p3.jpg"] },
+  { id: "m2", categoryId: "magazines", name: "Magazine 12 Pages", price: 599, image: "/images/mag 12pgs 599.jpg", images: ["/images/mag 12pgs 599.jpg", "/images/mag 12pgs 599 p2.jpg", "/images/mag 12pgs 599 p3.jpg"] },
+  { id: "m3", categoryId: "magazines", name: "Magazine Design 2", price: 599, image: "/images/MAG design2.jpg", images: ["/images/MAG design2.jpg", "/images/MAG design2 p2.jpg", "/images/MAG design2 p3.jpg"] },
+  { id: "m4", categoryId: "magazines", name: "Premium Magazine", price: 699, image: "/images/mag(1).jpg", images: ["/images/mag(1).jpg", "/images/mag(1).jpg", "/images/mag(1).jpg"] },
+  { id: "m5", categoryId: "magazines", name: "Classic Magazine Design", price: 599, image: "/images/mag.jpg", images: ["/images/mag.jpg", "/images/mag.jpg", "/images/mag.jpg"] },
+  { id: "m6", categoryId: "magazines", name: "Magazine Premium Edition", price: 799, image: "/images/MAG(2).jpg", images: ["/images/MAG(2).jpg", "/images/MAG(2).jpg", "/images/MAG(2).jpg"] },
+  { id: "m7", categoryId: "magazines", name: "Photo Book Premium", price: 269, image: "/images/photo book 269.jpg", images: ["/images/photo book 269.jpg", "/images/photo book 269.jpg", "/images/photo book 269.jpg"] },
+  { id: "m8", categoryId: "magazines", name: "Polaroid Album 169", price: 169, image: "/images/polaroids album 169.jpg", images: ["/images/polaroids album 169.jpg", "/images/pol album 169.jpg", "/images/polaroids album 169.jpg"] },
+  { id: "m9", categoryId: "magazines", name: "Custom Magnets Magazine", price: 499, image: "/images/magnizes 499.jpg", images: ["/images/magnizes 499.jpg", "/images/magnizes 499.jpg", "/images/magnizes 499.jpg"] },
+
+  // ===== CATEGORY 3: POLAROIDS & MEMORIES (4 Products) =====
+  { id: "pol1", categoryId: "memories", name: "Mini Polaroids Set", price: 60, image: "/images/polaroids.jpg", images: ["/images/polaroids.jpg", "/images/polaroids.jpg", "/images/polaroids.jpg"] },
+  { id: "pol2", categoryId: "memories", name: "Medium Polaroids Set", price: 64, image: "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", images: ["/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/POLAROIDS MEDIUM 8 PER EACH.jpg"] },
+  { id: "pol3", categoryId: "memories", name: "Large Polaroids Set", price: 60, image: "/images/POLAROIDS MEDIUM 8 PER EACH.jpg", images: ["/images/POLAROIDS MEDIUM 8 PER EACH.jpg", "/images/polaroids.jpg", "/images/polaroids.jpg"] },
+  { id: "mem1", categoryId: "memories", name: "Memory Storage Set", price: 299, image: "/images/photo book 269.jpg", images: ["/images/photo book 269.jpg", "/images/photo book 269.jpg", "/images/photo book 269.jpg"] },
+
+  // ===== CATEGORY 4: FLOWERS & BOUQUETS (8 Products) =====
+  { id: "bou1", categoryId: "flowers", name: "Real Flower Bouquet 249", price: 249, image: "/images/real flower boq 249.jpg", images: ["/images/real flower boq 249.jpg", "/images/real flower boq 249(1).jpg", "/images/real flower boq 249.jpg"] },
+  { id: "bou2", categoryId: "flowers", name: "Real Flowers Bouquet 249", price: 249, image: "/images/real flwr 249.jpg", images: ["/images/real flwr 249.jpg", "/images/real flwrs 249 p2.jpg", "/images/real flwrs p3 249.jpg"] },
+  { id: "bou3", categoryId: "flowers", name: "Premium Rose Bouquet 899", price: 899, image: "/images/real flwr boq 899.jpg", images: ["/images/real flwr boq 899.jpg", "/images/real flwr boq 899.jpg", "/images/real flwr boq 899.jpg"], isBestSeller: true },
+  { id: "bou4", categoryId: "flowers", name: "Artificial Single Flower Bouquet 199", price: 199, image: "/images/artificial single flower boq 199.jpg", images: ["/images/artificial single flower boq 199.jpg", "/images/artificial single flower boq 199 p2.jpg", "/images/artificial single flower boq 199.jpg"] },
+  { id: "bou5", categoryId: "flowers", name: "Red Bouquet Arrangement", price: 249, image: "/images/red boq p2.jpg", images: ["/images/red boq p2.jpg", "/images/red boq p3.jpg", "/images/red boq p2.jpg"] },
+  { id: "bou6", categoryId: "flowers", name: "Art Bouquet with Flowers", price: 899, image: "/images/artboqwith,pol,flow,choc 899.jpg", images: ["/images/artboqwith,pol,flow,choc 899.jpg", "/images/artboqwith,pol,flow,cktpr, 899.jpg", "/images/artboqwith,pol,flow,choc 899.jpg"] },
+  { id: "bou7", categoryId: "flowers", name: "Bouquet with Multiple Items", price: 999, image: "/images/artboqwith,pol,flow,cktpr,choc 999.jpg", images: ["/images/artboqwith,pol,flow,cktpr,choc 999.jpg", "/images/artboqwith,pol,flow,cktpr,choc 999 p2.jpg", "/images/artboqwith,pol,flow,cktpr,choc 999 p3.jpg"] },
+  { id: "bou8", categoryId: "flowers", name: "Natural Roses 20 Flowers 499", price: 499, image: "/images/real flwr 249.jpg", images: ["/images/real flwr 249.jpg", "/images/real flwrs p3 249.jpg", "/images/real flower boq 249.jpg"] },
+
+  // ===== CATEGORY 5: HAMPERS & GIFT COMBOS (4 Products) =====
+  { id: "ham1", categoryId: "hampers", name: "Premium Hamper", price: 999, image: "/images/hamper.jpg", images: ["/images/hamper.jpg", "/images/hamper .jpg", "/images/HAMPER.jpg"] },
+  { id: "ham2", categoryId: "hampers", name: "Premium Hamper Edition", price: 599, image: "/images/HAMPER(1).jpg", images: ["/images/HAMPER(1).jpg", "/images/HAMPER(1).jpg", "/images/HAMPER(1).jpg"] },
+  { id: "ham3", categoryId: "hampers", name: "Artistic Hamper Combo", price: 999, image: "/images/hamperc.jpeg", images: ["/images/hamperc.jpeg", "/images/hamperc.jpeg", "/images/hamper.jpg"] },
+  { id: "ham4", categoryId: "hampers", name: "Hamper with Sweets", price: 1249, image: "/images/HAMPER.jpg", images: ["/images/HAMPER.jpg", "/images/hamper.jpg", "/images/hamper .jpg"] },
+
+  // ===== CATEGORY 6: APPAREL (T-SHIRTS) (5 Products) =====
+  { id: "t1", categoryId: "apparel", name: "Customized T-Shirt 499", price: 499, image: "/images/CUSTOMIZED T-SHIRTS 499.jpg", images: ["/images/CUSTOMIZED T-SHIRTS 499.jpg", "/images/CUSTOMIZED T-SHIRTS P2 499.jpg", "/images/CUSTOMIZED T-SHIRTS P3 499.jpg"], isBestSeller: true, pricingType: "standard" },
+  { id: "t2", categoryId: "apparel", name: "Signature Day T-Shirts", price: 199, image: "/images/Tshirt.jpeg", images: ["/images/Tshirt.jpeg", "/images/Tshirt.jpeg", "/images/Tshirt.jpeg"], pricingType: "quantity-based", pricing: { "1-4": 199, "5-10": 189, "11-20": 179, "21-100": 169 } },
+  { id: "cap1", categoryId: "apparel", name: "Custom Cap", price: 99, image: "/images/cap.jpeg", images: ["/images/cap.jpeg", "/images/cap.jpeg", "/images/cap.jpeg"] },
+  { id: "pouch1", categoryId: "apparel", name: "Photo Pouch 299", price: 299, image: "/images/photo cup p2 299.jpg", images: ["/images/photo cup p2 299.jpg", "/images/photo cup p2 299.jpg", "/images/photo cup p2 299.jpg"] },
+  { id: "apparel5", categoryId: "apparel", name: "Apparel Collection", price: 599, image: "/images/CUSTOMIZED T-SHIRTS 499.jpg", images: ["/images/CUSTOMIZED T-SHIRTS 499.jpg", "/images/CUSTOMIZED T-SHIRTS P2 499.jpg", "/images/cap.jpeg"] },
+
+  // ===== CATEGORY 7: PHONE CASES & ESSENTIALS (4 Products) =====
+  { id: "case1", categoryId: "essentials", name: "Customized Phone Case", price: 299, image: "/images/PC.jpeg", images: ["/images/PC.jpeg", "/images/CUSTOMIZED PHONE CASE.jpg", "/images/CUSTOMIZED PHONE CASE P2.jpg"], isBestSeller: true },
+  { id: "cup1", categoryId: "essentials", name: "Photo Cup 299", price: 299, image: "/images/photo cup 299.jpg", images: ["/images/photo cup 299.jpg", "/images/photo cup 299.jpg", "/images/photo cup 299.jpg"] },
+  { id: "cup2", categoryId: "essentials", name: "Photo Cup Premium 299", price: 299, image: "/images/photo cup p2 299.jpg", images: ["/images/photo cup p2 299.jpg", "/images/photo cup p2 299.jpg", "/images/photo cup p2 299.jpg"] },
+  { id: "ess4", categoryId: "essentials", name: "Daily Essentials Set", price: 399, image: "/images/PC.jpeg", images: ["/images/PC.jpeg", "/images/photo cup 299.jpg", "/images/CUSTOMIZED PHONE CASE P2.jpg"] },
+
+  // ===== CATEGORY 8: CALENDARS & MAGNETS (3 Products) =====
+  { id: "cal1", categoryId: "addons", name: "Photo Calendar 199", price: 199, image: "/images/calender 199.jpg", images: ["/images/calender 199.jpg", "/images/calender 199.jpg", "/images/calender 199.jpg"] },
+  { id: "mag1", categoryId: "addons", name: "Fridge Magnet Set 179", price: 179, image: "/images/fridge magents 179.jpg", images: ["/images/fridge magents 179.jpg", "/images/fridge magents 179.jpg", "/images/fridge magents 179.jpg"] },
+  { id: "addon3", categoryId: "addons", name: "Addon Collection", price: 299, image: "/images/calender 199.jpg", images: ["/images/calender 199.jpg", "/images/fridge magents 179.jpg", "/images/calender 199.jpg"] },
+
+  // ===== CATEGORY 9: VINTAGE COLLECTION (3 Products) =====
+  { id: "vf1", categoryId: "vintage", name: "Vintage Frame", price: 399, image: "/images/vintage frame.jpg", images: ["/images/vintage frame.jpg", "/images/vintage frames p2.jpg", "/images/vintage frames p3.jpg"] },
+  { id: "vl1", categoryId: "vintage", name: "Vintage Letter 119", price: 119, image: "/images/vintage letter 119.JPG", images: ["/images/vintage letter 119.JPG", "/images/vintage letter 119.JPG", "/images/vintage letter 119.JPG"] },
+  { id: "vintage3", categoryId: "vintage", name: "Vintage Collection Bundle", price: 499, image: "/images/vintage frame.jpg", images: ["/images/vintage frame.jpg", "/images/vintage frames p4.jpg", "/images/vintage frames p2.jpg"] },
+
+  // ===== CATEGORY 10: SMART & DIGITAL SERVICES (9 Products) =====
+  { id: "nfc1", categoryId: "smart-digital", name: "NFC Review Board 799", price: 799, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/REVIEW BOARD NFC 799.jpg", "/images/REVIEW BOARD NFC 799.jpg"] },
+  { id: "id1", categoryId: "smart-digital", name: "ID Card PVC 149", price: 149, image: "/images/ID.jpeg", images: ["/images/ID.jpeg", "/images/ID.jpeg", "/images/ID.jpeg"] },
+  { id: "d1", categoryId: "smart-digital", name: "Digital Invitation", price: 299, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/DI1.JPG", "/images/DI2.JPG"] },
+  { id: "d2", categoryId: "smart-digital", name: "Photo Restoration", price: 199, image: "/images/photo restoration (after).JPEG", images: ["/images/photo restoration (after).JPEG", "/images/photo restoration (before).jpg", "/images/photo restoration (after).JPEG"] },
+  { id: "d4", categoryId: "smart-digital", name: "Digital Video Invitation", price: 399, image: "/images/reel1.jpeg", images: ["/images/reel1.jpeg", "/images/reel2.jpeg", "/images/reel3.jpeg", "/images/reel4.jpeg"], instagramLinks: ["https://www.instagram.com/reel/DGTDnYoSW0X/?igsh=YzFtZmNxY2h6djF5", "https://www.instagram.com/reel/DJfx-NCy9o-/?igsh=cWZkemk1NjJ0dDBk", "https://www.instagram.com/reel/DJZPJJdSvhA/?igsh=MTNjazVnaDJ4cW9vdg==", "https://www.instagram.com/reel/DUJDSZRktXE/?igsh=NjVoZzV4amhoMzR0"] },
+  { id: "sd5", categoryId: "smart-digital", name: "Smart Digital Package", price: 999, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/REVIEW BOARD NFC 799.jpg"] },
+  { id: "sd6", categoryId: "smart-digital", name: "Digital Services Suite", price: 1299, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/photo restoration (after).JPEG", "/images/DI1.JPG"] },
+  { id: "sd7", categoryId: "smart-digital", name: "NFC & ID Combo", price: 899, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/REVIEW BOARD NFC 799.jpg"] },
+  { id: "sd8", categoryId: "smart-digital", name: "Digital Experience Package", price: 1499, image: "/images/digital invitation.jpg", images: ["/images/digital invitation.jpg", "/images/REVIEW BOARD NFC 799.jpg", "/images/photo restoration (after).JPEG"] },
+  { id: "sd9", categoryId: "smart-digital", name: "Smart Memory Management", price: 599, image: "/images/REVIEW BOARD NFC 799.jpg", images: ["/images/REVIEW BOARD NFC 799.jpg", "/images/ID.jpeg", "/images/digital invitation.jpg"] }
+];
+
+// --- 4. SHOWCASE DATA (10 SECTIONS - 2 PRODUCTS PER CATEGORY) ---
+export const showcaseData = [
+  { categoryTitle: "Photo Frames", categoryId: "frames", products: [ products[0], products[1] ] },
+  { categoryTitle: "Magazines & Books", categoryId: "magazines", products: [ products[14], products[15] ] },
+  { categoryTitle: "Polaroids & Memories", categoryId: "memories", products: [ products[23], products[24] ] },
+  { categoryTitle: "Flowers & Bouquets", categoryId: "flowers", products: [ products[27], products[28] ] },
+  { categoryTitle: "Hampers & Combos", categoryId: "hampers", products: [ products[35], products[36] ] },
+  { categoryTitle: "T-Shirts & Apparel", categoryId: "apparel", products: [ products[39], products[40] ] },
+  { categoryTitle: "Phone Cases & Essentials", categoryId: "essentials", products: [ products[44], products[45] ] },
+  { categoryTitle: "Calendars & Magnets", categoryId: "addons", products: [ products[48], products[49] ] },
+  { categoryTitle: "Vintage Collection", categoryId: "vintage", products: [ products[51], products[52] ] },
+  { categoryTitle: "Smart & Digital Services", categoryId: "smart-digital", products: [ products[54], products[55] ] },
+];
+
+// Categories array (kept for internal use if needed, empty is fine)
+export const categories = [];
+
+// Phone model options for Phone Cases (used on product page)
+export const phoneModelOptions = {
+  "Apple": [
+    "iPhone 16 Pro Max",
+    "iPhone 16 Pro",
+    "iPhone 16 Plus",
+    "iPhone 16",
+    "iPhone 15 Pro Max",
+    "iPhone 15 Pro",
+    "iPhone 15 Plus",
+    "iPhone 15",
+    "iPhone 14 Pro Max",
+    "iPhone 14 Pro",
+    "iPhone 14 Plus",
+    "iPhone 14",
+    "iPhone 13 Pro Max",
+    "iPhone 13 Pro",
+    "iPhone 13",
+    "iPhone 13 Mini",
+    "iPhone 12 Pro Max",
+    "iPhone 12 Pro",
+    "iPhone 12",
+    "iPhone 12 Mini",
+    "iPhone 11 Pro Max",
+    "iPhone 11 Pro",
+    "iPhone 11",
+    "iPhone SE (2022)",
+    "iPhone SE (2020)"
+  ],
+  "Samsung": [
+    "Galaxy S24 Ultra",
+    "Galaxy S24+",
+    "Galaxy S24",
+    "Galaxy S23 Ultra",
+    "Galaxy S23+",
+    "Galaxy S23",
+    "Galaxy S22 Ultra",
+    "Galaxy S22+",
+    "Galaxy S22",
+    "Galaxy S21 FE",
+    "Galaxy A54",
+    "Galaxy A34",
+    "Galaxy A24",
+    "Galaxy A14",
+    "Galaxy A73",
+    "Galaxy A53",
+    "Galaxy A33",
+    "Galaxy Z Fold 5",
+    "Galaxy Z Fold 4",
+    "Galaxy Z Flip 5",
+    "Galaxy Z Flip 4"
+  ],
+  "Xiaomi / Redmi / Poco": [
+    "Xiaomi 13 Pro",
+    "Xiaomi 13",
+    "Xiaomi 12 Pro",
+    "Xiaomi 12",
+    "Xiaomi 11T Pro",
+    "Xiaomi 11 Lite",
+    "Redmi Note 13 Pro",
+    "Redmi Note 13",
+    "Redmi Note 12 Pro",
+    "Redmi Note 12",
+    "Redmi 12",
+    "Redmi 11 Prime",
+    "Redmi 10",
+    "Poco X5 Pro",
+    "Poco X5",
+    "Poco F5",
+    "Poco M5",
+    "Poco C55"
+  ],
+  "OnePlus": [
+    "OnePlus 12",
+    "OnePlus 11",
+    "OnePlus 10 Pro",
+    "OnePlus 10T",
+    "OnePlus Nord 3",
+    "OnePlus Nord CE 3",
+    "OnePlus Nord CE 2",
+    "OnePlus Nord N30",
+    "OnePlus Nord N20"
+  ],
+  "Google": [
+    "Pixel 9 Pro",
+    "Pixel 9",
+    "Pixel 8 Pro",
+    "Pixel 8",
+    "Pixel 7 Pro",
+    "Pixel 7",
+    "Pixel 7a",
+    "Pixel 6 Pro",
+    "Pixel 6",
+    "Pixel 6a"
+  ],
+  "Realme": [
+    "Realme GT 5",
+    "Realme GT Neo 3",
+    "Realme 12 Pro",
+    "Realme 12",
+    "Realme 11 Pro",
+    "Realme 11",
+    "Realme Narzo 60",
+    "Realme Narzo 50",
+    "Realme C55",
+    "Realme C35"
+  ],
+  "Vivo": [
+    "Vivo X100 Pro",
+    "Vivo X90 Pro",
+    "Vivo V29",
+    "Vivo V27",
+    "Vivo V25",
+    "Vivo Y200",
+    "Vivo Y100",
+    "Vivo Y56",
+    "Vivo T2 Pro",
+    "Vivo T1"
+  ],
+  "Oppo": [
+    "Oppo Find X6 Pro",
+    "Oppo Find X5",
+    "Oppo Reno 11 Pro",
+    "Oppo Reno 11",
+    "Oppo Reno 10 Pro",
+    "Oppo Reno 10",
+    "Oppo A78",
+    "Oppo A58",
+    "Oppo A38"
+  ],
+  "Motorola": [
+    "Moto Edge 40 Pro",
+    "Moto Edge 40",
+    "Moto G84",
+    "Moto G73",
+    "Moto G54",
+    "Moto G32",
+    "Moto G Power",
+    "Moto G Stylus"
+  ],
+  "Nothing": [
+    "Nothing Phone (2)",
+    "Nothing Phone (2a)",
+    "Nothing Phone (1)"
+  ]
+};
+
