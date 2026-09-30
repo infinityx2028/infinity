@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [adminToken, setAdminToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Initialize from localStorage on mount
+  // Initialize from localStorage on mount and sync with server
   useEffect(() => {
     const storedToken = localStorage.getItem('userToken');
     const storedUser = localStorage.getItem('user');
@@ -22,19 +22,89 @@ export const AuthProvider = ({ children }) => {
 
     if (storedToken && storedUser) {
       setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+        setIsAuthenticated(true);
+      } catch (e) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('userToken');
+      }
+
+      // Background fresh fetch from server
+      userAuth.getProfile(storedToken)
+        .then(profileData => {
+          if (profileData && profileData.phoneNumber) {
+            setUser(profileData);
+            localStorage.setItem('user', JSON.stringify(profileData));
+          }
+        })
+        .catch(err => {
+          if (err?.status === 401) {
+            logout();
+          }
+        });
     }
 
     if (storedAdminToken && storedAdmin) {
       setAdminToken(storedAdminToken);
-      setAdmin(JSON.parse(storedAdmin));
+      try {
+        setAdmin(JSON.parse(storedAdmin));
+      } catch (e) {}
     }
 
     setLoading(false);
   }, []);
 
-  // Login with phone, password and name (Direct - No OTP)
+  // Dedicated Login with Email or Phone + Password
+  const loginUser = async (emailOrPhone, password) => {
+    try {
+      setLoading(true);
+      const response = await userAuth.login(emailOrPhone, password);
+
+      const { token: newToken, user: userData } = response;
+      localStorage.setItem('userToken', newToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setToken(newToken);
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return { success: true, user: userData };
+    } catch (error) {
+      console.error('Login error:', error);
+      const errorMsg = error?.data?.error || error?.message || 'Login failed';
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Dedicated Signup with Name, Email, Phone, Password
+  const signupUser = async ({ name, email, phoneNumber, password }) => {
+    try {
+      setLoading(true);
+      const response = await userAuth.signup({ name, email, phoneNumber, password });
+
+      const { token: newToken, user: userData } = response;
+      localStorage.setItem('userToken', newToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setToken(newToken);
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return { success: true, user: userData };
+    } catch (error) {
+      console.error('Signup error:', error);
+      const errorMsg = error?.data?.error || error?.message || 'Account creation failed';
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Login with phone, password and name (Legacy Direct - No OTP)
   const verifyCredentials = async (phoneNumber, password, name) => {
     try {
       setLoading(true);
@@ -42,11 +112,9 @@ export const AuthProvider = ({ children }) => {
 
       const { token: newToken, user: userData } = response;
 
-      // Store in localStorage
       localStorage.setItem('userToken', newToken);
       localStorage.setItem('user', JSON.stringify(userData));
 
-      // Update state
       setToken(newToken);
       setUser(userData);
       setIsAuthenticated(true);
@@ -69,7 +137,6 @@ export const AuthProvider = ({ children }) => {
     return { success: true, message: 'OTP system removed' };
   };
 
-  // Login function (legacy - kept for compatibility)
   const login = async (phoneNumber, otp) => {
     return verifyOTP(phoneNumber, otp);
   };
@@ -99,8 +166,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await userAuth.updateProfile(profileData, token);
-
-      const updatedUser = { ...user, ...profileData };
+      const updatedUser = response?.user || { ...user, ...profileData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
 
@@ -111,9 +177,112 @@ export const AuthProvider = ({ children }) => {
         logout();
         return { success: false, error: 'Session expired. Please log in again.' };
       }
-      return { success: false, error: error.message };
+      return { success: false, error: error.data?.error || error.message };
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Change Password
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const res = await userAuth.changePassword(currentPassword, newPassword, token);
+      return { success: true, message: res.message };
+    } catch (error) {
+      return { success: false, error: error.data?.error || error.message || 'Failed to change password' };
+    }
+  };
+
+  // Address Book helpers
+  const getAddresses = async () => {
+    try {
+      const res = await userAuth.getAddresses(token);
+      return res.addresses || [];
+    } catch (err) {
+      console.error('Failed to get addresses:', err);
+      return user?.addresses || [];
+    }
+  };
+
+  const addAddress = async (addressData) => {
+    try {
+      const res = await userAuth.addAddress(addressData, token);
+      if (res.addresses) {
+        const updated = { ...user, addresses: res.addresses };
+        setUser(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      }
+      return { success: true, addresses: res.addresses };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
+    }
+  };
+
+  const updateAddress = async (addressId, addressData) => {
+    try {
+      const res = await userAuth.updateAddress(addressId, addressData, token);
+      if (res.addresses) {
+        const updated = { ...user, addresses: res.addresses };
+        setUser(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      }
+      return { success: true, addresses: res.addresses };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
+    }
+  };
+
+  const deleteAddress = async (addressId) => {
+    try {
+      const res = await userAuth.deleteAddress(addressId, token);
+      if (res.addresses) {
+        const updated = { ...user, addresses: res.addresses };
+        setUser(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      }
+      return { success: true, addresses: res.addresses };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
+    }
+  };
+
+  const setDefaultAddress = async (addressId) => {
+    try {
+      const res = await userAuth.setDefaultAddress(addressId, token);
+      if (res.addresses) {
+        const updated = { ...user, addresses: res.addresses };
+        setUser(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      }
+      return { success: true, addresses: res.addresses };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
+    }
+  };
+
+  // Preferences helper
+  const updatePreferences = async (preferencesData) => {
+    try {
+      const res = await userAuth.updatePreferences(preferencesData, token);
+      if (res.preferences) {
+        const updated = { ...user, preferences: res.preferences };
+        setUser(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      }
+      return { success: true, preferences: res.preferences };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
+    }
+  };
+
+  // Delete account helper
+  const deleteAccount = async () => {
+    try {
+      await userAuth.deleteAccount(token);
+      logout();
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.data?.error || err.message };
     }
   };
 
@@ -159,11 +328,6 @@ export const AuthProvider = ({ children }) => {
       return { success: true, admin: adminData };
     } catch (error) {
       console.error('❌ Admin login error:', error);
-      console.log('Error details:', {
-        status: error.status,
-        message: error.message,
-        data: error.data
-      });
       return { success: false, error: error.message || 'Invalid credentials' };
     } finally {
       setLoading(false);
@@ -187,10 +351,20 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     login,
     logout,
+    loginUser,
+    signupUser,
     loginAdmin,
     logoutAdmin,
     requestOTP,
     updateProfile,
+    changePassword,
+    getAddresses,
+    addAddress,
+    updateAddress,
+    deleteAddress,
+    setDefaultAddress,
+    updatePreferences,
+    deleteAccount,
     refreshLoyalty,
     verifyCredentials,
     verifyOTP,

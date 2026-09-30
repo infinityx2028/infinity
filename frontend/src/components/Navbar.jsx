@@ -11,7 +11,8 @@ import {
   ArrowRight,
   Package,
   Heart,
-  Sparkles
+  Sparkles,
+  MapPin
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -605,18 +606,32 @@ const Navbar = ({ cartCount = 0 }) => {
                           <p className="text-xs font-bold text-[#071A2F] truncate">{user?.name || user?.phoneNumber}</p>
                         </div>
                         <Link 
-                          to="/profile" 
+                          to="/account" 
                           onClick={() => setProfileOpen(false)}
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4]"
                         >
-                          <User size={14} className="text-[#6B7280]" /> My Profile
+                          <User size={14} className="text-[#6B7280]" /> My Account
                         </Link>
                         <Link 
-                          to="/orders" 
+                          to="/account?tab=orders" 
                           onClick={() => setProfileOpen(false)}
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4]"
                         >
-                          <Package size={14} className="text-[#6B7280]" /> My Orders
+                          <Package size={14} className="text-[#6B7280]" /> Your Orders
+                        </Link>
+                        <Link 
+                          to="/account?tab=addresses" 
+                          onClick={() => setProfileOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4]"
+                        >
+                          <MapPin size={14} className="text-[#6B7280]" /> Saved Addresses
+                        </Link>
+                        <Link 
+                          to="/account?tab=saved" 
+                          onClick={() => setProfileOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4]"
+                        >
+                          <Heart size={14} className="text-[#6B7280]" /> Saved Gifts
                         </Link>
                         <div className="border-t border-gray-100 my-1"></div>
                         <button 
@@ -632,7 +647,7 @@ const Navbar = ({ cartCount = 0 }) => {
               ) : (
                 <Link
                   to="/login"
-                  title="Sign In"
+                  title="Sign In / Create Account"
                   className="w-11 h-11 text-[#071A2F]/80 hover:text-[#071A2F] hover:bg-[#FAF8F4] rounded-full transition-colors flex items-center justify-center cursor-pointer"
                 >
                   <User size={19} />
@@ -748,21 +763,28 @@ const Navbar = ({ cartCount = 0 }) => {
                 <div className="text-xs text-white/70">
                   Signed in as <span className="font-bold text-white">{user?.name || user?.phoneNumber}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <Link 
-                    to="/orders" 
+                    to="/account" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-center py-3 px-4 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-xs font-bold text-white min-h-[44px] flex items-center justify-center transition-colors"
+                    className="text-center py-2.5 px-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-xs font-bold text-white min-h-[44px] flex items-center justify-center transition-colors"
+                  >
+                    My Account
+                  </Link>
+                  <Link 
+                    to="/account?tab=orders" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2.5 px-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-xs font-bold text-white min-h-[44px] flex items-center justify-center transition-colors"
                   >
                     My Orders
                   </Link>
-                  <button 
-                    onClick={handleLogout}
-                    className="py-3 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl text-xs font-bold min-h-[44px] flex items-center justify-center transition-colors cursor-pointer"
-                  >
-                    Logout
-                  </button>
                 </div>
+                <button 
+                  onClick={handleLogout}
+                  className="w-full py-2.5 px-4 bg-red-500/15 hover:bg-red-500/25 text-red-300 rounded-xl text-xs font-bold min-h-[40px] flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  Sign Out
+                </button>
               </div>
             ) : (
               <Link
@@ -770,7 +792,7 @@ const Navbar = ({ cartCount = 0 }) => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="btn-physical-3d block text-center py-3.5 px-6 bg-[#C5A46D] text-[#071A2F] rounded-full text-xs font-black tracking-wider uppercase min-h-[44px] flex items-center justify-center shadow-lg"
               >
-                LOGIN / REGISTER
+                SIGN IN / CREATE ACCOUNT
               </Link>
             )}
 

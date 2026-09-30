@@ -8,9 +8,11 @@ import { API_BASE_URL } from './services/api';
 import { getImageSrc, isDataUrl } from './utils/imageUtils';
 import { getWhatsAppUrl, buildProductPersonalizationWhatsAppMessage } from './utils/whatsapp';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import SearchResults from './pages/SearchResults';
 
 // Code-split heavy routes for optimal initial page-load performance
+const AccountCenter = React.lazy(() => import('./pages/AccountCenter'));
 const UserProfile = React.lazy(() => import('./pages/UserProfile'));
 const UserOrders = React.lazy(() => import('./pages/UserOrders'));
 const Checkout = React.lazy(() => import('./pages/Checkout'));
@@ -2211,8 +2213,10 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/orders" element={<UserOrders />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/account" element={<AccountCenter />} />
+          <Route path="/profile" element={<AccountCenter />} />
+          <Route path="/orders" element={<AccountCenter />} />
           <Route path="/shop" element={<CategoryPage />} />
           <Route path="/shop/:id" element={<CategoryPage />} />
           <Route path="/product/:id" element={<ProductPage addToCart={addToCart} />} />

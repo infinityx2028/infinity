@@ -1,71 +1,68 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Phone, Lock, User, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, X, MessageCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { verifyCredentials } = useAuth();
+  const { loginUser } = useAuth();
   const redirectTo = location.state?.from?.pathname || location.state?.from || '/';
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
-  // Login with Phone, Password & Name — Logic strictly preserved
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
-    if (!/^[6-9]\d{9}$/.test(phoneNumber)) {
-      setError('Please enter a valid 10-digit Indian phone number');
+    const cleanIdentifier = identifier.trim();
+    if (!cleanIdentifier) {
+      setError('Please enter your email or 10-digit mobile number');
       return;
     }
 
-    if (!password || password.length < 4) {
-      setError('Password must be at least 4 characters');
-      return;
-    }
-
-    if (!name || name.trim().length < 2) {
-      setError('Please enter a valid name');
+    if (!password) {
+      setError('Please enter your password');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await verifyCredentials(phoneNumber, password, name);
+      const res = await loginUser(cleanIdentifier, password);
 
-      if (response.success) {
-        setSuccess('Login successful! Redirecting...');
+      if (res.success) {
+        const firstName = res.user?.name ? res.user.name.split(' ')[0] : 'friend';
+        setSuccess(`Welcome back, ${firstName}! ✦`);
+        // Fast redirect (280ms)
         setTimeout(() => {
           navigate(redirectTo, { replace: true });
-        }, 1200);
+        }, 280);
       } else {
-        setError(response.error || 'Failed to login');
+        setError(res.error || 'Failed to sign in. Please verify your credentials.');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError('A network error occurred. Please check your connection.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center py-8 sm:py-16 px-4 sm:px-6">
-      {/* Centered Premium Split Card */}
-      <div className="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl border border-[#071A2F]/8 shadow-[0_10px_40px_rgba(7,26,47,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+    <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center py-6 sm:py-14 px-3 sm:px-6">
+      {/* Container */}
+      <div className="w-full max-w-4xl bg-white rounded-[24px] sm:rounded-3xl border border-[#071A2F]/8 shadow-[0_12px_44px_rgba(7,26,47,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
         
-        {/* DESKTOP LEFT: Brand & Editorial Visual Showcase (lg+) */}
+        {/* DESKTOP LEFT: Editorial Brand Composition (lg+) */}
         <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-10 bg-[#071A2F] text-white relative overflow-hidden">
           {/* Subtle Champagne Radial Glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#C5A46D]/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-72 h-72 bg-[#C5A46D]/15 rounded-full blur-3xl pointer-events-none" />
 
           <div>
             <Link to="/" className="inline-block mb-8">
@@ -77,108 +74,154 @@ const Login = () => {
               </span>
             </Link>
 
-            {/* Editorial Visual */}
-            <div className="w-full aspect-[4/4.5] rounded-2xl overflow-hidden border border-white/10 shadow-lg mb-6 relative">
+            {/* Editorial Visual Composition */}
+            <div className="w-full aspect-[4/4.2] rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6 relative group">
               <img 
-                src="/images/4 x 6 black frame 199.jpg" 
-                alt="Personalized Gifts" 
-                className="w-full h-full object-cover"
+                src="/images/mag(1).jpg" 
+                alt="Personalized Magazine" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071A2F]/80 via-transparent to-transparent" />
-              <div className="absolute bottom-3 left-3 right-3 text-white">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5A46D] block">Artisanal Gifting</span>
-                <p className="text-xs font-semibold">Handcrafted with precision</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#071A2F]/90 via-[#071A2F]/20 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 text-white">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5A46D] block">
+                  Studio Keepsakes
+                </span>
+                <p className="text-sm font-semibold mt-0.5">
+                  Handcrafted around moments you love
+                </p>
               </div>
             </div>
 
             <p className="font-serif italic text-base text-[#DECBA6] leading-snug">
-              "A memory made tangible."
+              "Every gift tells a memory."
             </p>
-            <p className="text-xs text-gray-300 font-light mt-1">
-              Sign in to view past orders, track deliveries, and manage your account.
+            <p className="text-xs text-gray-300 font-light mt-1.5 leading-relaxed">
+              Sign in to manage your addresses, track your orders, and revisit your saved gifts.
             </p>
           </div>
 
           {/* Trust badges */}
           <div className="pt-6 border-t border-white/10 flex items-center gap-2 text-[11px] text-gray-400">
             <ShieldCheck size={14} className="text-[#C5A46D] flex-shrink-0" />
-            <span>Encrypted • Verified Studio Production</span>
+            <span>256-Bit Encrypted • Verified Studio Production</span>
           </div>
         </div>
 
-        {/* RIGHT (Mobile & Desktop): Clean Form Container */}
-        <div className="col-span-1 lg:col-span-7 p-6 sm:p-10 md:p-12 flex flex-col justify-center bg-white">
+        {/* RIGHT: Mobile & Desktop Form */}
+        <div className="col-span-1 lg:col-span-7 p-5 sm:p-10 md:p-12 flex flex-col justify-center bg-white">
           
-          {/* Mobile Header Branding */}
-          <div className="lg:hidden text-center mb-6">
+          {/* Top Brand Header (Mobile Only) */}
+          <div className="lg:hidden text-center mb-3">
             <Link to="/" className="inline-block">
-              <span className="text-2xl font-extrabold tracking-tight text-[#071A2F] block">
+              <span className="text-2xl font-black tracking-tight text-[#071A2F] block">
                 Infinity
               </span>
-              <span className="text-[10px] font-bold tracking-[0.25em] text-[#C5A46D] uppercase block mt-0.5">
+              <span className="text-[10px] font-bold tracking-[0.28em] text-[#C5A46D] uppercase block mt-0.5">
                 CUSTOMIZATIONS
               </span>
             </Link>
           </div>
 
-          <div className="mb-6">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#071A2F] tracking-tight">
-              SIGN IN TO YOUR MEMORIES
+          {/* Compact Mobile Product/Memory Composition (130-170px area) */}
+          <div className="lg:hidden relative h-[140px] w-full max-w-[320px] mx-auto mb-4 flex items-center justify-center select-none overflow-hidden">
+            {/* Product 1: Polaroid / Frame Left */}
+            <div className="absolute left-4 top-2 w-[85px] h-[95px] rounded-xl overflow-hidden border border-[#071A2F]/10 shadow-md -rotate-6 transform transition-transform hover:rotate-0 hover:scale-105 duration-300 bg-white p-1">
+              <img 
+                src="/images/4 x 6 black frame 199.jpg" 
+                alt="Frame memory" 
+                className="w-full h-full object-cover rounded-lg" 
+              />
+            </div>
+            {/* Product 2: Magazine Center Hero */}
+            <div className="absolute z-10 w-[95px] h-[115px] rounded-xl overflow-hidden border border-[#071A2F]/15 shadow-xl rotate-1 transform transition-transform hover:scale-105 duration-300 bg-white p-1">
+              <img 
+                src="/images/mag(1).jpg" 
+                alt="Custom Magazine" 
+                className="w-full h-full object-cover rounded-lg" 
+              />
+              <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-[#071A2F]/80 backdrop-blur-xs text-[8px] font-bold text-white text-center py-0.5 rounded">
+                Keepsake
+              </div>
+            </div>
+            {/* Product 3: Phone Case Right */}
+            <div className="absolute right-4 top-2 w-[85px] h-[95px] rounded-xl overflow-hidden border border-[#071A2F]/10 shadow-md rotate-6 transform transition-transform hover:rotate-0 hover:scale-105 duration-300 bg-white p-1">
+              <img 
+                src="/images/CUSTOMIZED PHONE CASE.jpg" 
+                alt="Custom Phone Case" 
+                className="w-full h-full object-contain rounded-lg p-0.5" 
+              />
+            </div>
+          </div>
+
+          {/* Heading */}
+          <div className="mb-5 sm:mb-6 text-center lg:text-left">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF8F4] border border-[#071A2F]/8 text-[#071A2F] text-[11px] font-bold tracking-wider uppercase mb-2">
+              <Sparkles size={11} className="text-[#C5A46D]" />
+              <span>Welcome Back ✦</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#071A2F] tracking-tight">
+              Sign In to Your Account
             </h1>
-            <p className="text-xs sm:text-sm text-[#687386] font-normal mt-1">
-              Welcome back. Track your personalized orders and account.
+            <p className="text-xs sm:text-sm text-[#687386] font-normal mt-1 max-w-md">
+              Your orders, saved gifts and memories are waiting.
             </p>
           </div>
 
+          {/* Feedback Alerts */}
+          {error && (
+            <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 animate-fadeIn">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <span className="font-medium">{error}</span>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-4 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center gap-2.5 animate-fadeIn">
+              <CheckCircle size={16} className="text-emerald-600 flex-shrink-0" />
+              <span className="font-bold">{success}</span>
+            </div>
+          )}
+
+          {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             
-            {/* Full Name */}
+            {/* Email or Phone */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <User size={13} className="text-[#687386]" />
-                <span>Full Name</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                disabled={loading}
-                autoComplete="name"
-                className="w-full h-[52px] px-4 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50"
-              />
-            </div>
-
-            {/* Phone Number */}
-            <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Phone size={13} className="text-[#687386]" />
-                <span>Phone Number</span>
+              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5">
+                Email or Mobile Number
               </label>
               <div className="relative group">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#687386] pointer-events-none">
-                  +91
-                </span>
                 <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="10-digit mobile number"
-                  maxLength={10}
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="e.g. rahul@gmail.com or 9876543210"
                   disabled={loading}
-                  autoComplete="tel"
-                  className="w-full h-[52px] pl-12 pr-4 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50 font-mono"
+                  autoComplete="username"
+                  className="w-full h-[50px] pl-4 pr-10 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50"
+                  required
                 />
+                <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#687386] pointer-events-none">
+                  <Mail size={16} />
+                </div>
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Lock size={13} className="text-[#687386]" />
-                <span>Password</span>
-              </label>
-              <div className="relative">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgotModal(true)}
+                  className="text-xs font-bold text-[#071A2F]/70 hover:text-[#071A2F] underline transition-colors cursor-pointer"
+                >
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative group">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -186,80 +229,106 @@ const Login = () => {
                   placeholder="Enter your password"
                   disabled={loading}
                   autoComplete="current-password"
-                  className="w-full h-[52px] pl-4 pr-12 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50"
+                  className="w-full h-[50px] pl-4 pr-11 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50"
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#687386] hover:text-[#071A2F] p-1 transition-colors cursor-pointer"
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center text-[#687386] hover:text-[#071A2F] transition-colors cursor-pointer"
                 >
-                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-red-700 font-medium">
-                <AlertCircle size={16} className="text-red-600 flex-shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Success Message */}
-            {success && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-2.5 text-xs text-emerald-800 font-medium">
-                <CheckCircle size={16} className="text-emerald-600 flex-shrink-0 mt-0.5" />
-                <span>{success}</span>
-              </div>
-            )}
-
             {/* Submit Button */}
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loading || phoneNumber.length !== 10 || !password || !name}
-                className="w-full h-[52px] bg-[#071A2F] hover:bg-[#0B2748] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {loading ? (
-                  <>
-                    <Loader size={16} className="animate-spin text-white" />
-                    <span>AUTHENTICATING...</span>
-                  </>
-                ) : (
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[50px] mt-2 rounded-xl bg-[#071A2F] hover:bg-[#03101D] text-white font-bold text-sm tracking-wide flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.98] cursor-pointer disabled:opacity-50"
+            >
+              {loading ? (
+                <>
+                  <Loader size={16} className="animate-spin text-[#C5A46D]" />
+                  <span>Signing In...</span>
+                </>
+              ) : (
+                <>
                   <span>SIGN IN</span>
-                )}
-              </button>
-            </div>
+                  <ArrowRight size={16} />
+                </>
+              )}
+            </button>
           </form>
 
-          {/* Clean Helper Note & Legal Links */}
-          <div className="mt-6 pt-5 border-t border-[#071A2F]/8 text-center space-y-2">
-            <p className="text-xs text-[#687386] font-normal">
-              New to Infinity? You can shop and checkout directly anytime.
+          {/* New to Infinity? Register */}
+          <div className="mt-6 pt-5 border-t border-gray-100 text-center">
+            <p className="text-xs sm:text-sm text-[#687386] font-normal mb-2.5">
+              New to Infinity?
             </p>
-            <p className="text-[11px] text-[#687386]">
-              By signing in, you agree to our{' '}
-              <Link to="/terms-and-conditions" className="text-[#071A2F] font-bold hover:underline">
-                Terms
-              </Link>{' '}
-              and{' '}
-              <Link to="/privacy-policy" className="text-[#071A2F] font-bold hover:underline">
-                Privacy Policy
-              </Link>.
-            </p>
+            <Link
+              to="/signup"
+              state={location.state}
+              className="w-full h-[46px] rounded-xl border-2 border-[#071A2F] text-[#071A2F] hover:bg-[#FAF8F4] font-bold text-xs uppercase tracking-wider flex items-center justify-center transition-all cursor-pointer"
+            >
+              CREATE AN ACCOUNT
+            </Link>
           </div>
 
-          {/* Security Indicator */}
-          <div className="flex items-center justify-center gap-1.5 mt-4 text-[11px] text-[#687386] text-center">
-            <ShieldCheck size={14} className="text-[#C5A46D] flex-shrink-0" />
-            <span>Your personalized orders and saved details are kept safe.</span>
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-xs text-[#687386] hover:text-[#071A2F] transition-colors">
+              ← Return to Shopping
+            </Link>
           </div>
-
         </div>
 
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotModal && (
+        <div className="fixed inset-0 z-50 bg-[#03101D]/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full border border-[#071A2F]/10 shadow-2xl relative animate-fadeIn">
+            <button
+              onClick={() => setShowForgotModal(false)}
+              className="absolute top-4 right-4 text-[#687386] hover:text-[#071A2F] p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="w-10 h-10 rounded-full bg-[#FAF8F4] border border-[#071A2F]/10 flex items-center justify-center text-[#071A2F] mb-3">
+              <Lock size={18} />
+            </div>
+
+            <h3 className="text-lg font-extrabold text-[#071A2F]">
+              Need Help Signing In?
+            </h3>
+            <p className="text-xs sm:text-sm text-[#687386] mt-2 leading-relaxed">
+              If you’ve forgotten your password or originally registered using OTP, our studio concierge can verify your registered mobile number and securely update your password on WhatsApp.
+            </p>
+
+            <div className="mt-5 flex flex-col gap-2.5">
+              <a
+                href={`https://wa.me/918985993948?text=${encodeURIComponent('Hi Infinity Customizations team, I need help resetting my account password.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-[46px] rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-sm transition-all"
+              >
+                <MessageCircle size={16} />
+                <span>Contact Studio on WhatsApp</span>
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowForgotModal(false)}
+                className="w-full h-[42px] rounded-xl border border-gray-200 text-gray-700 font-bold text-xs uppercase tracking-wider hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

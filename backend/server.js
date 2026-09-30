@@ -41,7 +41,15 @@ app.use(cors({
       // Permit localhost development origins
       if (hostname === 'localhost' || hostname === '127.0.0.1') return callback(null, true);
       // Allow configured production domains commonly used for this project
-      if (hostname === 'infinitycustomizations.com' || hostname === 'www.infinitycustomizations.com') return callback(null, true);
+      if (
+        hostname === 'infinitycustomizations.com' ||
+        hostname === 'www.infinitycustomizations.com' ||
+        hostname === 'infinitycustomizationz.com' ||
+        hostname === 'www.infinitycustomizationz.com' ||
+        hostname === 'i.infinitycustomizationz.com' ||
+        hostname.endsWith('.infinitycustomizationz.com') ||
+        hostname.endsWith('.infinitycustomizations.com')
+      ) return callback(null, true);
     } catch (e) {
       // If origin is malformed, reject
       console.warn('CORS origin parse error:', e && e.message);

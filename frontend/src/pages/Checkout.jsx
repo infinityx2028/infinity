@@ -44,6 +44,51 @@ const Checkout = () => {
   const [relatedLoading, setRelatedLoading] = useState(false);
   const [availableLoyaltyPoints, setAvailableLoyaltyPoints] = useState(0);
   const [redeemPointsInput, setRedeemPointsInput] = useState('0');
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  // Sync orderData when user or user.addresses is loaded
+  useEffect(() => {
+    if (user) {
+      const defaultAddr = user.addresses?.find(a => a.isDefault) || user.addresses?.[0];
+      if (defaultAddr && !selectedAddressId) {
+        setSelectedAddressId(defaultAddr._id);
+      }
+      setOrderData(prev => ({
+        ...prev,
+        customerName: prev.customerName || defaultAddr?.fullName || user.name || '',
+        email: prev.email || user.email || '',
+        phoneNumber: prev.phoneNumber || defaultAddr?.phoneNumber || user.phoneNumber || '',
+        address: prev.address || (defaultAddr ? (defaultAddr.addressLine1 + (defaultAddr.addressLine2 ? `, ${defaultAddr.addressLine2}` : '')) : (user.address || '')),
+        city: prev.city || defaultAddr?.city || user.city || '',
+        state: prev.state || defaultAddr?.state || user.state || '',
+        pincode: prev.pincode || defaultAddr?.pincode || user.pincode || ''
+      }));
+    }
+  }, [user]);
+
+  const selectSavedAddress = (addr) => {
+    setSelectedAddressId(addr._id);
+    setOrderData(prev => ({
+      ...prev,
+      customerName: addr.fullName || prev.customerName,
+      phoneNumber: addr.phoneNumber || prev.phoneNumber,
+      address: addr.addressLine1 + (addr.addressLine2 ? `, ${addr.addressLine2}` : '') + (addr.landmark ? ` (Near ${addr.landmark})` : ''),
+      city: addr.city,
+      state: addr.state,
+      pincode: addr.pincode
+    }));
+  };
+
+  const selectCustomAddress = () => {
+    setSelectedAddressId('custom');
+    setOrderData(prev => ({
+      ...prev,
+      address: '',
+      city: '',
+      state: '',
+      pincode: ''
+    }));
+  };
 
   const shouldShowLoginRequired = !isAuthenticated;
   const shouldShowEmptyCart = cart.length === 0 && step !== 'success';
@@ -464,6 +509,64 @@ const Checkout = () => {
                     <h3 className="text-base font-bold text-[#071A2F] mb-4 pb-2 border-b border-gray-100">
                       2. Shipping Address
                     </h3>
+
+                    {user?.addresses && user.addresses.length > 0 && (
+                      <div className="mb-5 space-y-2.5">
+                        <span className="text-xs font-bold text-[#071A2F] uppercase tracking-wider block">
+                          Select Saved Address:
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {user.addresses.map((addr) => {
+                            const isSelected = selectedAddressId === addr._id;
+                            return (
+                              <button
+                                key={addr._id}
+                                type="button"
+                                onClick={() => selectSavedAddress(addr)}
+                                className={`text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                                  isSelected
+                                    ? 'border-[#071A2F] bg-[#FAF8F4] ring-1 ring-[#071A2F]'
+                                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#071A2F]">
+                                    {addr.label || 'Home'}
+                                  </span>
+                                  {addr.isDefault && (
+                                    <span className="text-[9px] font-bold text-[#C5A46D] uppercase bg-[#071A2F] px-1.5 py-0.5 rounded">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs font-bold text-[#071A2F] truncate">{addr.fullName}</p>
+                                <p className="text-[11px] text-[#687386] truncate mt-0.5">
+                                  {addr.addressLine1}, {addr.city} - {addr.pincode}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <div className="flex items-center justify-between pt-1 text-xs">
+                          <button
+                            type="button"
+                            onClick={selectCustomAddress}
+                            className={`font-bold underline cursor-pointer ${
+                              selectedAddressId === 'custom' ? 'text-[#071A2F]' : 'text-[#687386] hover:text-[#071A2F]'
+                            }`}
+                          >
+                            + Enter a different delivery address
+                          </button>
+                          <Link
+                            to="/account?tab=addresses"
+                            className="text-[#071A2F] hover:underline font-bold"
+                          >
+                            Manage Address Book →
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="mb-4">
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#071A2F] mb-1.5">
                         Street Address & House / Flat No. *

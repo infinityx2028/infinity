@@ -67,6 +67,12 @@ const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
 
 // --- USER AUTHENTICATION API ---
 export const userAuth = {
+  login: async (emailOrPhone, password) => {
+    return apiCall('/auth/user/login', 'POST', { emailOrPhone, password });
+  },
+  signup: async ({ name, email, phoneNumber, password }) => {
+    return apiCall('/auth/user/signup', 'POST', { name, email, phoneNumber, password });
+  },
   verifyCredentials: async (phoneNumber, password, name) => {
     return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber, password, name });
   },
@@ -84,6 +90,39 @@ export const userAuth = {
   },
   updateProfile: async (profileData, token) => {
     return apiCall('/auth/user/profile', 'PUT', profileData, token);
+  },
+  changePassword: async (currentPassword, newPassword, token) => {
+    return apiCall('/auth/user/change-password', 'POST', { currentPassword, newPassword }, token);
+  },
+  getAddresses: async (token) => {
+    return apiCall('/auth/user/addresses', 'GET', null, token);
+  },
+  addAddress: async (addressData, token) => {
+    return apiCall('/auth/user/addresses', 'POST', addressData, token);
+  },
+  updateAddress: async (addressId, addressData, token) => {
+    return apiCall(`/auth/user/addresses/${addressId}`, 'PUT', addressData, token);
+  },
+  deleteAddress: async (addressId, token) => {
+    return apiCall(`/auth/user/addresses/${addressId}`, 'DELETE', null, token);
+  },
+  setDefaultAddress: async (addressId, token) => {
+    return apiCall(`/auth/user/addresses/${addressId}/default`, 'PUT', {}, token);
+  },
+  getPreferences: async (token) => {
+    return apiCall('/auth/user/preferences', 'GET', null, token);
+  },
+  updatePreferences: async (preferencesData, token) => {
+    return apiCall('/auth/user/preferences', 'PUT', preferencesData, token);
+  },
+  getWishlist: async (token) => {
+    return apiCall('/auth/user/wishlist', 'GET', null, token);
+  },
+  toggleWishlist: async (productId, token) => {
+    return apiCall('/auth/user/wishlist/toggle', 'POST', { productId }, token);
+  },
+  deleteAccount: async (token) => {
+    return apiCall('/auth/user/delete-account', 'POST', {}, token);
   },
   adminLogin: async (email, password) => {
     return apiCall('/auth/admin/login', 'POST', { email, password });
