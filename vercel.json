@@ -14,11 +14,7 @@
   ],
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://infinity-customizations.onrender.com/api/:path*"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
