@@ -173,6 +173,8 @@ module.exports = async (req, res) => {
     if (data && data.includes('upi://pay')) {
       // Remove unauthenticated parameters (tr, mc, mode, purpose) which trigger bank rejection
       data = data.replace(/[&?](tr|mc|mode|purpose)=[^&"]+/g, '');
+      // Ensure the store's primary merchant UPI ID Q489570312@ybl is strictly used
+      data = data.replace(/pa=[^&"]+/g, 'pa=Q489570312@ybl');
     }
 
     res.status(upstream.status);
