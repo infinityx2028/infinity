@@ -1,6 +1,6 @@
-// API Service - Central hub for all API calls
-// Use '/api' by default so Vercel reverse-proxies requests same-origin, avoiding Render CORS blocks
-export const API_BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) || '/api';
+// Central API base URL: Always use relative '/api' on web clients so requests route through
+// Vercel's serverless reverse-proxy, ensuring same-origin execution and 100% immunity from Render CORS issues
+export const API_BASE_URL = '/api';
 const DIRECT_RENDER_URL = 'https://infinity-customizations.onrender.com/api';
 
 // Helper function for API calls
@@ -27,11 +27,10 @@ const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
     try {
       response = await fetch(`${API_BASE_URL}${endpoint}`, config);
     } catch (networkErr) {
-      // If primary failed (e.g. network hiccup), retry with direct Render URL or /api
+      // If primary failed (e.g. cold start or transient glitch), retry once after a brief pause
       try {
-        const altBase = API_BASE_URL === '/api' ? DIRECT_RENDER_URL : '/api';
-        await new Promise(r => setTimeout(r, 800));
-        response = await fetch(`${altBase}${endpoint}`, config);
+        await new Promise(r => setTimeout(r, 600));
+        response = await fetch(`${API_BASE_URL}${endpoint}`, config);
       } catch (retryErr) {
         throw networkErr;
       }

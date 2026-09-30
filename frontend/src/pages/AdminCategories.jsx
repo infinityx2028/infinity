@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { AlertCircle, Plus, Trash2, Edit2, X, Save, ChevronRight, Check, Package, Pencil } from 'lucide-react';
@@ -8,8 +8,7 @@ import { getImageSrc } from '../utils/imageUtils';
 import BackButton from '../components/BackButton'; 
 
 const AdminCategories = () => {
-  // Use environment variable for API base URL, fallback to localhost for dev
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = '/api';
   const { admin, adminToken } = useAuth();
   const [categories, setCategories] = useState([]);
   // cache products per category to avoid fetching all products upfront
