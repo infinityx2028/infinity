@@ -65,39 +65,78 @@ const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
   }
 };
 
+// Known directory mapping for existing registered accounts (email -> phone)
+const KNOWN_EMAIL_DIRECTORY = {
+  'infinitycustomizations@gmail.com': '9632588855',
+  'jashwanthreddysingireddy@gmail.com': '8525852855',
+  'sjashwanthreddy948@gmail.com': '9585568248',
+  'h@gmail.com': '7777786474',
+  'velgasnehareddy@gmail.com': '9177631176',
+  'karriveeraveni3@gmail.com': '7893391748',
+  'sriniketh2002@gmail.com': '8688912605',
+  'sanjana3646@gmail.com': '9059673704',
+  'kosuriomkar@gmail.com': '9505317596',
+  'pulimamidipreetham@gmail.com': '6300376157',
+  'gudururishika08@gmail.com': '9110576243',
+  'mythri347@gmail.com': '6281816611',
+  'sourabhi.manu.potti948@gmail.com': '8019312948',
+  'vaggusowmyasri2005@gmail.com': '9392505765',
+  'bharathgopavaram2005@gmail.com': '7995732446',
+  'vyshali13neela@gmail.com': '9553763852',
+  'test@infinity.com': '9123456780'
+};
+
 // --- USER AUTHENTICATION API ---
 export const userAuth = {
   login: async (emailOrPhone, password) => {
+    const rawInput = String(emailOrPhone || '').trim();
+    let targetPhone = '';
+
+    // If identifier is an Indian phone number (with or without +91 / country code / spaces)
+    const digitsOnly = rawInput.replace(/\D/g, '');
+    const cleanPhone = digitsOnly.slice(-10);
+    if (/^[6-9]\d{9}$/.test(cleanPhone)) {
+      targetPhone = cleanPhone;
+    } else if (rawInput.includes('@')) {
+      // Check known email directory
+      const cleanEmail = rawInput.toLowerCase();
+      if (KNOWN_EMAIL_DIRECTORY[cleanEmail]) {
+        targetPhone = KNOWN_EMAIL_DIRECTORY[cleanEmail];
+      } else {
+        // Check client localStorage
+        const stored = localStorage.getItem(`infinity_phone_${cleanEmail}`);
+        if (stored && /^[6-9]\d{9}$/.test(stored)) {
+          targetPhone = stored;
+        }
+      }
+    }
+
     // 1. Try dedicated /auth/user/login first
     try {
-      return await apiCall('/auth/user/login', 'POST', { emailOrPhone, password });
+      return await apiCall('/auth/user/login', 'POST', { emailOrPhone: rawInput, password });
     } catch (err) {
       // If endpoint doesn't exist on backend (404 / Invalid JSON response / Cannot POST)
-      const cleanPhone = String(emailOrPhone || '').replace(/\D/g, '').slice(-10);
-      if (/^[6-9]\d{9}$/.test(cleanPhone)) {
+      if (targetPhone && /^[6-9]\d{9}$/.test(targetPhone)) {
         return await apiCall('/auth/user/verify-credentials', 'POST', {
-          phoneNumber: cleanPhone,
+          phoneNumber: targetPhone,
           password,
           name: 'Infinity Member'
         });
       }
-      // If identifier was an email, check stored phone mapping from signup
-      if (typeof emailOrPhone === 'string' && emailOrPhone.includes('@')) {
-        const storedPhone = localStorage.getItem(`infinity_phone_${emailOrPhone.trim().toLowerCase()}`);
-        if (storedPhone && /^[6-9]\d{9}$/.test(storedPhone)) {
-          return await apiCall('/auth/user/verify-credentials', 'POST', {
-            phoneNumber: storedPhone,
-            password,
-            name: 'Infinity Member'
-          });
-        }
+
+      if (rawInput.includes('@')) {
         throw {
-          status: 400,
-          message: 'Please enter your registered 10-digit mobile number to sign in.',
-          data: { error: 'Please enter your registered 10-digit mobile number to sign in.' }
+          status: 404,
+          message: `Account with email "${rawInput}" not found. Please sign in with your registered 10-digit mobile number, or create an account.`,
+          data: { error: `Account with email "${rawInput}" not found. Please sign in with your registered 10-digit mobile number, or create an account.` }
         };
       }
-      throw err;
+
+      throw {
+        status: 400,
+        message: 'Please enter a valid 10-digit Indian mobile number or registered email.',
+        data: { error: 'Please enter a valid 10-digit Indian mobile number or registered email.' }
+      };
     }
   },
   signup: async ({ name, email, phoneNumber, password }) => {
@@ -117,21 +156,33 @@ export const userAuth = {
       // If 404 or backend is on verify-credentials
       if (err.status === 404 || (err.data && err.data.error === 'Invalid JSON response') || err.message?.includes('Cannot POST') || err.message?.includes('404')) {
         if (/^[6-9]\d{9}$/.test(cleanPhone)) {
-          const res = await apiCall('/auth/user/verify-credentials', 'POST', {
-            phoneNumber: cleanPhone,
-            password,
-            name: name.trim()
-          });
-          // Update email in profile if token returned
-          if (res.token && cleanEmail) {
-            try {
-              await apiCall('/auth/user/profile', 'PUT', { email: cleanEmail }, res.token);
-              if (res.user) res.user.email = cleanEmail;
-            } catch (e) {
-              console.warn('Failed to update email in profile:', e);
+          try {
+            const res = await apiCall('/auth/user/verify-credentials', 'POST', {
+              phoneNumber: cleanPhone,
+              password,
+              name: name.trim()
+            });
+            // Update email in profile if token returned
+            if (res.token && cleanEmail) {
+              try {
+                await apiCall('/auth/user/profile', 'PUT', { email: cleanEmail }, res.token);
+                if (res.user) res.user.email = cleanEmail;
+              } catch (e) {
+                console.warn('Failed to update email in profile:', e);
+              }
             }
+            return res;
+          } catch (vcErr) {
+            // If verify-credentials returned "Invalid password", user already exists with different password!
+            if (vcErr.data?.error === 'Invalid password' || vcErr.message?.includes('Invalid password') || vcErr.status === 401) {
+              throw {
+                status: 409,
+                message: `An account with mobile number ${cleanPhone} already exists. Please sign in with your existing password, or click Forgot Password.`,
+                data: { error: `An account with mobile number ${cleanPhone} already exists. Please sign in with your existing password, or click Forgot Password.` }
+              };
+            }
+            throw vcErr;
           }
-          return res;
         }
       }
       throw err;
