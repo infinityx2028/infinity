@@ -8,6 +8,8 @@ dist/
 dist-ssr/
 frontend/dist/
 backend/dist/
+.vite/
+frontend/.vite/
 
 # Environment Variables & Secrets
 backend/.env
