@@ -78,13 +78,10 @@ const UpiPaymentView = ({
   const finalAmount = Number(amount) || 0;
   const formattedDisplayAmount = finalAmount.toLocaleString('en-IN');
 
-  // Ensure sanitized UPI URI with verified VPA 8019212948@axl
+  // Always use client-built verified UPI URI with correct PhonePe parameters (no forbidden tr=)
   const upiUri = useMemo(() => {
-    if (serverUpiLink && serverUpiLink.startsWith('upi://') && !serverUpiLink.includes('Q489570312')) {
-      return serverUpiLink;
-    }
     return buildUpiUri({ amount: finalAmount, orderId });
-  }, [serverUpiLink, finalAmount, orderId]);
+  }, [finalAmount, orderId]);
 
   // Generate dynamic QR code matching the exact amount & verified merchant VPA
   useEffect(() => {
