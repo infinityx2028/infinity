@@ -4,26 +4,24 @@ import {
   QrCode, 
   Smartphone, 
   Copy, 
-  Check, 
   ShieldCheck, 
   AlertCircle, 
   Lock, 
   CheckCircle2, 
-  RefreshCw,
-  ExternalLink,
+  Download,
+  Info,
   MessageCircle,
-  HelpCircle,
-  Download
+  HelpCircle
 } from 'lucide-react';
 
-// Verified Primary PhonePe UPI ID (from official PhonePe QR standee in repository)
-export const MERCHANT_UPI_ID = '8019212948@axl';
-export const MERCHANT_NAME = 'SINGIREDDY JASHWANTH';
+// Store Merchant UPI Configuration (Confirmed by store owner)
+export const MERCHANT_UPI_ID = 'Q489570312@ybl';
+export const MERCHANT_NAME = 'Infinity Customizations';
 export const ALT_MERCHANT_UPI_ID = '8985993948@ybl';
 export const MERCHANT_PHONE = '8985993948';
 
 /**
- * Builds compliant UPI payment URI with verified PhonePe merchant parameters
+ * Builds compliant, universally accepted UPI payment URI (NPCI standard compliant)
  */
 export const buildUpiUri = ({ amount, orderId, app = 'generic' }) => {
   const numAmount = Number(amount);
@@ -32,10 +30,10 @@ export const buildUpiUri = ({ amount, orderId, app = 'generic' }) => {
   const cleanOrderId = String(orderId || '').replace(/[^a-zA-Z0-9]/g, '');
   const encodedName = encodeURIComponent(MERCHANT_NAME.trim());
 
-  // Standard NPCI URI with verified PhonePe QR parameters (mode=02, mc=0000, purpose=00)
-  let baseParams = `pa=${cleanUpiId}&pn=${encodedName}&mc=0000&mode=02&purpose=00&am=${formattedAmount}&cu=INR`;
+  // Clean universal NPCI parameters (strictly no tr, no mc/mode to avoid bank switch declines)
+  let baseParams = `pa=${cleanUpiId}&pn=${encodedName}&am=${formattedAmount}&cu=INR`;
   if (cleanOrderId) {
-    baseParams += `&tn=${cleanOrderId}`;
+    baseParams += `&tn=Order${cleanOrderId}`;
   }
 
   switch (app) {
@@ -78,12 +76,12 @@ const UpiPaymentView = ({
   const finalAmount = Number(amount) || 0;
   const formattedDisplayAmount = finalAmount.toLocaleString('en-IN');
 
-  // Always use client-built verified UPI URI with correct PhonePe parameters (no forbidden tr=)
+  // Build clean verified UPI URI for dynamic QR & app intent
   const upiUri = useMemo(() => {
     return buildUpiUri({ amount: finalAmount, orderId });
   }, [finalAmount, orderId]);
 
-  // Generate dynamic QR code matching the exact amount & verified merchant VPA
+  // Generate dynamic QR code matching the exact order amount & verified merchant VPA
   useEffect(() => {
     let cancelled = false;
 
@@ -137,7 +135,7 @@ const UpiPaymentView = ({
     }
   };
 
-  // Launch specific or generic UPI App with fallback
+  // Launch specific or generic UPI App with smooth fallback
   const handleLaunchApp = (appType = 'generic') => {
     setAppOpenError(false);
     setHasAttemptedAppPay(true);
@@ -157,7 +155,6 @@ const UpiPaymentView = ({
     window.addEventListener('blur', () => { appLaunched = true; }, { once: true });
 
     try {
-      // First attempt target app intent
       window.location.href = targetUri;
     } catch (err) {
       console.warn(`Could not launch ${appType} scheme:`, err);
@@ -229,15 +226,30 @@ const UpiPaymentView = ({
       </div>
 
       <div className="p-4 sm:p-8">
+
+        {/* Owner Self-Payment Testing Notice */}
+        <div className="bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3.5 sm:p-4 mb-6 text-left shadow-2xs">
+          <div className="flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-950 space-y-1">
+              <p className="font-bold text-amber-900">
+                Notice regarding Bank Declines during Testing:
+              </p>
+              <p className="text-amber-800 leading-relaxed">
+                If you are testing this payment using the same PhonePe app or bank account linked to <strong>{MERCHANT_UPI_ID}</strong>, your bank will automatically decline it with a <em>"Self-transfer not allowed"</em> restriction. Please test using an alternate bank account, or use <strong>"Pay to Mobile" ({MERCHANT_PHONE})</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
         
-        {/* Navigation Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 bg-[#F4F5F7] rounded-2xl max-w-xl mx-auto mb-6 sm:mb-8 border border-gray-200 text-xs font-bold">
+        {/* Navigation Tabs (3 Clean Options) */}
+        <div className="grid grid-cols-3 gap-1.5 p-1 bg-[#F4F5F7] rounded-2xl max-w-lg mx-auto mb-6 sm:mb-8 border border-gray-200 text-xs font-bold">
           <button
             type="button"
             onClick={() => { setActiveTab('apps'); setAppOpenError(false); }}
-            className={`py-2.5 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-2.5 px-2 sm:px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'apps'
-                ? 'bg-white text-[#071A2F] shadow-xs'
+                ? 'bg-white text-[#071A2F] shadow-xs font-extrabold'
                 : 'text-[#687386] hover:text-[#071A2F]'
             }`}
           >
@@ -248,35 +260,22 @@ const UpiPaymentView = ({
           <button
             type="button"
             onClick={() => { setActiveTab('dynamic_qr'); setAppOpenError(false); }}
-            className={`py-2.5 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-2.5 px-2 sm:px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'dynamic_qr'
-                ? 'bg-white text-[#071A2F] shadow-xs'
+                ? 'bg-white text-[#071A2F] shadow-xs font-extrabold'
                 : 'text-[#687386] hover:text-[#071A2F]'
             }`}
           >
             <QrCode className="w-3.5 h-3.5" />
-            <span>Amount QR</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setActiveTab('official_qr'); setAppOpenError(false); }}
-            className={`py-2.5 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-              activeTab === 'official_qr'
-                ? 'bg-white text-[#071A2F] shadow-xs'
-                : 'text-[#687386] hover:text-[#071A2F]'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full bg-[#5f259f]" />
-            <span>PhonePe QR</span>
+            <span>Scan QR</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setActiveTab('manual'); setAppOpenError(false); }}
-            className={`py-2.5 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-2.5 px-2 sm:px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'manual'
-                ? 'bg-white text-[#071A2F] shadow-xs'
+                ? 'bg-white text-[#071A2F] shadow-xs font-extrabold'
                 : 'text-[#687386] hover:text-[#071A2F]'
             }`}
           >
@@ -295,7 +294,7 @@ const UpiPaymentView = ({
                   Completing your payment in UPI app?
                 </h4>
                 <p className="text-xs text-blue-900/80 mt-0.5 leading-relaxed">
-                  If your UPI app opened, finish the payment and enter your UPI PIN. When done, enter your 12-digit UTR/reference number below and tap <strong>"Confirm Payment"</strong>.
+                  If your UPI app opened, finish the payment to <strong>{MERCHANT_NAME}</strong> ({MERCHANT_UPI_ID}) and enter your UPI PIN. When done, enter your 12-digit UTR/reference number below and tap <strong>"Confirm Order"</strong>.
                 </p>
               </div>
             </div>
@@ -334,7 +333,7 @@ const UpiPaymentView = ({
                 Tap Your Preferred UPI App
               </h3>
               <p className="text-xs text-[#687386]">
-                Opens your app directly with recipient <strong className="text-[#071A2F]">SINGIREDDY JASHWANTH</strong> and exact amount <strong className="text-emerald-700">₹{formattedDisplayAmount}</strong> prefilled.
+                Opens your app directly with recipient <strong className="text-[#071A2F]">{MERCHANT_NAME}</strong> and exact amount <strong className="text-emerald-700">₹{formattedDisplayAmount}</strong> prefilled.
               </p>
             </div>
 
@@ -350,7 +349,7 @@ const UpiPaymentView = ({
                 </div>
                 <div className="text-left">
                   <div className="text-sm font-extrabold leading-none">Pay with PhonePe</div>
-                  <div className="text-[10px] text-white/80 font-normal mt-0.5">Instant transfer to 8019212948@axl</div>
+                  <div className="text-[10px] text-white/80 font-normal mt-0.5">Instant transfer to {MERCHANT_UPI_ID}</div>
                 </div>
               </div>
               <span className="text-sm font-black bg-white/20 px-2 py-1 rounded-lg">₹{formattedDisplayAmount}</span>
@@ -420,7 +419,7 @@ const UpiPaymentView = ({
                       UPI App Not Responding?
                     </p>
                     <p className="text-amber-900 mt-1">
-                      Some mobile browsers restrict direct app links. You can pay with 100% guarantee by:
+                      Some mobile browsers restrict direct app links. You can pay with 100% reliability by:
                     </p>
                     <div className="mt-2 space-y-1.5 font-medium text-amber-950">
                       <p>1. Copying our UPI ID <strong className="font-mono bg-white px-1.5 py-0.5 rounded border border-amber-300">{MERCHANT_UPI_ID}</strong></p>
@@ -529,40 +528,7 @@ const UpiPaymentView = ({
           </div>
         )}
 
-        {/* ================= TAB 3: OFFICIAL PHONEPE STANDING QR ================= */}
-        {activeTab === 'official_qr' && (
-          <div className="max-w-md mx-auto space-y-4 text-center">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 bg-[#5f259f]/10 text-[#5f259f] px-3 py-1 rounded-full text-xs font-bold mb-1">
-                <span>PhonePe Official Merchant Standee</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-bold text-[#071A2F]">
-                SINGIREDDY JASHWANTH
-              </h3>
-              <p className="text-xs text-[#687386]">
-                Direct photo of our verified PhonePe QR standee. Scan or upload from gallery in PhonePe.
-              </p>
-            </div>
-
-            {/* Standee Image Frame */}
-            <div className="p-3 bg-black rounded-3xl max-w-[280px] mx-auto shadow-md border border-gray-800">
-              <img 
-                src="/images/phonepe-qr.png" 
-                alt="PhonePe Accepted Here — Singireddy Jashwanth" 
-                className="w-full h-auto rounded-2xl object-cover"
-              />
-            </div>
-
-            <div className="bg-[#FAF8F4] border border-[#071A2F]/10 rounded-2xl p-3 text-xs text-[#071A2F] space-y-1 text-left">
-              <p className="font-bold text-[#071A2F]">How to use this standee:</p>
-              <p className="text-[#687386] text-[11px]">1. Open PhonePe $\rightarrow$ Tap the Scanner icon at the top right</p>
-              <p className="text-[#687386] text-[11px]">2. Point camera at this screen OR choose this screenshot from gallery</p>
-              <p className="text-[#687386] text-[11px]">3. Enter amount <strong className="text-emerald-700">₹{formattedDisplayAmount}</strong> and complete payment</p>
-            </div>
-          </div>
-        )}
-
-        {/* ================= TAB 4: MANUAL TRANSFER & COPY UPI ================= */}
+        {/* ================= TAB 3: MANUAL TRANSFER & COPY UPI ================= */}
         {activeTab === 'manual' && (
           <div className="max-w-md mx-auto space-y-4">
             <div className="text-center space-y-1">
@@ -578,7 +544,7 @@ const UpiPaymentView = ({
             <div className="bg-gray-50 border border-gray-200 rounded-2xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-[#071A2F] uppercase tracking-wider">
-                  Primary UPI ID (PhonePe Axis)
+                  Primary Merchant UPI ID (PhonePe)
                 </span>
                 <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
                   Recommended
@@ -597,7 +563,7 @@ const UpiPaymentView = ({
                       : 'bg-[#071A2F] text-white hover:bg-[#123C69]'
                   }`}
                 >
-                  {copiedId === 'vpa_primary' ? '✓ Copied' : 'Copy'}
+                  {copiedId === 'vpa_primary' ? '✓ Copied' : 'Copy UPI ID'}
                 </button>
               </div>
               <p className="text-[11px] text-[#687386]">Beneficiary Name: <strong>{MERCHANT_NAME}</strong></p>
@@ -626,7 +592,7 @@ const UpiPaymentView = ({
                       : 'bg-[#071A2F] text-white hover:bg-[#123C69]'
                   }`}
                 >
-                  {copiedId === 'phone' ? '✓ Copied' : 'Copy'}
+                  {copiedId === 'phone' ? '✓ Copied' : 'Copy Number'}
                 </button>
               </div>
               <p className="text-[11px] text-[#687386]">Open PhonePe $\rightarrow$ Select "To Mobile Number" $\rightarrow$ Type 8985993948</p>

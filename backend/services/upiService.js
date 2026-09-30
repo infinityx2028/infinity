@@ -1,11 +1,10 @@
 // UPI Payment Service
-// Verified Primary PhonePe UPI ID: 8019212948@axl
-// Registered Payee Name: SINGIREDDY JASHWANTH
-// Registered PhonePe parameters: mc=0000, mode=02, purpose=00
-// Alternate Verified UPI ID: 8985993948@ybl (Business Phone: 8985993948)
+// Primary Merchant UPI ID: Q489570312@ybl
+// Payee Name: Infinity Customizations
+// Alternate UPI ID: 8985993948@ybl (Business Phone: 8985993948)
 
-const MERCHANT_UPI_ID = "8019212948@axl";
-const MERCHANT_NAME = "SINGIREDDY JASHWANTH";
+const MERCHANT_UPI_ID = "Q489570312@ybl";
+const MERCHANT_NAME = "Infinity Customizations";
 const ALT_MERCHANT_UPI_ID = "8985993948@ybl";
 const MERCHANT_PHONE = "8985993948";
 
@@ -22,10 +21,10 @@ const generateUpiDeepLink = (orderId, amount) => {
   const cleanOrderId = String(orderId || '').replace(/[^a-zA-Z0-9]/g, '');
   const encodedName = encodeURIComponent(MERCHANT_NAME.trim());
 
-  // Compliant NPCI URI matching verified PhonePe merchant QR parameters:
-  let link = `upi://pay?pa=${cleanUpiId}&pn=${encodedName}&mc=0000&mode=02&purpose=00&am=${formattedAmount}&cu=INR`;
+  // Compliant NPCI universal UPI URI without unauthenticated parameters:
+  let link = `upi://pay?pa=${cleanUpiId}&pn=${encodedName}&am=${formattedAmount}&cu=INR`;
   if (cleanOrderId) {
-    link += `&tn=${cleanOrderId}`;
+    link += `&tn=Order${cleanOrderId}`;
   }
   return link;
 };

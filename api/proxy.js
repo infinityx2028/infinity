@@ -171,11 +171,8 @@ module.exports = async (req, res) => {
     const contentType = upstream.headers.get('content-type') || 'application/json';
     let data = await upstream.text();
     if (data && data.includes('upi://pay')) {
-      // Remove any unauthenticated tr= parameter which triggers bank rejection
-      data = data.replace(/[&?]tr=[^&"]+/g, '');
-      if (data.includes('Q489570312@ybl')) {
-        data = data.split('Q489570312@ybl').join('8019212948@axl&mc=0000&mode=02&purpose=00');
-      }
+      // Remove unauthenticated parameters (tr, mc, mode, purpose) which trigger bank rejection
+      data = data.replace(/[&?](tr|mc|mode|purpose)=[^&"]+/g, '');
     }
 
     res.status(upstream.status);
