@@ -323,21 +323,23 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
     intent = { ...intent, ...currentIntent };
   }
 
-  if (refinement === 'under-500') {
+  if (refinement === 'under-500' || refinement === 'lower-budget') {
     intent.budgetMax = 500;
-  } else if (refinement === 'premium') {
+  } else if (refinement === 'premium' || refinement === 'more-premium') {
     intent.style = 'premium';
     intent.budgetMin = 600;
-  } else if (refinement === 'photo-gifts') {
+  } else if (refinement === 'photo-gifts' || refinement === 'photo-focused') {
     if (!intent.interests.includes('photos')) intent.interests.push('photos');
   } else if (refinement === 'couples') {
     intent.recipient = 'couple';
     intent.relationship = 'romantic';
-  } else if (refinement === 'more-personal') {
+  } else if (refinement === 'more-personal' || refinement === 'more-emotional') {
     intent.style = 'sentimental';
+  } else if (refinement === 'surprise-me') {
+    intent.isSurprise = true;
   }
 
-  const isVague = !intent.occasion && !intent.recipient && !intent.budgetMax && intent.interests.length === 0;
+  const isVague = !intent.occasion && !intent.recipient && !intent.budgetMax && intent.interests.length === 0 && !intent.isSurprise;
   const isGibberish = cleanQuery.length > 5 && !/[aeiouy]/i.test(cleanQuery);
 
   const pool = (Array.isArray(cachedProducts) && cachedProducts.length > 0)
@@ -382,3 +384,32 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
 
   return rankCatalogDeterministically(pool, intent);
 }
+
+// Extract interactive intent tokens for real-time visual UI feedback
+export function getIntentTokens(intent) {
+  if (!intent) return [];
+  const tokens = [];
+  if (intent.occasion) {
+    const formatted = intent.occasion.charAt(0).toUpperCase() + intent.occasion.slice(1);
+    tokens.push({ key: 'occasion', label: formatted, type: 'occasion' });
+  }
+  if (intent.recipient) {
+    const formatted = intent.recipient.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    tokens.push({ key: 'recipient', label: formatted, type: 'recipient' });
+  }
+  if (intent.interests && intent.interests.length > 0) {
+    intent.interests.forEach(i => {
+      const formatted = i.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      tokens.push({ key: `interest-${i}`, value: i, label: formatted, type: 'interest' });
+    });
+  }
+  if (intent.budgetMax) {
+    tokens.push({ key: 'budgetMax', label: `Under ₹${intent.budgetMax}`, type: 'budget' });
+  }
+  if (intent.style) {
+    const formatted = intent.style.charAt(0).toUpperCase() + intent.style.slice(1);
+    tokens.push({ key: 'style', label: formatted, type: 'style' });
+  }
+  return tokens;
+}
+

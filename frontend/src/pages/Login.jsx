@@ -123,10 +123,10 @@ const Login = () => {
 
           <div className="mb-6">
             <h1 className="text-xl sm:text-2xl font-extrabold text-[#071A2F] tracking-tight">
-              WELCOME BACK
+              SIGN IN TO YOUR MEMORIES
             </h1>
             <p className="text-xs sm:text-sm text-[#687386] font-normal mt-1">
-              Sign in to continue to your account.
+              Welcome back. Track your personalized orders and account.
             </p>
           </div>
 
@@ -252,9 +252,9 @@ const Login = () => {
           </div>
 
           {/* Security Indicator */}
-          <div className="flex items-center justify-center gap-1.5 mt-4 text-[11px] text-[#687386]">
-            <ShieldCheck size={13} className="text-emerald-600" />
-            <span>Secured with 256-bit encryption</span>
+          <div className="flex items-center justify-center gap-1.5 mt-4 text-[11px] text-[#687386] text-center">
+            <ShieldCheck size={14} className="text-[#C5A46D] flex-shrink-0" />
+            <span>Your personalized orders and saved details are kept safe.</span>
           </div>
 
         </div>

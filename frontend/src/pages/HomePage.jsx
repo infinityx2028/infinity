@@ -6,6 +6,7 @@ import BestSellersSection from '../components/BestSellersSection';
 import MomentsStorySection from '../components/MomentsStorySection';
 import FeaturedProducts from '../components/FeaturedProducts';
 import PersonalizationProcess from '../components/PersonalizationProcess';
+import CustomerReviews from '../components/CustomerReviews';
 import WhyChooseUs from '../components/WhyChooseUs';
 import CommunityGallery from '../components/CommunityGallery';
 import PremiumCTA from '../components/PremiumCTA';
@@ -17,36 +18,39 @@ const HomePage = () => {
 
   return (
     <main className="w-full bg-[#FAF8F4] overflow-x-hidden">
-      {/* 1. CINEMATIC 3D HERO */}
+      {/* 03. COMPACT CINEMATIC 3D HERO */}
       <Hero3D />
 
-      {/* 2. PERSONALIZED CATEGORIES (What Are You Looking For?) */}
-      <CategoryGrid />
-
-      {/* 2.5 INFINITY AI — PERSONALIZED GIFT FINDER */}
+      {/* 04. INFINITY AI — PERSONAL GIFT CONCIERGE */}
       <InfinityAISection />
 
-      {/* 3. BEST SELLERS */}
+      {/* 05. SHOP BY CATEGORY */}
+      <CategoryGrid />
+
+      {/* 06. SIGNATURE KEEPSAKES (BEST SELLERS) */}
       <BestSellersSection />
 
-      {/* 4. SCROLL STORY (Make Their Moment Unforgettable) */}
-      <MomentsStorySection />
-
-      {/* 5. FEATURED GIFTS (Curated Selection of Handcrafted Gifts) */}
-      <FeaturedProducts />
-
-      {/* 6. HOW IT WORKS (Personalizing Is Easy - 4 Simple Steps) */}
+      {/* 07. HOW IT WORKS (THE GIFTING EXPERIENCE) */}
       <PersonalizationProcess />
 
-      {/* 7. THE INFINITY DIFFERENCE (Deep Navy #071A2F Brand Story) */}
+      {/* 08. CUSTOMER MOMENTS & REVIEWS */}
+      <CustomerReviews />
+
+      {/* BRAND STORY: FROM CAMERA ROLL TO SOMETHING REAL */}
+      <MomentsStorySection />
+
+      {/* FEATURED GIFTS */}
+      <FeaturedProducts />
+
+      {/* THE INFINITY DIFFERENCE */}
       <WhyChooseUs />
 
-      {/* 8. Real Social Proof & Community Studio Gallery (Desktop only to keep mobile strictly to 10 sections) */}
+      {/* Real Social Proof & Community Studio Gallery (Desktop) */}
       <div className="hidden lg:block">
         <CommunityGallery />
       </div>
 
-      {/* 9. FINAL CONVERSION CTA BANNER */}
+      {/* 09. FINAL EMOTIONAL CTA / BRAND KEEPSAKE BANNER */}
       <PremiumCTA />
     </main>
   );

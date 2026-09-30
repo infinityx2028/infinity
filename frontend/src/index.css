@@ -37,6 +37,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Global Image & 3D Orientation Rules */
+img {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  image-rendering: auto;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 /* Headings: Manrope Hierarchy */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

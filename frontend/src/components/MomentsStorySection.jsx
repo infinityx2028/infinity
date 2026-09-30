@@ -7,38 +7,55 @@ const MomentsStorySection = () => {
     <section id="made-around-your-story" className="py-6 sm:py-20 md:py-28 bg-[#F5F6F8] border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* MOBILE VIEW: Compact Editorial Banner (~280px height) */}
+        {/* MOBILE VIEW: Editorial Story Banner (~320px height) */}
         <div className="lg:hidden">
-          <div className="relative rounded-2xl overflow-hidden bg-white border border-[#071A2F]/8 shadow-[0_4px_16px_rgba(7,26,47,0.04)] p-4 flex flex-col justify-between h-[270px]">
-            {/* Background image occupying ~55% with subtle depth and soft gradient */}
-            <div className="absolute top-0 right-0 w-[55%] h-full overflow-hidden pointer-events-none">
-              <img
-                loading="lazy"
-                decoding="async"
-                src="/images/anniversary MAG.jpg"
-                alt="Personalized Gifts"
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
+          <div className="relative rounded-2xl overflow-hidden bg-[#071A2F] text-white p-5 flex flex-col justify-between h-[320px] shadow-[0_12px_36px_rgba(7,26,47,0.12)] border border-[#071A2F]/10">
+            {/* Background champagne ambient glow */}
+            <div className="absolute top-0 right-0 w-56 h-56 bg-[#C5A46D]/15 rounded-full blur-3xl pointer-events-none" />
+            
+            {/* Visual Depth: Layered keepsakes peeking on the right */}
+            <div className="absolute -right-6 top-6 w-44 h-56 pointer-events-none select-none">
+              {/* Drifting polaroid layer */}
+              <div className="absolute top-2 right-12 w-28 aspect-[3/4] rounded-xl bg-white p-1.5 shadow-md transform rotate-6 border border-white/20">
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src="/images/hero-pol-optimized.webp"
+                  alt=""
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              {/* Emerging keepsake frame */}
+              <div className="absolute top-10 right-2 w-32 aspect-[4/5] rounded-xl bg-white/10 backdrop-blur-md p-1 shadow-2xl transform -rotate-3 border border-white/30">
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src="/images/anniversary MAG.jpg"
+                  alt="Personalized Keepsake"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
             </div>
 
-            <div className="relative z-10 max-w-[65%] flex flex-col justify-between h-full">
+            {/* Content on the left */}
+            <div className="relative z-10 max-w-[62%] flex flex-col justify-between h-full">
               <div>
-                <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-[#C5A46D] block mb-1">
-                  Personalized Gifting
+                <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-[#C5A46D] block mb-1.5">
+                  BRAND STORY
                 </span>
-                <h3 className="text-xl font-extrabold text-[#071A2F] tracking-tight leading-tight mb-2">
-                  MADE FROM <br />YOUR MEMORIES.
+                <h3 className="text-xl font-extrabold text-white tracking-tight leading-[1.15] mb-2">
+                  FROM CAMERA ROLL <br />
+                  <span className="text-[#C5A46D]">TO SOMETHING REAL.</span>
                 </h3>
-                <p className="text-xs text-[#687386] font-light leading-relaxed">
-                  Turn your favourite moments into personalized gifts.
+                <p className="text-[11.5px] text-gray-300 font-light leading-snug">
+                  Turn ordinary phone photos into tangible keepsakes they will hold onto forever.
                 </p>
               </div>
 
               <div>
                 <Link
                   to="/shop"
-                  className="inline-flex items-center gap-1.5 bg-[#071A2F] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xs hover:bg-[#0B2748] active:scale-95 transition-all"
+                  className="inline-flex items-center gap-1.5 bg-white text-[#071A2F] text-xs font-bold px-4 py-2.5 rounded-full shadow-md active:scale-95 hover:bg-[#FAF8F4] transition-all"
                 >
                   <span>EXPLORE GIFTS</span>
                   <span className="text-[#C5A46D]">→</span>

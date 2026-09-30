@@ -78,14 +78,9 @@ const CategoryGrid = () => {
         {/* MOBILE VIEW: Compact SHOP BY CATEGORY Horizontal Carousel (< lg) */}
         <div className="lg:hidden">
           <div className="flex items-end justify-between mb-3">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#687386] block mb-0.5">
-                Curated Collections
-              </span>
-              <h2 className="text-xl font-extrabold text-[#071A2F] tracking-tight">
-                SHOP BY CATEGORY
-              </h2>
-            </div>
+            <h2 className="text-xl font-extrabold text-[#071A2F] tracking-tight">
+              SHOP BY CATEGORY
+            </h2>
             <Link 
               to="/shop"
               className="text-xs font-bold text-[#071A2F] hover:text-[#C5A46D] transition-colors pb-0.5"

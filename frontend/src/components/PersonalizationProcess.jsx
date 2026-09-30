@@ -3,18 +3,18 @@ import React from 'react';
 const STEPS = [
   {
     num: '01',
-    title: 'Choose a product',
-    desc: 'Pick your handcrafted frame, t-shirt, polaroids, or magazine.'
+    title: 'Choose Your Keepsake',
+    desc: 'Pick your handcrafted frame, magazine, polaroid set, or hamper.'
   },
   {
     num: '02',
-    title: 'Place your order',
-    desc: 'Select options, add custom text, and complete your order.'
+    title: 'Tell Us Your Story',
+    desc: 'Add names, dates, or share photos easily on WhatsApp after checkout.'
   },
   {
     num: '03',
-    title: 'Send photos on WhatsApp',
-    desc: 'Send photos on WhatsApp to approve your preview before crafting.'
+    title: 'Delivered with Care',
+    desc: 'Handcrafted with archival precision and shipped to their doorstep.'
   }
 ];
 

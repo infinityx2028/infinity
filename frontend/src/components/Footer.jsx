@@ -10,11 +10,11 @@ const WhatsAppIcon = ({ size = 15, className = "" }) => (
 
 const Footer = () => {
   return (
-    <footer className="bg-[#04111F] text-white pt-12 sm:pt-16 pb-8 border-t border-white/10 mt-auto">
+    <footer className="bg-[#04111F] text-white pt-8 sm:pt-14 pb-6 sm:pb-8 border-t border-white/10 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Main Grid: Responsive 2-column on mobile, 12-column on desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-10 border-b border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-8 sm:pb-10 border-b border-white/10">
           
           {/* Brand Column */}
           <div className="sm:col-span-2 lg:col-span-5 space-y-3.5">
@@ -28,7 +28,7 @@ const Footer = () => {
             </Link>
 
             <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed max-w-sm">
-              Personalized gifts made around your favourite memories. Handcrafted photo frames, custom magazines, polaroids & hampers delivered across India.
+              Personalized gifts made from the moments you never want to forget.
             </p>
 
             {/* Contact details */}

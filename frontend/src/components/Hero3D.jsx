@@ -78,6 +78,25 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
   const touchStartYRef = useRef(null);
   const isDocumentHiddenRef = useRef(false);
   const rafIdRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Track scroll position for Part 6 signature hero-to-AI transition
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const y = window.scrollY || 0;
+          const p = Math.min(Math.max(y / 240, 0), 1);
+          setScrollProgress(p);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Detect reduced motion preference
   useEffect(() => {
@@ -215,9 +234,9 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     touchRafRef.current = requestAnimationFrame(() => {
       touchRafRef.current = null;
       if (!mobileCardRef.current) return;
-      // Max rotateX ±3°, rotateY ±4° as requested by spec
-      const rx = Math.max(-3, Math.min(3, -deltaY * 0.05)).toFixed(2);
-      const ry = Math.max(-4, Math.min(4, deltaX * 0.06)).toFixed(2);
+      // Strict tilt bounds: max rotateX ±2.5°, rotateY ±3.5° as specified
+      const rx = Math.max(-2.5, Math.min(2.5, -deltaY * 0.04)).toFixed(2);
+      const ry = Math.max(-3.5, Math.min(3.5, deltaX * 0.05)).toFixed(2);
       mobileCardRef.current.style.setProperty('--mobile-rx', `${rx}deg`);
       mobileCardRef.current.style.setProperty('--mobile-ry', `${ry}deg`);
     });
@@ -394,11 +413,11 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10">
 
         {/* ======================================================== */}
-        {/* COMPACT TWO-ZONE MOBILE HERO (Target: 500-600px Total) */}
+        {/* COMPACT TWO-ZONE MOBILE HERO (Target: 450-510px Total) */}
         {/* ======================================================== */}
-        <div className="lg:hidden flex flex-col justify-between w-full max-w-[420px] mx-auto pt-2 pb-1">
+        <div className="lg:hidden flex flex-col justify-between w-full max-w-[420px] mx-auto pt-1 pb-1">
           
-          {/* ZONE 1: HERO COPY (Compact, ~190-210px) */}
+          {/* ZONE 1: HERO COPY (Compact, ~185-200px) */}
           <div className="flex flex-col space-y-2">
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#071A2F]/10 shadow-2xs w-fit">
@@ -414,43 +433,67 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               <span className="text-[#123C69]">MOMENT PERSONAL.</span>
             </h1>
 
-            {/* Description: max 2 lines */}
+            {/* Supporting sentence: clean & focused */}
             <p className="text-[14px] text-[#687386] font-normal leading-snug w-[92%]">
-              Custom gifts designed around the moments that matter most. Handcrafted frames, apparel & magazines.
+              Turn your favourite moments into gifts made just for them.
             </p>
 
-            {/* Buttons on one compact row */}
+            {/* Primary & Secondary CTAs on one compact row */}
             <div className="flex items-center gap-2 pt-1">
               <Link
                 to="/shop"
-                className="btn-physical-3d inline-flex items-center justify-center gap-1.5 bg-[#071A2F] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] flex-1 text-center"
+                className="btn-physical-3d inline-flex items-center justify-center gap-1.5 bg-[#071A2F] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] flex-1 text-center shadow-xs active:scale-95 cursor-pointer"
               >
                 <span>SHOP GIFTS</span>
-                <ArrowRight size={13} />
+                <ArrowRight size={13} className="text-[#C5A46D]" />
               </Link>
 
               <a
-                href="#collections-section"
-                className="inline-flex items-center justify-center gap-1 bg-white text-[#071A2F] border border-[#071A2F]/15 px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] transition-colors"
+                href="#infinity-ai-concierge"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('infinity-ai-concierge');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    const input = el.querySelector('input');
+                    if (input) setTimeout(() => input.focus(), 400);
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-1.5 bg-white text-[#071A2F] border border-[#071A2F]/15 px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] transition-colors shadow-2xs active:scale-95 cursor-pointer"
               >
-                <span>EXPLORE</span>
+                <span>ASK INFINITY AI</span>
                 <span className="text-[#C5A46D]">→</span>
               </a>
             </div>
           </div>
 
-          {/* ZONE 2: 3D PRODUCT STAGE (Compact 220-250px) */}
+          {/* ZONE 2: 3D PRODUCT STAGE (Compact 220-245px) */}
           <div 
             className="w-full pt-3"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* 3D Product Stage: 220px height, 1 main object (200px visual) + 2 side peekers */}
+            {/* 3D Product Stage: Visual concept "PRODUCTS EMERGING FROM MEMORIES" */}
             <div 
-              style={{ perspective: '700px', transformStyle: 'preserve-3d' }}
-              className="relative w-full h-[215px] flex items-center justify-center overflow-hidden"
+              style={{ perspective: '800px', transformStyle: 'preserve-3d' }}
+              className="relative w-full h-[220px] flex items-center justify-center overflow-hidden"
             >
+              {/* Subtle memory polaroid peeker in backdrop */}
+              <div 
+                aria-hidden="true"
+                style={{
+                  transform: 'translate3d(0, -15px, -60px) rotate(-6deg) scale(0.85)',
+                  opacity: 0.35,
+                  pointerEvents: 'none'
+                }}
+                className="absolute w-[140px] h-[155px] rounded-xl bg-white p-1.5 shadow-sm border border-[#071A2F]/10 z-0"
+              >
+                <div className="w-full h-full bg-[#FAF8F4] rounded-lg overflow-hidden flex items-center justify-center">
+                  <img src="/images/hero-pol-optimized.webp" alt="" className="w-full h-full object-cover" />
+                </div>
+              </div>
+
               {HERO_PRODUCTS.map((prod, idx) => {
                 const total = HERO_PRODUCTS.length;
                 const diff = (idx - activeIndex + total) % total;
@@ -460,20 +503,23 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
 
                 if (!isCurrent && !isPrev && !isNext) return null;
 
-                // Mobile 3D transform: Main object 100% sharp, side objects smaller and peeking behind
+                // Part 6 signature scroll transition: active product shrinks and travels down toward AI section
+                const scrollTranslateY = scrollProgress * 70;
+                const scrollScale = 1 - scrollProgress * 0.16;
+
                 let cardTransform = '';
                 let cardOpacity = 1;
                 let cardZ = 20;
 
                 if (isCurrent) {
-                  cardTransform = 'translate3d(0, 0, 24px) rotateX(var(--mobile-rx, 0deg)) rotateY(var(--mobile-ry, 0deg)) scale(1)';
+                  cardTransform = `translate3d(0, ${scrollTranslateY}px, 32px) rotateX(var(--mobile-rx, 0deg)) rotateY(var(--mobile-ry, 0deg)) scale(${scrollScale})`;
                   cardZ = 30;
                 } else if (isNext) {
-                  cardTransform = 'translate3d(68px, 4px, -45px) rotateY(-14deg) scale(0.82)';
+                  cardTransform = 'translate3d(65px, 6px, -45px) rotateY(-8deg) scale(0.82)';
                   cardOpacity = 0.55;
                   cardZ = 10;
                 } else if (isPrev) {
-                  cardTransform = 'translate3d(-68px, 4px, -45px) rotateY(14deg) scale(0.82)';
+                  cardTransform = 'translate3d(-65px, 6px, -45px) rotateY(8deg) scale(0.82)';
                   cardOpacity = 0.55;
                   cardZ = 10;
                 }
@@ -484,10 +530,10 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                     ref={isCurrent ? mobileCardRef : null}
                     style={{
                       transform: cardTransform,
-                      opacity: cardOpacity,
+                      opacity: isCurrent ? Math.max(1 - scrollProgress * 0.3, 0.7) : cardOpacity,
                       zIndex: cardZ,
                       transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease',
-                      boxShadow: isCurrent ? '0 16px 36px rgba(7, 26, 47, 0.16)' : 'none'
+                      boxShadow: isCurrent ? '0 18px 40px rgba(7, 26, 47, 0.16)' : 'none'
                     }}
                     onClick={() => {
                       if (!isCurrent) {
@@ -495,8 +541,10 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
                         resetAutoScroll();
                       }
                     }}
-                    className={`absolute w-[175px] h-[190px] rounded-2xl bg-white border border-[#071A2F]/10 p-2 select-none ${
-                      isCurrent ? 'cursor-grab active:cursor-grabbing ring-1 ring-[#071A2F]/10' : 'cursor-pointer'
+                    className={`absolute rounded-2xl bg-white border border-[#071A2F]/10 p-2 select-none overflow-hidden ${
+                      isCurrent 
+                        ? 'w-[195px] h-[200px] cursor-grab active:cursor-grabbing ring-1 ring-[#071A2F]/10' 
+                        : 'w-[130px] h-[140px] cursor-pointer'
                     }`}
                   >
                     <div className="relative w-full h-full rounded-xl overflow-hidden bg-[#FAF8F4]">
@@ -523,8 +571,8 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               })}
             </div>
 
-            {/* COMPACT PRODUCT INFO STRIP (Max 55-60px tall) */}
-            <div className="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#071A2F]/10 shadow-xs flex items-center justify-between gap-2 mt-1">
+            {/* COMPACT PRODUCT INFO STRIP (Max 52-56px tall) */}
+            <div className="w-full bg-white rounded-xl px-3.5 py-2 border border-[#071A2F]/10 shadow-xs flex items-center justify-between gap-2 mt-1">
               <div className="min-w-0 flex-1">
                 <h3 className="font-bold text-xs text-[#071A2F] leading-tight truncate">
                   {activeProduct.name}
@@ -537,7 +585,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
               {/* Action */}
               <Link 
                 to={activeProduct.link}
-                className="btn-physical-3d inline-flex items-center gap-1 bg-[#071A2F] text-white px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wider flex-shrink-0 cursor-pointer"
+                className="btn-physical-3d inline-flex items-center gap-1 bg-[#071A2F] text-white px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wider flex-shrink-0 cursor-pointer shadow-2xs"
               >
                 <span>CUSTOMIZE</span>
                 <span>→</span>

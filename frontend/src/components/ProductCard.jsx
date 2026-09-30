@@ -43,6 +43,15 @@ const ProductCard = ({ product, showCategory = true }) => {
     !product.canDirectBuy
   );
 
+  const isCase = 
+    product.categoryId === 'cases' || 
+    product.categoryId === 'essentials' || 
+    (product.name && product.name.toLowerCase().includes('case'));
+
+  const isPolaroid =
+    product.categoryId === 'memories' ||
+    (product.name && product.name.toLowerCase().includes('polaroid'));
+
   const toggleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -150,7 +159,9 @@ const ProductCard = ({ product, showCategory = true }) => {
                 setIsImgError(true);
                 setIsImgLoaded(true);
               }}
-              className={`w-full h-full object-cover group-hover:scale-[1.03] group-active:scale-[1.03] transition-transform duration-300 ease-out ${
+              className={`w-full h-full ${
+                isCase ? 'object-contain p-2.5' : isPolaroid ? 'object-cover p-1 bg-white' : 'object-cover'
+              } group-hover:scale-[1.03] group-active:scale-[1.03] transition-transform duration-300 ease-out ${
                 isImgLoaded ? 'opacity-100' : 'opacity-0'
               }`}
             />

@@ -10,7 +10,8 @@ async function optimizeFile(filePath) {
     const { size } = fs.statSync(filePath);
     if (size < 100 * 1024) return;
 
-    const image = sharp(filePath);
+    // Automatically normalize orientation according to EXIF Orientation tag before any processing
+    const image = sharp(filePath).rotate();
     const metadata = await image.metadata();
 
     const maxWidth = 1920;

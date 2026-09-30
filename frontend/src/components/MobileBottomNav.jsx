@@ -1,14 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Compass, Search, ShoppingBag, User } from 'lucide-react';
+import { Home, Compass, Sparkles, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useInfinityAI } from '../contexts/InfinityAIContext';
 
 const MobileBottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { cart, openCartDrawer } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { openInfinityAI, isOpen: isAIOpen } = useInfinityAI();
 
   // Hide on checkout, product pages, and admin routes to prioritize purchase CTAs and forms
   if (
@@ -28,21 +28,21 @@ const MobileBottomNav = () => {
       label: 'Home',
       icon: Home,
       action: () => navigate('/'),
-      isActive: location.pathname === '/',
+      isActive: location.pathname === '/' && !isAIOpen,
     },
     {
       id: 'shop',
       label: 'Shop',
       icon: Compass,
       action: () => navigate('/shop'),
-      isActive: location.pathname.startsWith('/shop'),
+      isActive: location.pathname.startsWith('/shop') && !isAIOpen,
     },
     {
-      id: 'search',
-      label: 'Search',
-      icon: Search,
-      action: () => navigate('/search'),
-      isActive: location.pathname === '/search',
+      id: 'ai',
+      label: 'AI',
+      icon: Sparkles,
+      action: () => openInfinityAI(),
+      isActive: isAIOpen,
     },
     {
       id: 'bag',
@@ -55,7 +55,7 @@ const MobileBottomNav = () => {
           navigate('/cart');
         }
       },
-      isActive: location.pathname === '/cart',
+      isActive: location.pathname === '/cart' && !isAIOpen,
       badge: totalCartCount,
     },
   ];
