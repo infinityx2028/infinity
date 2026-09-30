@@ -168,6 +168,7 @@ module.exports = async (req, res) => {
       }
     }
 
+    const contentType = upstream.headers.get('content-type') || 'application/json';
     let data = await upstream.text();
     if (data && data.includes('Q489570312@ybl')) {
       data = data.split('Q489570312@ybl').join('8019212948@axl&mc=0000&mode=02&purpose=00');
