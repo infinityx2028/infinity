@@ -10,10 +10,52 @@ const WhatsAppIcon = ({ size = 18, className = "" }) => (
 
 const PremiumCTA = () => {
   return (
-    <section className="py-20 md:py-28 bg-[#FAF8F4] border-t border-[#071A2F]/5">
+    <section className="py-6 sm:py-20 md:py-28 bg-[#FAF8F4] border-t border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        <div className="relative rounded-[36px] bg-[#071A2F] p-8 sm:p-14 lg:p-20 text-white overflow-hidden shadow-2xl">
+        {/* MOBILE VIEW: Compact Final CTA (~280-320px) */}
+        <div className="sm:hidden relative rounded-2xl bg-[#071A2F] p-5 text-white overflow-hidden shadow-xl text-center flex flex-col items-center justify-between min-h-[280px]">
+          {/* Subtle Warm Highlight in Corner */}
+          <div className="absolute top-0 right-0 w-60 h-60 bg-[#C5A46D]/10 rounded-full blur-2xl pointer-events-none" />
+
+          {/* One Compact Product Visual */}
+          <div className="relative z-10 w-14 h-14 rounded-2xl overflow-hidden border-2 border-white/20 shadow-md mb-2">
+            <img 
+              src="/images/4 x 6 black frame 199.jpg" 
+              alt="Infinity Custom Gifts" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="relative z-10">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-[#C5A46D] block mb-1">
+              GIFTING REDEFINED
+            </span>
+
+            <h2 className="text-lg font-extrabold tracking-tight text-white leading-snug mb-1.5">
+              Some gifts are opened. <br />
+              <span className="text-[#C5A46D]">The best ones are remembered.</span>
+            </h2>
+
+            <p className="text-[11px] text-gray-300 font-light leading-relaxed mb-4 max-w-xs mx-auto">
+              Start personalizing a keepsake today with WhatsApp preview confirmation.
+            </p>
+          </div>
+
+          {/* One Dominant CTA */}
+          <div className="relative z-10 w-full">
+            <Link
+              to="/shop/frames"
+              className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-[#071A2F] py-3 rounded-full font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all"
+            >
+              <span>FIND THEIR GIFT</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW: Full Heroic CTA (sm+) */}
+        <div className="hidden sm:block relative rounded-[36px] bg-[#071A2F] p-10 sm:p-14 lg:p-20 text-white overflow-hidden shadow-2xl">
           
           {/* Subtle Warm Highlight in Corner */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#C5A46D]/8 rounded-full blur-3xl pointer-events-none" />

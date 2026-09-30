@@ -43,45 +43,43 @@ const BestSellersSection = () => {
   }, []);
 
   return (
-    <section id="best-sellers" className="py-16 md:py-24 bg-white border-b border-[#071A2F]/5">
+    <section id="best-sellers" className="py-7 sm:py-16 md:py-24 bg-white border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4">
+        <div className="flex items-end justify-between mb-4 sm:mb-12">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2.5 block">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-[#687386] mb-0.5 sm:mb-1 block">
               Customer Favorites
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#071A2F] tracking-tight">
-              BEST SELLERS.
+            <h2 className="text-xl sm:text-4xl lg:text-5xl font-extrabold text-[#071A2F] tracking-tight">
+              BEST SELLERS
             </h2>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/shop/frames"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#071A2F] hover:text-[#123C69] transition-colors"
-            >
-              <span>VIEW ALL</span>
-              <span className="text-[#C5A46D]">→</span>
-            </Link>
-          </div>
+          <Link
+            to="/shop/frames"
+            className="text-xs sm:text-sm font-bold text-[#071A2F] hover:text-[#C5A46D] transition-colors pb-0.5"
+          >
+            <span>View All</span>
+            <span className="ml-1 text-[#C5A46D]">→</span>
+          </Link>
         </div>
 
-        {/* Product Cards Grid: 2 lines in mobile view (2x2), 1 line in PC view (1x4) */}
+        {/* Product Cards Grid: 2 columns on mobile (gap 10px), 4 columns on PC */}
         {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-[#FAF8F4] rounded-3xl p-4 border border-[#071A2F]/6 flex flex-col justify-between">
-                <div className="aspect-[4/5] bg-white rounded-2xl mb-4 flex items-center justify-center">
+              <div key={i} className="bg-[#FAF8F4] rounded-2xl p-2.5 border border-[#071A2F]/6 flex flex-col justify-between">
+                <div className="aspect-square bg-white rounded-xl mb-2 flex items-center justify-center">
                   <InfinityLoader size="sm" />
                 </div>
-                <div className="h-4 bg-gray-200/60 rounded w-3/4 mb-2 animate-pulse" />
-                <div className="h-4 bg-gray-200/60 rounded w-1/3 animate-pulse" />
+                <div className="h-3.5 bg-gray-200/60 rounded w-3/4 mb-1.5 animate-pulse" />
+                <div className="h-3 bg-gray-200/60 rounded w-1/3 animate-pulse" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {bestSellers.filter(Boolean).slice(0, 4).map((item) => (
               <ProductCard key={item._id || item.id} product={item} />
             ))}

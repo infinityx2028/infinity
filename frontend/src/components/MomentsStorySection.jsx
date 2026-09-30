@@ -4,14 +4,72 @@ import { ArrowRight, Check } from 'lucide-react';
 
 const MomentsStorySection = () => {
   return (
-    <section id="made-around-your-story" className="py-20 md:py-28 bg-[#FAF8F4] border-b border-[#071A2F]/5">
+    <section id="made-around-your-story" className="py-6 sm:py-20 md:py-28 bg-[#FAF8F4] border-b border-[#071A2F]/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        {/* MOBILE VIEW: Compact Editorial Banner (~280px height) */}
+        <div className="lg:hidden">
+          <div className="relative rounded-2xl overflow-hidden bg-white border border-[#071A2F]/8 shadow-[0_4px_16px_rgba(7,26,47,0.04)] p-4 flex flex-col justify-between h-[270px]">
+            {/* Background image occupying ~55% with subtle depth and soft gradient */}
+            <div className="absolute top-0 right-0 w-[55%] h-full overflow-hidden pointer-events-none">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="/images/anniversary MAG.jpg"
+                alt="Personalized Gifts"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent" />
+            </div>
+
+            <div className="relative z-10 max-w-[65%] flex flex-col justify-between h-full">
+              <div>
+                <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-[#C5A46D] block mb-1">
+                  Personalized Gifting
+                </span>
+                <h3 className="text-xl font-extrabold text-[#071A2F] tracking-tight leading-tight mb-2">
+                  MADE FROM <br />YOUR MEMORIES.
+                </h3>
+                <p className="text-xs text-[#687386] font-light leading-relaxed">
+                  Turn your favourite moments into personalized gifts.
+                </p>
+              </div>
+
+              <div>
+                <Link
+                  to="/shop/frames"
+                  className="inline-flex items-center gap-1.5 bg-[#071A2F] text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xs hover:bg-[#0B2748] active:scale-95 transition-all"
+                >
+                  <span>EXPLORE GIFTS</span>
+                  <span className="text-[#C5A46D]">→</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW: Full Editorial Story (lg+) */}
+        <div className="hidden lg:grid grid-cols-12 gap-16 items-center">
           
-          {/* Left: Large Real Product Photography */}
-          <div className="lg:col-span-6 relative">
-            <div className="relative aspect-[4/5] sm:aspect-[1/1] lg:aspect-[4/5] rounded-[32px] overflow-hidden bg-white shadow-[0_20px_50px_rgba(7,26,47,0.08)] border border-[#071A2F]/8">
+          {/* Left: Large Real Product Photography with 3D Layered Depth */}
+          <div style={{ perspective: '1000px' }} className="col-span-6 relative">
+            {/* Drifting decorative polaroid accent behind */}
+            <div 
+              aria-hidden="true"
+              className="absolute -top-6 -left-4 sm:-top-8 sm:-left-6 w-32 sm:w-40 aspect-[4/5] rounded-2xl bg-white p-2 shadow-[0_12px_30px_rgba(7,26,47,0.1)] border border-[#071A2F]/10 transform -rotate-6 hidden sm:block z-0 pointer-events-none"
+            >
+              <img 
+                src="/images/hero-pol-optimized.webp" 
+                alt="" 
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+
+            {/* Main Editorial Story Object */}
+            <div 
+              style={{ transformStyle: 'preserve-3d' }}
+              className="relative z-10 aspect-[4/5] sm:aspect-[1/1] lg:aspect-[4/5] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-white shadow-[0_24px_60px_rgba(7,26,47,0.12)] border border-[#071A2F]/8 transform hover:scale-[1.01] transition-transform duration-500"
+            >
               <img
                 loading="lazy"
                 decoding="async"
@@ -20,7 +78,7 @@ const MomentsStorySection = () => {
                 className="w-full h-full object-cover"
               />
               {/* Subtle caption badge */}
-              <div className="absolute bottom-5 left-5 right-5 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40">
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#C5A46D] block mb-0.5">
                   Handcrafted Edition
                 </span>
@@ -32,32 +90,33 @@ const MomentsStorySection = () => {
           </div>
 
           {/* Right: Editorial Storytelling Typography */}
-          <div className="lg:col-span-6 flex flex-col justify-center">
+          <div className="col-span-6 flex flex-col justify-center">
             
             {/* Eyebrow */}
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-3 block">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#C5A46D] mb-3 block">
               MADE AROUND YOUR STORY
             </span>
 
             {/* Heading */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#071A2F] leading-[1.08] mb-6">
-              Gifts that become part of their story.
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#071A2F] leading-[1.08] mb-5">
+              MAKE THEIR MOMENT <br />
+              <span className="text-[#123C69]">UNFORGETTABLE.</span>
             </h2>
 
             {/* Supporting Copy */}
-            <p className="text-base sm:text-lg text-[#687386] font-normal leading-relaxed mb-8">
-              From everyday moments to once-in-a-lifetime memories, every Infinity piece is designed to make something personal feel unforgettable.
+            <p className="text-sm sm:text-base text-[#687386] font-normal leading-relaxed mb-7">
+              From everyday moments to once-in-a-lifetime memories, every Infinity piece is designed to make something personal feel tangible and timeless.
             </p>
 
             {/* Subtle Pillars of Craftsmanship */}
-            <div className="space-y-3.5 mb-10">
+            <div className="space-y-3 mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#071A2F]/5 flex items-center justify-center text-[#071A2F] mt-0.5 flex-shrink-0">
                   <Check size={12} className="text-[#071A2F]" />
                 </div>
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#071A2F]">Archival Pigment Printing</h4>
-                  <p className="text-xs text-[#6B7280] font-light mt-0.5">
+                  <p className="text-xs text-[#687386] font-light mt-0.5">
                     Fade-resistant pigment inks calibrated for vivid color fidelity.
                   </p>
                 </div>
@@ -69,7 +128,7 @@ const MomentsStorySection = () => {
                 </div>
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#071A2F]">Solid Wooden Borders</h4>
-                  <p className="text-xs text-[#6B7280] font-light mt-0.5">
+                  <p className="text-xs text-[#687386] font-light mt-0.5">
                     Shatter-resistant acrylic and durable wood backing crafted for longevity.
                   </p>
                 </div>
@@ -81,21 +140,21 @@ const MomentsStorySection = () => {
                 </div>
                 <div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#071A2F]">WhatsApp Proof Confirmation</h4>
-                  <p className="text-xs text-[#6B7280] font-light mt-0.5">
+                  <p className="text-xs text-[#687386] font-light mt-0.5">
                     Review and approve your layout proof before final production begins.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* CTA */}
+            {/* Physical CTA */}
             <div>
               <Link
                 to="/shop/frames"
-                className="group inline-flex items-center gap-3 bg-[#071A2F] hover:bg-[#0B2748] text-white px-8 py-4 rounded-full font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-200"
+                className="btn-physical-3d group inline-flex items-center gap-3 bg-[#071A2F] text-white px-8 py-4 rounded-full font-bold text-xs uppercase tracking-wider min-h-[46px]"
               >
                 <span>EXPLORE PERSONALIZED GIFTS</span>
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
 

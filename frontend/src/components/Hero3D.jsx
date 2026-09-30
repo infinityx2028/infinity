@@ -70,6 +70,8 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   const containerRef = useRef(null);
+  const mobileCardRef = useRef(null);
+  const touchRafRef = useRef(null);
   const hoverIntentTimerRef = useRef(null);
   const autoRotateTimerRef = useRef(null);
   const touchStartXRef = useRef(null);
@@ -196,18 +198,46 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
     }
   };
 
-  // Touch Swipe Handlers for Mobile
+  // Touch Swipe & 3D Tilt Handlers for Mobile
   const handleTouchStart = (e) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchStartYRef.current = e.touches[0].clientY;
   };
 
+  const handleTouchMove = (e) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null || !mobileCardRef.current || isReducedMotion) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - touchStartXRef.current;
+    const deltaY = currentY - touchStartYRef.current;
+
+    if (touchRafRef.current) return;
+    touchRafRef.current = requestAnimationFrame(() => {
+      touchRafRef.current = null;
+      if (!mobileCardRef.current) return;
+      // Max rotateX ±3°, rotateY ±4° as requested by spec
+      const rx = Math.max(-3, Math.min(3, -deltaY * 0.05)).toFixed(2);
+      const ry = Math.max(-4, Math.min(4, deltaX * 0.06)).toFixed(2);
+      mobileCardRef.current.style.setProperty('--mobile-rx', `${rx}deg`);
+      mobileCardRef.current.style.setProperty('--mobile-ry', `${ry}deg`);
+    });
+  };
+
   const handleTouchEnd = (e) => {
+    if (touchRafRef.current) {
+      cancelAnimationFrame(touchRafRef.current);
+      touchRafRef.current = null;
+    }
+    if (mobileCardRef.current) {
+      mobileCardRef.current.style.setProperty('--mobile-rx', '0deg');
+      mobileCardRef.current.style.setProperty('--mobile-ry', '0deg');
+    }
+
     if (touchStartXRef.current === null || touchStartYRef.current === null) return;
     const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
     const deltaY = e.changedTouches[0].clientY - touchStartYRef.current;
 
-    if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (Math.abs(deltaX) > 36 && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX < 0) {
         setActiveIndex(prev => (prev + 1) % HERO_PRODUCTS.length);
       } else {
@@ -218,6 +248,59 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
 
     touchStartXRef.current = null;
     touchStartYRef.current = null;
+  };
+
+  // Mobile 3D Turntable Card Styling
+  const getMobileCardStyle = (index) => {
+    const total = HERO_PRODUCTS.length;
+    const diff = (index - activeIndex + total) % total;
+
+    if (isReducedMotion) {
+      return {
+        zIndex: diff === 0 ? 30 : 0,
+        opacity: diff === 0 ? 1 : 0,
+        transform: diff === 0 ? 'scale(1)' : 'scale(0.9)',
+        pointerEvents: diff === 0 ? 'auto' : 'none',
+        transition: 'opacity 0.35s ease, transform 0.35s ease'
+      };
+    }
+
+    if (diff === 0) {
+      return {
+        zIndex: 30,
+        opacity: 1,
+        transform: 'translate3d(0, 0, 36px) rotateX(var(--mobile-rx, 0deg)) rotateY(var(--mobile-ry, 0deg)) scale(1)',
+        boxShadow: '0 20px 48px rgba(7, 26, 47, 0.16), 0 6px 16px rgba(7, 26, 47, 0.08)',
+        pointerEvents: 'auto',
+        transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+      };
+    } else if (diff === 1) {
+      return {
+        zIndex: 10,
+        opacity: 0.5,
+        transform: 'translate3d(70px, 8px, -50px) rotateY(-12deg) scale(0.82)',
+        boxShadow: '0 8px 24px rgba(7, 26, 47, 0.08)',
+        pointerEvents: 'auto',
+        transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+      };
+    } else if (diff === total - 1) {
+      return {
+        zIndex: 10,
+        opacity: 0.5,
+        transform: 'translate3d(-70px, 8px, -50px) rotateY(12deg) scale(0.82)',
+        boxShadow: '0 8px 24px rgba(7, 26, 47, 0.08)',
+        pointerEvents: 'auto',
+        transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+      };
+    } else {
+      return {
+        zIndex: 0,
+        opacity: 0,
+        transform: 'translate3d(0, 10px, -100px) scale(0.7)',
+        pointerEvents: 'none',
+        transition: 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+      };
+    }
   };
 
   // Desktop 3D Stack Styling
@@ -296,7 +379,7 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleContainerMouseLeave}
-      className="relative flex items-center bg-[#FAF8F4] overflow-hidden py-8 sm:py-12 lg:py-20 border-b border-[#071A2F]/6 select-none"
+      className="relative flex items-center bg-[#FAF8F4] overflow-hidden pt-3 pb-4 sm:py-12 lg:py-20 border-b border-[#071A2F]/6 select-none"
     >
       {/* Ambient Lighting */}
       <div 
@@ -311,190 +394,174 @@ const Hero3D = ({ isIntroActive: propIsIntroActive, introPhase: propIntroPhase }
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10">
 
         {/* ======================================================== */}
-        {/* MOBILE PRESENTATION (Order: Eyebrow, Headline, Desc, CTA, Trust, Carousel) */}
+        {/* COMPACT TWO-ZONE MOBILE HERO (Target: 500-600px Total) */}
         {/* ======================================================== */}
-        <div className="lg:hidden flex flex-col space-y-6 sm:space-y-8">
+        <div className="lg:hidden flex flex-col justify-between w-full max-w-[420px] mx-auto pt-2 pb-1">
           
-          {/* 1. Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#071A2F]/10 shadow-[0_2px_8px_rgba(7,26,47,0.04)] w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C5A46D]"></span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#071A2F]">
-              PERSONALIZED • MADE FOR YOU
-            </span>
-          </div>
-
-          {/* 2. Headline */}
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#071A2F] leading-[1.1]">
-            YOUR MEMORIES. <br />
-            <span className="text-[#123C69]">MADE PERSONAL.</span>
-          </h1>
-
-          {/* 3. Description */}
-          <p className="text-sm sm:text-base text-[#687386] font-normal leading-relaxed">
-            Turn your favorite photos and moments into personalized frames, apparel, polaroids, magazines and meaningful gifts.
-          </p>
-
-          {/* 4. SHOP GIFTS CTA */}
-          <div className="flex flex-col sm:flex-row items-stretch gap-3">
-            <Link
-              to="/shop/frames"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#071A2F] active:bg-[#0B2748] text-white px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider shadow-md min-h-[46px] transition-transform active:scale-[0.98]"
-            >
-              <span>SHOP PERSONALIZED GIFTS</span>
-              <ArrowRight size={14} />
-            </Link>
-
-            <a
-              href="#collections-section"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-white text-[#071A2F] border border-[#071A2F]/15 px-5 py-3 rounded-full font-bold text-xs uppercase tracking-wider min-h-[44px] transition-colors"
-            >
-              <span>EXPLORE COLLECTIONS</span>
-              <span className="text-[#C5A46D]">→</span>
-            </a>
-          </div>
-
-          {/* 5. Trust Indicators (Clean, uncompressed mobile stack) */}
-          <div className="py-4 border-y border-[#071A2F]/8 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            <div className="flex items-start gap-2">
-              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
-              <div>
-                <p className="font-bold text-xs text-[#071A2F] leading-tight">Easy Personalization</p>
-                <p className="text-[11px] text-[#687386] mt-0.5">Send photos through WhatsApp</p>
-              </div>
+          {/* ZONE 1: HERO COPY (Compact, ~190-210px) */}
+          <div className="flex flex-col space-y-2">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#071A2F]/10 shadow-2xs w-fit">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A46D]"></span>
+              <span className="text-[9.5px] font-bold uppercase tracking-widest text-[#071A2F]">
+                PERSONALIZED • MADE FOR YOU
+              </span>
             </div>
 
-            <div className="flex items-start gap-2">
-              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
-              <div>
-                <p className="font-bold text-xs text-[#071A2F] leading-tight">Made With Care</p>
-                <p className="text-[11px] text-[#687386] mt-0.5">Verified before print</p>
-              </div>
-            </div>
+            {/* Headline: 38-42px, tight leading 0.98 */}
+            <h1 className="text-[38px] sm:text-[42px] font-extrabold tracking-tight text-[#071A2F] leading-[0.98]">
+              MAKE THEIR <br />
+              <span className="text-[#123C69]">MOMENT PERSONAL.</span>
+            </h1>
 
-            <div className="flex items-start gap-2">
-              <span className="text-emerald-600 font-black text-sm flex-shrink-0">✓</span>
-              <div>
-                <p className="font-bold text-xs text-[#071A2F] leading-tight">Secure Checkout</p>
-                <p className="text-[11px] text-[#687386] mt-0.5">Safe payment experience</p>
-              </div>
+            {/* Description: max 2 lines */}
+            <p className="text-[14px] text-[#687386] font-normal leading-snug w-[92%]">
+              Custom gifts designed around the moments that matter most. Handcrafted frames, apparel & magazines.
+            </p>
+
+            {/* Buttons on one compact row */}
+            <div className="flex items-center gap-2 pt-1">
+              <Link
+                to="/shop/frames"
+                className="btn-physical-3d inline-flex items-center justify-center gap-1.5 bg-[#071A2F] text-white px-5 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] flex-1 text-center"
+              >
+                <span>SHOP GIFTS</span>
+                <ArrowRight size={13} />
+              </Link>
+
+              <a
+                href="#collections-section"
+                className="inline-flex items-center justify-center gap-1 bg-white text-[#071A2F] border border-[#071A2F]/15 px-4 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider min-h-[42px] transition-colors"
+              >
+                <span>EXPLORE</span>
+                <span className="text-[#C5A46D]">→</span>
+              </a>
             </div>
           </div>
 
-          {/* 6. Mobile Product Carousel (Only ONE dominant card, calc(100vw - 32px) max, NO horizontal overflow) */}
+          {/* ZONE 2: 3D PRODUCT STAGE (Compact 220-250px) */}
           <div 
-            className="w-full pt-2"
+            className="w-full pt-3"
             onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="w-full max-w-[360px] mx-auto bg-white rounded-3xl p-3.5 border border-[#071A2F]/10 shadow-[0_12px_32px_rgba(7,26,47,0.08)] flex flex-col">
-              
-              {/* Product Image */}
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#FAF8F4] border border-[#071A2F]/8">
-                <img 
-                  src={activeProduct.image} 
-                  alt={activeProduct.name}
-                  loading="eager"
-                  fetchPriority="high"
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Badge */}
-                <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md px-2.5 py-0.5 rounded-full shadow-xs">
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#071A2F]">
-                    {activeProduct.badge}
-                  </span>
-                </div>
-              </div>
+            {/* 3D Product Stage: 220px height, 1 main object (200px visual) + 2 side peekers */}
+            <div 
+              style={{ perspective: '700px', transformStyle: 'preserve-3d' }}
+              className="relative w-full h-[215px] flex items-center justify-center overflow-hidden"
+            >
+              {HERO_PRODUCTS.map((prod, idx) => {
+                const total = HERO_PRODUCTS.length;
+                const diff = (idx - activeIndex + total) % total;
+                const isCurrent = diff === 0;
+                const isPrev = diff === total - 1;
+                const isNext = diff === 1;
 
-              {/* Product Info & Action (Strict Hierarchy in Normal Document Flow) */}
-              <div className="pt-3.5 flex flex-col space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#C5A46D] block">
-                  {activeProduct.category}
-                </span>
+                if (!isCurrent && !isPrev && !isNext) return null;
 
-                <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-bold text-base text-[#071A2F] leading-tight truncate">
-                    {activeProduct.name}
-                  </h3>
-                  <span className="font-black text-base text-[#071A2F] flex-shrink-0">
-                    {activeProduct.price}
-                  </span>
-                </div>
+                // Mobile 3D transform: Main object 100% sharp, side objects smaller and peeking behind
+                let cardTransform = '';
+                let cardOpacity = 1;
+                let cardZ = 20;
 
-                <p className="text-xs text-[#687386] font-normal line-clamp-1">
-                  {activeProduct.subtitle}
-                </p>
+                if (isCurrent) {
+                  cardTransform = 'translate3d(0, 0, 24px) rotateX(var(--mobile-rx, 0deg)) rotateY(var(--mobile-ry, 0deg)) scale(1)';
+                  cardZ = 30;
+                } else if (isNext) {
+                  cardTransform = 'translate3d(68px, 4px, -45px) rotateY(-14deg) scale(0.82)';
+                  cardOpacity = 0.55;
+                  cardZ = 10;
+                } else if (isPrev) {
+                  cardTransform = 'translate3d(-68px, 4px, -45px) rotateY(14deg) scale(0.82)';
+                  cardOpacity = 0.55;
+                  cardZ = 10;
+                }
 
-                {/* Primary CTA in Normal Document Flow */}
-                <div className="pt-2 flex flex-col gap-1.5">
-                  <Link 
-                    to={activeProduct.link}
-                    className="w-full min-h-[46px] px-4 rounded-xl bg-[#071A2F] active:bg-[#0B2748] text-white font-bold text-xs tracking-wider uppercase shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                return (
+                  <div
+                    key={prod.id}
+                    ref={isCurrent ? mobileCardRef : null}
+                    style={{
+                      transform: cardTransform,
+                      opacity: cardOpacity,
+                      zIndex: cardZ,
+                      transition: 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease',
+                      boxShadow: isCurrent ? '0 16px 36px rgba(7, 26, 47, 0.16)' : 'none'
+                    }}
+                    onClick={() => {
+                      if (!isCurrent) {
+                        setActiveIndex(idx);
+                        resetAutoScroll();
+                      }
+                    }}
+                    className={`absolute w-[175px] h-[190px] rounded-2xl bg-white border border-[#071A2F]/10 p-2 select-none ${
+                      isCurrent ? 'cursor-grab active:cursor-grabbing ring-1 ring-[#071A2F]/10' : 'cursor-pointer'
+                    }`}
                   >
-                    <span>CUSTOMIZE & BUY</span>
-                    <ArrowRight size={14} />
-                  </Link>
-
-                  <Link
-                    to={activeProduct.link}
-                    className="text-center text-[11px] font-semibold text-[#687386] hover:text-[#071A2F] py-1 cursor-pointer"
-                  >
-                    View Details →
-                  </Link>
-                </div>
-              </div>
+                    <div className="relative w-full h-full rounded-xl overflow-hidden bg-[#FAF8F4]">
+                      <img 
+                        src={prod.image} 
+                        alt={prod.name}
+                        loading={isCurrent ? "eager" : "lazy"}
+                        fetchPriority={isCurrent ? "high" : "low"}
+                        className="w-full h-full object-cover pointer-events-none"
+                      />
+                      {isCurrent && (
+                        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-full shadow-2xs">
+                          <span className="text-[8.5px] font-extrabold uppercase tracking-wider text-[#071A2F]">
+                            {prod.badge}
+                          </span>
+                        </div>
+                      )}
+                      {!isCurrent && (
+                        <div className="absolute inset-0 bg-[#071A2F]/15 backdrop-blur-[0.5px]" />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Mobile Carousel Controls */}
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveIndex(prev => (prev - 1 + HERO_PRODUCTS.length) % HERO_PRODUCTS.length);
-                  resetAutoScroll();
-                }}
-                className="w-11 h-11 rounded-full bg-white text-[#071A2F] shadow-xs border border-[#071A2F]/10 flex items-center justify-center active:scale-95 cursor-pointer"
-                aria-label="Previous product"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-[#071A2F]/10 text-xs font-mono font-bold text-[#071A2F]">
-                <span>0{activeIndex + 1}</span>
-                <span className="text-[#687386]/60">/</span>
-                <span className="text-[#687386]">0{HERO_PRODUCTS.length}</span>
+            {/* COMPACT PRODUCT INFO STRIP (Max 55-60px tall) */}
+            <div className="w-full bg-white rounded-xl px-3.5 py-2.5 border border-[#071A2F]/10 shadow-xs flex items-center justify-between gap-2 mt-1">
+              <div className="min-w-0 flex-1">
+                <h3 className="font-bold text-xs text-[#071A2F] leading-tight truncate">
+                  {activeProduct.name}
+                </h3>
+                <span className="font-black text-xs text-[#071A2F]">
+                  {activeProduct.price}
+                </span>
               </div>
 
-              <div className="flex items-center gap-1.5">
-                {HERO_PRODUCTS.map((prod, idx) => (
-                  <button
-                    key={prod.id}
-                    type="button"
-                    onClick={() => {
-                      setActiveIndex(idx);
-                      resetAutoScroll();
-                    }}
-                    aria-label={`View ${prod.name}`}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      idx === activeIndex 
-                        ? 'w-6 bg-[#071A2F]' 
-                        : 'w-2 bg-[#071A2F]/20'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveIndex(prev => (prev + 1) % HERO_PRODUCTS.length);
-                  resetAutoScroll();
-                }}
-                className="w-11 h-11 rounded-full bg-white text-[#071A2F] shadow-xs border border-[#071A2F]/10 flex items-center justify-center active:scale-95 cursor-pointer"
-                aria-label="Next product"
+              {/* Action */}
+              <Link 
+                to={activeProduct.link}
+                className="btn-physical-3d inline-flex items-center gap-1 bg-[#071A2F] text-white px-3 py-1.5 rounded-lg font-bold text-[11px] uppercase tracking-wider flex-shrink-0 cursor-pointer"
               >
-                <ChevronRight size={18} />
-              </button>
+                <span>CUSTOMIZE</span>
+                <span>→</span>
+              </Link>
+            </div>
+
+            {/* Minimal Dot Indicators */}
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              {HERO_PRODUCTS.map((prod, idx) => (
+                <button
+                  key={prod.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveIndex(idx);
+                    resetAutoScroll();
+                  }}
+                  aria-label={`View ${prod.name}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    idx === activeIndex 
+                      ? 'w-5 bg-[#071A2F]' 
+                      : 'w-1.5 bg-[#071A2F]/20'
+                  }`}
+                />
+              ))}
             </div>
           </div>
 

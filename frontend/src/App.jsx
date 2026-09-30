@@ -1911,17 +1911,18 @@ const ProductPage = ({ addToCart }) => {
         </div>
       </div>
 
-      {/* Sticky Bottom Purchase Bar on Mobile */}
-      <div className="sm:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md p-3.5 z-40 border-t border-[#071A2F]/10 flex items-center justify-between gap-3 shadow-[0_-4px_20px_rgba(7,26,47,0.08)]">
+      {/* Sticky Bottom Purchase Bar on Mobile with Safe Area Inset and Tactile 3D Button */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 bg-[#FAF8F4]/95 backdrop-blur-xl px-4 pt-3 pb-[calc(14px+env(safe-area-inset-bottom,0px))] z-40 border-t border-[#071A2F]/10 flex items-center justify-between gap-3 shadow-[0_-4px_24px_rgba(7,26,47,0.1)]">
         <div>
-          <span className="text-[10px] text-[#6B7280] block font-medium">Price</span>
-          <span className="text-lg font-black text-[#071A2F]">₹{displayTotalPrice}</span>
+          <span className="text-[10px] text-[#687386] block font-bold uppercase tracking-wider">Price</span>
+          <span className="text-xl font-black text-[#071A2F]">₹{displayTotalPrice}</span>
         </div>
         <button 
           onClick={handleAddToCart}
-          className="flex-1 bg-[#071A2F] active:bg-[#0B2748] text-white py-3 rounded-full font-bold text-xs tracking-wide shadow-md flex items-center justify-center gap-2"
+          className="btn-physical-3d flex-1 bg-[#071A2F] active:bg-[#0B2748] text-white py-3.5 px-5 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md"
         >
-          <ShoppingBag size={14} /> ADD TO BAG
+          <ShoppingBag size={15} /> 
+          <span>{isPhotoProduct || isCustomizedTShirt || isSignatureDayTShirt ? 'CUSTOMIZE & BUY' : 'ADD TO BAG'}</span>
         </button>
       </div>
 

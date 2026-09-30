@@ -167,16 +167,18 @@ const Navbar = ({ cartCount = 0 }) => {
     <>
       <header
         style={{
-          transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'height 250ms ease, background-color 250ms ease, box-shadow 250ms ease, opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
           transitionDelay: isIntroActive ? '200ms' : '0ms'
         }}
-        className={`sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#071A2F]/8 h-16 sm:h-[72px] ${
-          isScrolled ? 'shadow-[0_2px_12px_rgba(7,26,47,0.03)]' : 'shadow-none'
+        className={`sticky top-0 z-50 border-b border-[#071A2F]/8 ${
+          isScrolled 
+            ? 'h-[58px] sm:h-[66px] bg-[#FAF8F4]/95 backdrop-blur-xl shadow-[0_2px_12px_rgba(7,26,47,0.05)]' 
+            : 'h-[60px] sm:h-[70px] bg-white/95 backdrop-blur-md shadow-none'
         } ${
           isIntroInitial ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0'
         } flex items-center`}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 w-full flex items-center justify-between gap-2 sm:gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3 sm:gap-6">
           
           {/* ================= LEFT: MENU & LOGO ================= */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
@@ -526,8 +528,8 @@ const Navbar = ({ cartCount = 0 }) => {
               </Link>
             )}
 
-            {/* User Account (44x44 min touch target) */}
-            <div className="relative" ref={profileRef}>
+            {/* User Account (Desktop only - accessible via mobile menu drawer on mobile) */}
+            <div className="hidden sm:block relative" ref={profileRef}>
               {isAuthenticated ? (
                 <div>
                   <button
@@ -606,136 +608,131 @@ const Navbar = ({ cartCount = 0 }) => {
         </div>
       </header>
 
-      {/* ================= MOBILE DRAWER MENU ================= */}
+      {/* ================= MOBILE FULL-SCREEN LUXURY DRAWER MENU ================= */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col bg-[#071A2F] text-white">
+          
+          {/* Subtle Ambient Background Artwork */}
           <div 
-            className="fixed inset-0 bg-[#03101D]/50 backdrop-blur-xs transition-opacity" 
-            onClick={() => setMobileMenuOpen(false)}
-          />
+            aria-hidden="true" 
+            className="absolute inset-0 overflow-hidden pointer-events-none select-none"
+          >
+            <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-[#123C69]/30 blur-3xl" />
+            <div className="absolute top-1/2 -right-20 w-72 h-72 rounded-full bg-[#C5A46D]/15 blur-3xl" />
+            <img 
+              src="/images/hero-frame-optimized.webp" 
+              alt=""
+              className="absolute -right-16 -bottom-16 w-80 h-80 object-cover opacity-10 rounded-full blur-[1px]"
+            />
+          </div>
 
-          <div className="fixed inset-y-0 left-0 w-4/5 max-w-sm bg-white shadow-2xl z-50 flex flex-col overflow-y-auto">
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <div className="h-11 w-auto flex items-center">
-                <img src="/images/logo.png" alt="Infinity Customizations" className="h-10 w-auto object-contain" />
-              </div>
-              <button 
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
-              >
-                <X size={20} />
-              </button>
-            </div>
+          {/* Drawer Header */}
+          <div className="relative z-10 px-6 py-5 border-b border-white/10 flex items-center justify-between">
+            <Link 
+              to="/" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center"
+            >
+              <img 
+                src="/images/logo.png" 
+                alt="Infinity Customizations" 
+                className="h-9 w-auto brightness-0 invert object-contain" 
+              />
+            </Link>
+            <button 
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-white flex items-center justify-center transition-all cursor-pointer"
+              aria-label="Close navigation menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
 
-            <div className="p-4 space-y-1 flex-1">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl font-bold text-sm text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]"
-              >
-                <span>Home</span>
-              </Link>
+          {/* Drawer Navigation Links with Staggered Fade Up */}
+          <div className="relative z-10 px-6 py-8 flex-1 flex flex-col justify-center space-y-4 overflow-y-auto">
+            {[
+              { label: 'HOME', to: '/' },
+              { label: 'SHOP', to: '/shop/frames' },
+              { label: 'COLLECTIONS', href: '/#collections-section' },
+              { label: 'BEST SELLERS', href: '/#best-sellers' },
+              { label: 'GIFTS', href: '/#made-for-you' },
+              { label: 'ABOUT', to: '/about' }
+            ].map((link, idx) => {
+              const animStyle = {
+                animation: `heroFadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${idx * 60 + 80}ms both`
+              };
 
-              <Link
-                to="/shop/frames"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl font-bold text-sm text-[#071A2F] bg-[#FAF8F4] min-h-[44px]"
-              >
-                <span>Shop All Gifts</span>
-                <ArrowRight size={14} className="text-[#C5A46D]" />
-              </Link>
-
-              <a
-                href="/#best-sellers"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl font-semibold text-sm text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]"
-              >
-                <span>Best Sellers</span>
-              </a>
-
-              <a
-                href="/#made-for-you"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-xl font-semibold text-sm text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]"
-              >
-                <span>Curated Gifts</span>
-              </a>
-
-              <div className="pt-3 pb-2">
-                <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">Collections</p>
-                <div className="mt-1 space-y-0.5">
-                  <Link to="/shop/frames" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Photo Frames
-                  </Link>
-                  <Link to="/shop/memories" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Polaroids & Books
-                  </Link>
-                  <Link to="/shop/magazines" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Custom Magazines
-                  </Link>
-                  <Link to="/shop/apparel" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Custom Apparel
-                  </Link>
-                  <Link to="/shop/essentials" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Phone Cases
-                  </Link>
-                  <Link to="/shop/hampers" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]">
-                    Luxury Hampers
-                  </Link>
-                </div>
-              </div>
-
-              <div className="border-t border-gray-100 pt-2">
+              return link.to ? (
                 <Link
-                  to="/about"
+                  key={link.label}
+                  to={link.to}
+                  style={animStyle}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center p-3 rounded-xl font-medium text-sm text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]"
+                  className="group flex items-center justify-between py-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white hover:text-[#C5A46D] transition-colors"
                 >
-                  About Us
+                  <span>{link.label}</span>
+                  <ArrowRight size={20} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
                 </Link>
-                <Link
-                  to="/contact"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center p-3 rounded-xl font-medium text-sm text-[#071A2F] hover:bg-[#FAF8F4] min-h-[44px]"
-                >
-                  Contact Support
-                </Link>
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-gray-100 bg-[#FAF8F4]">
-              {isAuthenticated ? (
-                <div className="space-y-2">
-                  <div className="text-xs text-[#6B7280]">
-                    Logged in as <span className="font-bold text-[#071A2F]">{user?.name || user?.phoneNumber}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <Link 
-                      to="/orders" 
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-center py-2.5 px-3 bg-white rounded-lg border border-gray-200 text-xs font-semibold text-[#071A2F] min-h-[44px] flex items-center justify-center"
-                    >
-                      My Orders
-                    </Link>
-                    <button 
-                      onClick={handleLogout}
-                      className="py-2.5 px-3 bg-red-50 text-red-600 rounded-lg text-xs font-semibold min-h-[44px] flex items-center justify-center cursor-pointer"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
               ) : (
-                <Link
-                  to="/login"
+                <a
+                  key={link.label}
+                  href={link.href}
+                  style={animStyle}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block text-center py-3 px-4 bg-[#071A2F] text-white rounded-full text-xs font-bold min-h-[44px] flex items-center justify-center shadow-md"
+                  className="group flex items-center justify-between py-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white hover:text-[#C5A46D] transition-colors"
                 >
-                  Login / Register
-                </Link>
-              )}
+                  <span>{link.label}</span>
+                  <ArrowRight size={20} className="text-white/40 group-hover:text-[#C5A46D] group-hover:translate-x-1 transition-all" />
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Drawer Footer Account & WhatsApp Info */}
+          <div className="relative z-10 p-6 border-t border-white/10 bg-[#03101D]/70 backdrop-blur-md">
+            {isAuthenticated ? (
+              <div className="space-y-3">
+                <div className="text-xs text-white/70">
+                  Signed in as <span className="font-bold text-white">{user?.name || user?.phoneNumber}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link 
+                    to="/orders" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-3 px-4 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-xs font-bold text-white min-h-[44px] flex items-center justify-center transition-colors"
+                  >
+                    My Orders
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="py-3 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl text-xs font-bold min-h-[44px] flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn-physical-3d block text-center py-3.5 px-6 bg-[#C5A46D] text-[#071A2F] rounded-full text-xs font-black tracking-wider uppercase min-h-[44px] flex items-center justify-center shadow-lg"
+              >
+                LOGIN / REGISTER
+              </Link>
+            )}
+
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/50">
+              <span>Studio Support: +91 89859 93948</span>
+              <Link 
+                to="/contact" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-white/80 hover:text-white"
+              >
+                Help & Contact →
+              </Link>
             </div>
           </div>
+
         </div>
       )}
 
