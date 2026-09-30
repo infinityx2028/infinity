@@ -68,13 +68,78 @@ const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
 // --- USER AUTHENTICATION API ---
 export const userAuth = {
   login: async (emailOrPhone, password) => {
-    return apiCall('/auth/user/login', 'POST', { emailOrPhone, password });
+    // 1. Try dedicated /auth/user/login first
+    try {
+      return await apiCall('/auth/user/login', 'POST', { emailOrPhone, password });
+    } catch (err) {
+      // If endpoint doesn't exist on backend (404 / Invalid JSON response / Cannot POST)
+      const cleanPhone = String(emailOrPhone || '').replace(/\D/g, '').slice(-10);
+      if (/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return await apiCall('/auth/user/verify-credentials', 'POST', {
+          phoneNumber: cleanPhone,
+          password,
+          name: 'Infinity Member'
+        });
+      }
+      // If identifier was an email, check stored phone mapping from signup
+      if (typeof emailOrPhone === 'string' && emailOrPhone.includes('@')) {
+        const storedPhone = localStorage.getItem(`infinity_phone_${emailOrPhone.trim().toLowerCase()}`);
+        if (storedPhone && /^[6-9]\d{9}$/.test(storedPhone)) {
+          return await apiCall('/auth/user/verify-credentials', 'POST', {
+            phoneNumber: storedPhone,
+            password,
+            name: 'Infinity Member'
+          });
+        }
+        throw {
+          status: 400,
+          message: 'Please enter your registered 10-digit mobile number to sign in.',
+          data: { error: 'Please enter your registered 10-digit mobile number to sign in.' }
+        };
+      }
+      throw err;
+    }
   },
   signup: async ({ name, email, phoneNumber, password }) => {
-    return apiCall('/auth/user/signup', 'POST', { name, email, phoneNumber, password });
+    const cleanPhone = String(phoneNumber || '').replace(/\D/g, '').slice(-10);
+    const cleanEmail = (email || '').trim().toLowerCase();
+    
+    // Remember phone mapping for email logins on this client
+    if (cleanEmail && cleanPhone) {
+      try {
+        localStorage.setItem(`infinity_phone_${cleanEmail}`, cleanPhone);
+      } catch (e) {}
+    }
+
+    try {
+      return await apiCall('/auth/user/signup', 'POST', { name, email: cleanEmail, phoneNumber: cleanPhone, password });
+    } catch (err) {
+      // If 404 or backend is on verify-credentials
+      if (err.status === 404 || (err.data && err.data.error === 'Invalid JSON response') || err.message?.includes('Cannot POST') || err.message?.includes('404')) {
+        if (/^[6-9]\d{9}$/.test(cleanPhone)) {
+          const res = await apiCall('/auth/user/verify-credentials', 'POST', {
+            phoneNumber: cleanPhone,
+            password,
+            name: name.trim()
+          });
+          // Update email in profile if token returned
+          if (res.token && cleanEmail) {
+            try {
+              await apiCall('/auth/user/profile', 'PUT', { email: cleanEmail }, res.token);
+              if (res.user) res.user.email = cleanEmail;
+            } catch (e) {
+              console.warn('Failed to update email in profile:', e);
+            }
+          }
+          return res;
+        }
+      }
+      throw err;
+    }
   },
-  verifyCredentials: async (phoneNumber, password, name) => {
-    return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber, password, name });
+  verifyCredentials: async (phoneNumber, password, name = 'Infinity Member') => {
+    const cleanPhone = String(phoneNumber || '').replace(/\D/g, '').slice(-10);
+    return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber: cleanPhone, password, name });
   },
   verifyOTP: async (phoneNumber, otp) => {
     return { success: true, message: 'OTP system removed' };
@@ -83,7 +148,8 @@ export const userAuth = {
     return { success: true, message: 'OTP system removed' };
   },
   requestOTP: async (phoneNumber) => {
-    return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber, password: '' });
+    const cleanPhone = String(phoneNumber || '').replace(/\D/g, '').slice(-10);
+    return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber: cleanPhone, password: '', name: 'Member' });
   },
   getProfile: async (token) => {
     return apiCall('/auth/user/profile', 'GET', null, token);

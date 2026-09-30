@@ -77,14 +77,14 @@ const Login = () => {
             {/* Editorial Visual Composition */}
             <div className="w-full aspect-[4/4.2] rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6 relative group">
               <img 
-                src="/images/mag(1).jpg" 
-                alt="Personalized Magazine" 
+                src="/images/mag 12pgs 599.jpg" 
+                alt="Girls Magazine — Special Birthday Edition" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#071A2F]/90 via-[#071A2F]/20 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5A46D] block">
-                  Studio Keepsakes
+                  Girls Magazine Edition
                 </span>
                 <p className="text-sm font-semibold mt-0.5">
                   Handcrafted around moments you love
@@ -132,11 +132,11 @@ const Login = () => {
                 className="w-full h-full object-cover rounded-lg" 
               />
             </div>
-            {/* Product 2: Magazine Center Hero */}
+            {/* Product 2: Magazine Center Hero (Girls Magazine) */}
             <div className="absolute z-10 w-[95px] h-[115px] rounded-xl overflow-hidden border border-[#071A2F]/15 shadow-xl rotate-1 transform transition-transform hover:scale-105 duration-300 bg-white p-1">
               <img 
-                src="/images/mag(1).jpg" 
-                alt="Custom Magazine" 
+                src="/images/mag 12pgs 599.jpg" 
+                alt="Girls Magazine Keepsake" 
                 className="w-full h-full object-cover rounded-lg" 
               />
               <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-[#071A2F]/80 backdrop-blur-xs text-[8px] font-bold text-white text-center py-0.5 rounded">
@@ -188,14 +188,14 @@ const Login = () => {
             {/* Email or Phone */}
             <div>
               <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5">
-                Email or Mobile Number
+                Mobile Number or Email
               </label>
               <div className="relative group">
                 <input
                   type="text"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="e.g. rahul@gmail.com or 9876543210"
+                  placeholder="Enter 10-digit mobile number or email"
                   disabled={loading}
                   autoComplete="username"
                   className="w-full h-[50px] pl-4 pr-10 rounded-xl border border-[#071A2F]/15 bg-[#FAF8F4] focus:bg-white text-sm font-medium text-[#071A2F] placeholder:text-[#687386]/50 focus:outline-none focus:border-[#071A2F] focus:ring-2 focus:ring-[#071A2F]/15 transition-all disabled:opacity-50"
