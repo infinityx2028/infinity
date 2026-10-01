@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useCatalog } from "../contexts/useCatalog";
 import { useMemoryExperience } from "../contexts/useMemoryExperience";
-import { responsiveImage } from "../utils/responsiveImages";
 
 const STATES = {
   hero: { rotate: -9, tilt: -10, opacity: 1, dark: 0 },
   ai: { rotate: 6, tilt: 8, opacity: 1, dark: 0 },
   categories: { rotate: -4, tilt: -5, opacity: 1, dark: 0 },
-  products: { rotate: 12, tilt: 8, opacity: 0.13, dark: 0 },
+  products: { rotate: 12, tilt: 8, opacity: 0, dark: 0 },
   story: { rotate: -5, tilt: -8, opacity: 1, dark: 0 },
   wall: { rotate: 8, tilt: 5, opacity: 0.65, dark: 0.15 },
-  brand: { rotate: -12, tilt: 12, opacity: 0.36, dark: 1 },
-  process: { rotate: 3, tilt: -6, opacity: 0.8, dark: 0.12 },
+  brand: { rotate: -12, tilt: 12, opacity: 0.5, dark: 1 },
+  process: { rotate: 3, tilt: -6, opacity: 0, dark: 0 },
   final: { rotate: -5, tilt: -4, opacity: 1, dark: 0 },
 };
 const interpolate = (a, b, progress) => a + (b - a) * progress;
@@ -27,22 +26,17 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
   const frameProduct = products.find(
     (product) => product.categoryId === "frames",
   );
-  const magazine = products.find(
-    (product) => product.categoryId === "magazines",
-  );
-  const polaroid = products.find(
-    (product) => product.categoryId === "memories",
-  );
   const product =
     scene === "ai"
       ? aiProduct || frameProduct
       : scene === "categories"
         ? categoryProduct || frameProduct
-        : scene === "story"
-          ? magazine || frameProduct
-          : scene === "wall"
-            ? polaroid || frameProduct
-            : frameProduct;
+        : frameProduct;
+  const form = scene === 'story' ? 'magazine'
+    : scene === 'categories' ? 'polaroid'
+    : scene === 'ai' && product?.categoryId === 'magazines' ? 'magazine'
+    : scene === 'ai' && product?.categoryId === 'memories' ? 'polaroid'
+    : scene === 'ai' && product?.categoryId === 'essentials' ? 'case' : 'frame';
 
   useEffect(() => {
     const root = experienceRef.current;
@@ -76,13 +70,8 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           return {
             key,
             x: rect.left + rect.width / 2,
-            y: Math.min(
-              window.innerHeight - 150,
-              Math.max(
-                145,
-                rect.top - sectionRect.top + rect.height / 2 + header,
-              ),
-            ),
+            // Document coordinates keep the object inside the reserved safe zone.
+            y: rect.top + window.scrollY + rect.height / 2,
             start: sectionRect.top + window.scrollY - header,
             size: rect.width,
             ...STATES[key],
@@ -119,7 +108,7 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
         const progress = media.matches ? 0 : raw * raw * (3 - 2 * raw);
         const current = raw > 0.5 ? right : left;
         const x = interpolate(left.x, right.x, progress);
-        const y = interpolate(left.y, right.y, progress);
+        const y = interpolate(left.y, right.y, progress) - sample;
         const size = interpolate(left.size, right.size, progress);
         const rootBounds = root.getBoundingClientRect();
         const visible = rootBounds.bottom > 100 && rootBounds.top < viewport;
@@ -224,24 +213,23 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
         <div className="memory-light" />
         <div className="memory-grain" />
       </div>
-      <div className="memory-object-position" ref={position} aria-hidden="true">
+      <div className="memory-object-position" ref={position} data-form={form} aria-hidden="true">
         <div className="memory-frame-body" ref={frameBody}>
+          {form === 'polaroid' && <><div className="memory-paper-back" /><div className="memory-paper-back" /></>}
           <div className="memory-frame-edge" />
           <div className="memory-frame-face">
-            {product ? (
+            <picture>
+              <source type="image/avif" srcSet="/images/memory-core-480.avif 480w, /images/memory-core-1024.avif 1024w" sizes="(max-width: 767px) 220px, 400px" />
               <img
-                key={product._id || product.id}
-                {...responsiveImage(
-                  product.images?.[0] || product.image,
-                  "(max-width: 767px) 240px, 450px",
-                )}
+                src="/images/memory-core-480.webp"
+                srcSet="/images/memory-core-480.webp 480w, /images/memory-core-1024.webp 1024w"
+                sizes="(max-width: 767px) 220px, 400px"
                 alt=""
                 fetchPriority="high"
                 decoding="async"
               />
-            ) : (
-              <span className="memory-frame-placeholder">∞</span>
-            )}
+            </picture>
+            <span className="memory-magazine-type">Our story.<small>THE MOMENTS THAT MADE US / INFINITY</small></span>
             <div className="memory-frame-glass" />
             <span className="memory-frame-stamp">INFINITY / MADE PERSONAL</span>
           </div>

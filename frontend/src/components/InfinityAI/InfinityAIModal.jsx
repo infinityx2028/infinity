@@ -4,7 +4,6 @@ import { Sparkles, X, ArrowRight, CornerDownLeft, RefreshCw, ShoppingBag, Shield
 import { useInfinityAI } from '../../contexts/InfinityAIContext';
 import { getGiftRecommendations } from '../../services/giftAssistantService';
 import { API_BASE_URL } from '../../services/api';
-import { products as fallbackProducts } from '../../data';
 
 const SUGGESTION_CHIPS = [
   { label: 'Birthday', query: 'Birthday gift under ₹1000' },
@@ -36,11 +35,11 @@ export default function InfinityAIModal() {
         if (res.ok) {
           const data = await res.json();
           if (isMounted && Array.isArray(data) && data.length > 0) {
-            setCatalogCache(data);
+            setCatalogCache(data.filter(product => product.isActive !== false));
           }
         }
       } catch (e) {
-        if (isMounted) setCatalogCache(fallbackProducts);
+        if (isMounted) setCatalogCache([]);
       }
     };
     fetchCatalog();

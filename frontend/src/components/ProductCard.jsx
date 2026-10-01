@@ -7,22 +7,17 @@ import { getImageSrc } from '../utils/imageUtils';
 import { responsiveImage } from '../utils/responsiveImages';
 import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProductCard = ({ product, showCategory = true }) => {
   const { addToCart, openCartDrawer } = useCart();
   const { openQuickView } = useQuickView();
+  const { wishlist, wishlistBusy, toggleSavedGift } = useAuth();
+  const [saveError, setSaveError] = useState('');
   const [added, setAdded] = useState(false);
   const [isImgLoaded, setIsImgLoaded] = useState(false);
   const [isImgError, setIsImgError] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(() => {
-    try {
-      const saved = localStorage.getItem('infinity_wishlist');
-      const list = saved ? JSON.parse(saved) : [];
-      return list.includes(product?._id || product?.id);
-    } catch (e) {
-      return false;
-    }
-  });
+  const isWishlisted = wishlist.includes(product?._id || product?.id);
 
   if (!product) return null;
 
@@ -56,24 +51,12 @@ const ProductCard = ({ product, showCategory = true }) => {
 
   const shortDescription = getProductShortDescription(product);
 
-  const toggleWishlist = (e) => {
+  const toggleWishlist = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      const saved = localStorage.getItem('infinity_wishlist');
-      const list = saved ? JSON.parse(saved) : [];
-      let updated;
-      if (list.includes(productId)) {
-        updated = list.filter(id => id !== productId);
-        setIsWishlisted(false);
-      } else {
-        updated = [...list, productId];
-        setIsWishlisted(true);
-      }
-      localStorage.setItem('infinity_wishlist', JSON.stringify(updated));
-    } catch (err) {
-      setIsWishlisted(!isWishlisted);
-    }
+    setSaveError('');
+    try { await toggleSavedGift(productId); }
+    catch { setSaveError('Could not save this gift. Please try again.'); }
   };
 
   const handleQuickAdd = (e) => {
@@ -121,6 +104,7 @@ const ProductCard = ({ product, showCategory = true }) => {
           onClick={toggleWishlist}
           aria-label="Save to Wishlist"
           aria-pressed={isWishlisted}
+          disabled={wishlistBusy}
           className="absolute top-1.5 right-1.5 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#071A2F] hover:bg-white shadow-xs transition-all duration-200 cursor-pointer"
         >
           <Heart 
@@ -223,6 +207,7 @@ const ProductCard = ({ product, showCategory = true }) => {
       </div>
 
       {/* 3. CTA IN NORMAL DOCUMENT FLOW (44px height, full width) */}
+      {saveError && <span role="status" className="text-xs text-red-700">{saveError}</span>}
       <div className="w-full mt-auto pt-1">
         {requiresPersonalization ? (
           <Link

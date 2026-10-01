@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link, useParams } from 'react-router-dom';
 import { storyCategories, showcaseData, products, categoryDetails, phoneModelOptions } from './data';
 import { ShoppingCart, ShoppingBag, Menu, X, Search, User, Heart, ChevronRight, Phone, Mail, Instagram, Truck, ShieldCheck, Gift, Star, ArrowRight, MessageCircle, Filter, CheckCircle, AlertCircle, Info, ChevronDown, Trash2, ArrowLeft, LogOut, Share2, Copy, Check, Clock } from 'lucide-react';
@@ -36,7 +36,6 @@ import HomePage from './pages/HomePage';
 import ProductCard from './components/ProductCard';
 import CartDrawer from './components/CartDrawer';
 import MobileBottomNav from './components/MobileBottomNav';
-import IntroOverlay from './components/IntroOverlay';
 import { IntroContext } from './contexts/IntroContext';
 import InfinityLoader from './components/InfinityLoader';
 import { CANONICAL_CATEGORIES, resolveCategorySlug, getCategoryMeta } from './utils/categoryUtils';
@@ -47,6 +46,7 @@ import QuickViewModal from './components/QuickViewModal';
 import { getProductFullDescription } from './data/productDescriptions';
 import MemoryInteractions from './components/MemoryInteractions';
 import './memory-motion.css';
+import './memory-film.css';
 import { responsiveImage } from './utils/responsiveImages';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
@@ -84,7 +84,7 @@ const LEGAL_PAGES = {
   },
   about: {
     title: 'About Us',
-    content: 'Welcome to Infinity Customizations. We are a small business dedicated to creating customized products tailored to our customers\' preferences. Every product is made with attention to detail and personalized according to the design, text, or specifications provided by the customer. All our products are prepared only after an order is confirmed to ensure uniqueness and quality. We aim to deliver creative, reliable, and satisfactory customized solutions for gifts, personal use, and special occasions.'
+    content: 'Built from a simple idea: make memories feel physical again.\n\nInfinity Customizations was founded by Jashwanth Reddy on April 20, 2025 while studying B.Tech. The studio brings personalized gifts, printing and creative products together around the photos, stories and moments that matter to you.\n\nEvery product is personalized according to the design, text or specifications provided by the customer and prepared after an order is confirmed. After ordering, send your photos and personalization details to our team on WhatsApp.'
   },
   contact: {
     title: 'Contact Us',
@@ -124,14 +124,12 @@ const GlobalLoader = () => (
 // SmartLink: Navigation that triggers the Infinity Loader
 const SmartLink = ({ to, children, className, onClick }) => {
   const navigate = useNavigate();
-  const { setLoading } = useContext(LoaderContext);
   const location = useLocation();
   const handleClick = (e) => {
     e.preventDefault();
     if (onClick) onClick();
     if (location.pathname === to) return;
-    setLoading(true);
-    setTimeout(() => { navigate(to); setLoading(false); }, 800);
+    navigate(to);
   };
   return <a href={to} onClick={handleClick} className={`cursor-pointer ${className}`}>{children}</a>;
 };
@@ -2263,52 +2261,20 @@ const AppContent = () => {
 
 export default function App() {
   const [loading, setLoading] = useState(false);
-  const [showIntroOverlay, setShowIntroOverlay] = useState(() => {
-    try {
-      const isHome = window.location.pathname === '/' || window.location.pathname === '';
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('intro') === 'true') return true;
-      if (!isHome) return false;
-      return false;
-    } catch (e) {
-      return false;
-    }
-  });
-
-  const [introPhase, setIntroPhase] = useState(() => (showIntroOverlay ? 'initial' : 'completed'));
-
-  const handleTransitionStart = () => {
-    setIntroPhase('revealing');
-  };
-
-  const handleIntroComplete = () => {
-    try {
-      sessionStorage.setItem('infinity_intro_seen', 'true');
-    } catch (e) {}
-    setShowIntroOverlay(false);
-    setIntroPhase('completed');
-  };
 
   return (
     <LoaderContext.Provider value={{ loading, setLoading }}>
-      <IntroContext.Provider value={{ isIntroActive: showIntroOverlay, introPhase }}>
+      <IntroContext.Provider value={{ isIntroActive: false, introPhase: 'completed' }}>
         <AuthProvider>
           <CartProvider>
             <InfinityAIProvider>
               <QuickViewProvider>
                 <Router>
                   <ScrollToTop />
-                  {/* Homepage renders immediately underneath — Intro is an overlay */}
                   {loading && <GlobalLoader />}
                   <AppContent />
                   <QuickViewModal />
                   <InfinityAIModal />
-                  {showIntroOverlay && (
-                    <IntroOverlay 
-                      onTransitionStart={handleTransitionStart}
-                      onComplete={handleIntroComplete} 
-                    />
-                  )}
                 </Router>
               </QuickViewProvider>
             </InfinityAIProvider>

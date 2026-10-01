@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, RotateCcw } from "lucide-react";
 import { useCatalog } from "../../contexts/useCatalog";
@@ -7,6 +7,7 @@ import {
   extractIntent,
   getIntentTokens,
   getGiftRecommendations,
+  rankCatalogDeterministically,
 } from "../../services/giftAssistantService";
 import { responsiveImage } from "../../utils/responsiveImages";
 
@@ -18,12 +19,18 @@ const SUGGESTIONS = [
 ];
 export default function InfinityAISection() {
   const { products, loading: catalogLoading, error } = useCatalog();
-  const { setAIProduct, setTokens } = useMemoryExperience();
+  const { setAIProduct, setTokens, momentQuery } = useMemoryExperience();
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const tokens = getIntentTokens(extractIntent(query));
+  useEffect(() => {
+    if (!momentQuery) return;
+    setQuery(momentQuery);
+    setTokens(getIntentTokens(extractIntent(momentQuery)));
+    document.getElementById('memory-gift-query')?.focus({ preventScroll: true });
+  }, [momentQuery, setTokens]);
   function update(value) {
     setQuery(value);
     setTokens(getIntentTokens(extractIntent(value)));
@@ -55,9 +62,12 @@ export default function InfinityAISection() {
         })
         .filter(Boolean)
         .slice(0, 4);
-      setResult({ ...response, products: resolved });
-      setAIProduct(resolved[0] || null);
-      if (!resolved.length)
+      // Reapply strict availability and budget checks to server results as well.
+      const safeIntent = response.intent || extractIntent(value);
+      const safe = rankCatalogDeterministically(resolved, safeIntent).products.slice(0, 4);
+      setResult({ ...response, products: safe });
+      setAIProduct(safe[0] || null);
+      if (!safe.length)
         setNotice(
           "No matching gifts this time. Try a different budget or occasion.",
         );
@@ -219,15 +229,15 @@ export default function InfinityAISection() {
             ))}
           </div>
           <div className="motion-refinements">
-            {["Photo Gifts", "Under ₹500", "Premium", "Show More"].map(
-              (refinement) => (
+            {[["Photo Gifts", "photo-gifts"], ["Under ₹500", "under-500"], ["Premium", "premium"]].map(
+              ([label, refinement]) => (
                 <button
                   key={refinement}
                   type="button"
                   disabled={busy}
                   onClick={() => recommend(query, refinement)}
                 >
-                  {refinement} ↗
+                  {label} ↗
                 </button>
               ),
             )}

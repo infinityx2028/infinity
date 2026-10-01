@@ -12,6 +12,42 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [adminToken, setAdminToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [wishlistBusy, setWishlistBusy] = useState(false);
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!token) {
+      try { setWishlist(JSON.parse(localStorage.getItem('infinity_wishlist') || '[]')); }
+      catch { setWishlist([]); }
+      return () => controller.abort();
+    }
+    setWishlist([]);
+    fetch('/api/auth/user/wishlist', { headers: { Authorization: `Bearer ${token}` }, signal: controller.signal })
+      .then(response => { if (!response.ok) throw new Error('Saved gifts unavailable'); return response.json(); })
+      .then(data => setWishlist(Array.isArray(data.wishlist) ? data.wishlist : []))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [token]);
+  const toggleSavedGift = async (productId) => {
+    if (wishlistBusy) return false;
+    setWishlistBusy(true);
+    try {
+      if (token) {
+        const response = await fetch('/api/auth/user/wishlist/toggle', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ productId }),
+        });
+        if (!response.ok) throw new Error('Unable to save this gift. Please try again.');
+        const data = await response.json();
+        setWishlist(data.wishlist || []);
+      } else {
+        const next = wishlist.includes(productId) ? wishlist.filter(id => id !== productId) : [...wishlist, productId];
+        localStorage.setItem('infinity_wishlist', JSON.stringify(next));
+        setWishlist(next);
+      }
+      return true;
+    } finally { setWishlistBusy(false); }
+  };
 
   // Initialize from localStorage on mount and sync with server
   useEffect(() => {
@@ -349,6 +385,9 @@ export const AuthProvider = ({ children }) => {
     adminToken,
     loading,
     isAuthenticated,
+    wishlist,
+    wishlistBusy,
+    toggleSavedGift,
     login,
     logout,
     loginUser,

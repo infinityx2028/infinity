@@ -58,7 +58,7 @@ export default function CategoryGrid() {
           data-cursor="DRAG"
           onScroll={() => {
             if (window.innerWidth < 768)
-              select(Math.round(rail.current.scrollLeft / 190));
+              select(Math.min(categories.length - 1, Math.round(rail.current.scrollLeft / 188)));
           }}
         >
           {categories.map((category, index) => (

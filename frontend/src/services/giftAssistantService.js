@@ -1,7 +1,5 @@
 // Infinity AI — Client & Fallback Recommendation Engine
 import { API_BASE_URL } from './api.js';
-import { products as fallbackProducts } from '../data.js';
-import { getProductShortDescription } from '../data/productDescriptions.js';
 
 // --- 1. NATURAL LANGUAGE INTENT EXTRACTION ---
 export function extractIntent(query = '') {
@@ -84,7 +82,8 @@ export function extractIntent(query = '') {
     recipient,
     relationship,
     interests,
-    style
+    style,
+    urgency: text.match(/\b(today|tomorrow|urgent|asap|this week)\b/i)?.[0] || null
   };
 }
 
@@ -221,28 +220,17 @@ export function scoreProduct(product, intent) {
 
 // --- 4. DETERMINISTIC CLIENT-SIDE RANKING ENGINE ---
 export function rankCatalogDeterministically(rawProducts = [], intent = {}) {
-  const pool = Array.isArray(rawProducts) && rawProducts.length > 0 
-    ? rawProducts 
-    : fallbackProducts;
-
-  let candidates = pool.filter(p => p.inStock !== false);
-  let budgetLoosened = false;
+  intent = { interests: [], ...intent };
+  const pool = Array.isArray(rawProducts) ? rawProducts : [];
+  let candidates = pool.filter(p => p.isActive !== false && p.inStock !== false && Number.isFinite(Number(p.price)) && Number(p.price) >= 0);
 
   // Hard budget filtering
   if (intent.budgetMax) {
-    const inBudget = candidates.filter(p => Number(p.price || 0) <= intent.budgetMax);
-    if (inBudget.length > 0) {
-      candidates = inBudget;
-    } else {
-      budgetLoosened = true;
-      candidates.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
-      candidates = candidates.slice(0, 8);
-    }
+    candidates = candidates.filter(p => Number(p.price) <= intent.budgetMax);
   }
 
-  if (intent.budgetMin && !budgetLoosened) {
-    const aboveMin = candidates.filter(p => Number(p.price || 0) >= intent.budgetMin);
-    if (aboveMin.length > 0) candidates = aboveMin;
+  if (intent.budgetMin) {
+    candidates = candidates.filter(p => Number(p.price) >= intent.budgetMin);
   }
 
   const scored = candidates.map(product => {
@@ -262,8 +250,8 @@ export function rankCatalogDeterministically(rawProducts = [], intent = {}) {
   let replyMessage = "";
   const count = topResults.length;
   
-  if (budgetLoosened) {
-    replyMessage = `I couldn't find an exact match under ₹${intent.budgetMax}. Here are our closest handcrafted options starting from ₹${topResults[0]?.price || '...'}:`;
+  if (!count) {
+    replyMessage = 'No available gifts match this budget. Try another budget or occasion.';
   } else {
     const recipientPart = intent.recipient ? ` for your ${intent.recipient}` : '';
     const occasionPart = intent.occasion ? ` for ${intent.occasion}` : '';
@@ -310,8 +298,13 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
 
     if (res.ok) {
       const data = await res.json();
-      if (data && data.success && Array.isArray(data.products) && data.products.length > 0) {
-        return data;
+      if (data && data.success && Array.isArray(data.products) && Array.isArray(cachedProducts) && cachedProducts.length > 0) {
+        const intent = { ...extractIntent(cleanQuery), ...currentIntent };
+        if (refinement === 'under-500') intent.budgetMax = 500;
+        if (refinement === 'premium') intent.budgetMin = 600;
+        const verified = data.products.map(item => cachedProducts.find(product => String(product._id || product.id) === String(item._id || item.id))).filter(Boolean);
+        const safe = rankCatalogDeterministically(verified, intent);
+        if (safe.products.length) return { ...data, ...safe };
       }
     }
   } catch (apiErr) {
@@ -344,9 +337,14 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
   const isVague = !intent.occasion && !intent.recipient && !intent.budgetMax && intent.interests.length === 0 && !intent.isSurprise;
   const isGibberish = cleanQuery.length > 5 && !/[aeiouy]/i.test(cleanQuery);
 
-  const pool = (Array.isArray(cachedProducts) && cachedProducts.length > 0)
-    ? cachedProducts
-    : fallbackProducts;
+  let pool = Array.isArray(cachedProducts) ? cachedProducts : [];
+  if (!pool.length) {
+    const response = await fetch(`${API_BASE_URL}/products`);
+    if (!response.ok) throw new Error('The gift catalog is temporarily unavailable.');
+    const catalog = await response.json();
+    pool = Array.isArray(catalog) ? catalog : [];
+  }
+  pool = pool.filter(product => product.isActive !== false && product.inStock !== false);
 
   if (isGibberish) {
     const fallbackList = pool.filter(p => p.isBestSeller).slice(0, 4);
@@ -391,6 +389,7 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
 export function getIntentTokens(intent) {
   if (!intent) return [];
   const tokens = [];
+  if (intent.urgency) tokens.push({ key: 'urgency', label: intent.urgency, type: 'urgency' });
   if (intent.occasion) {
     const formatted = intent.occasion.charAt(0).toUpperCase() + intent.occasion.slice(1);
     tokens.push({ key: 'occasion', label: formatted, type: 'occasion' });

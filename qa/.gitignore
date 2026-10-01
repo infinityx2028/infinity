@@ -1,0 +1,5 @@
+chrome-profile/
+catalog.json
+lint-*.json
+local/
+live/

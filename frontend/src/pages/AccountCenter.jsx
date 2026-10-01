@@ -13,7 +13,7 @@ import { API_BASE_URL, orders as ordersApi, products as productsApi } from '../s
 const AccountCenter = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'orders';
+  const initialTab = searchParams.get('tab') || 'overview';
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const {
@@ -30,7 +30,9 @@ const AccountCenter = () => {
     setDefaultAddress,
     updatePreferences,
     deleteAccount,
-    refreshLoyalty
+    refreshLoyalty,
+    wishlist,
+    toggleSavedGift
   } = useAuth();
 
   const { openQuickView } = useQuickView();
@@ -172,8 +174,7 @@ const AccountCenter = () => {
     const loadWishlist = async () => {
       try {
         setWishlistLoading(true);
-        const rawSaved = localStorage.getItem('infinity_wishlist');
-        const ids = rawSaved ? JSON.parse(rawSaved) : [];
+        const ids = wishlist;
         if (ids.length === 0) {
           setWishlistProducts([]);
           setWishlistLoading(false);
@@ -194,18 +195,15 @@ const AccountCenter = () => {
 
     loadWishlist();
     return () => { cancelled = true; };
-  }, [activeTab]);
+  }, [activeTab, wishlist]);
 
-  const removeWishlistItem = (productId) => {
+  const removeWishlistItem = async (productId) => {
     try {
-      const raw = localStorage.getItem('infinity_wishlist');
-      const list = raw ? JSON.parse(raw) : [];
-      const updated = list.filter(id => id !== productId);
-      localStorage.setItem('infinity_wishlist', JSON.stringify(updated));
+      await toggleSavedGift(productId);
       setWishlistProducts(prev => prev.filter(p => (p.id || p._id) !== productId));
       window.dispatchEvent(new Event('storage'));
       showToast('Item removed from saved list');
-    } catch (e) {}
+    } catch { showToast('Could not remove this gift. Please try again.', 'error'); }
   };
 
   // Profile Change Handler
@@ -455,7 +453,7 @@ const AccountCenter = () => {
   const firstName = user?.name ? user.name.split(' ')[0] : 'friend';
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] py-6 sm:py-10 px-3 sm:px-6 font-sans">
+    <div className="film-account min-h-screen bg-[#FAF8F4] py-6 sm:py-10 px-3 sm:px-6 font-sans">
       
       {/* Toast Notification */}
       {toast.show && (
@@ -510,12 +508,14 @@ const AccountCenter = () => {
         {/* Mobile Quick Action Strip (Compact Horizontal Pills) */}
         <div className="lg:hidden flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
           {[
+            { id: 'overview', label: 'Overview', icon: Home },
             { id: 'orders', label: 'Orders', icon: Package },
             { id: 'addresses', label: 'Addresses', icon: MapPin },
             { id: 'saved', label: 'Saved', icon: Heart },
             { id: 'profile', label: 'Profile', icon: User },
             { id: 'security', label: 'Security', icon: Shield },
-            { id: 'preferences', label: 'Preferences', icon: Bell }
+            { id: 'preferences', label: 'Preferences', icon: Bell },
+            { id: 'privacy', label: 'Support', icon: HelpCircle }
           ].map(tab => {
             const Icon = tab.icon;
             const active = activeTab === tab.id;
@@ -548,6 +548,7 @@ const AccountCenter = () => {
                 Shopping
               </span>
               <div className="space-y-1">
+                <button type="button" onClick={() => switchTab('overview')} className={`w-full h-11 px-3.5 rounded-xl flex items-center gap-3 text-xs font-bold ${activeTab === 'overview' ? 'bg-[#071A2F] text-white' : 'text-[#071A2F]'}`}><Home size={16} />Overview</button>
                 <button
                   onClick={() => switchTab('orders')}
                   className={`w-full h-11 px-3.5 rounded-xl flex items-center justify-between text-xs font-bold transition-colors cursor-pointer ${
@@ -661,6 +662,13 @@ const AccountCenter = () => {
 
           {/* RIGHT CONTENT PANEL */}
           <div className="col-span-1 lg:col-span-8 bg-white rounded-3xl p-5 sm:p-8 border border-[#071A2F]/8 shadow-[0_4px_24px_rgba(7,26,47,0.03)] min-h-[460px]">
+            {activeTab === 'overview' && <div className="film-account-overview">
+              <p className="film-eyebrow">YOUR LITTLE CORNER OF INFINITY</p>
+              <h2>Your gifts.<br /><em>Your memories.</em></h2>
+              <p>Keep track of your orders, save the gifts you love and make your next memory personal.</p>
+              <div>{[[Package, 'orders', 'Your orders'], [MapPin, 'addresses', 'Delivery addresses'], [Heart, 'saved', 'Saved gifts'], [User, 'profile', 'Your profile']].map(action => { const [Icon, key, title] = action; return <button key={key} type="button" onClick={() => switchTab(key)}><Icon size={20} /><span>{title}</span><ArrowRight size={17} /></button>; })}</div>
+              {typeof user?.loyaltyPoints === 'number' && <aside><Sparkles size={19} /><div><span>INFINITY REWARDS</span><strong>{user.loyaltyPoints.toLocaleString('en-IN')} points</strong><p>₹{user.loyaltyPoints.toLocaleString('en-IN')} value</p></div></aside>}
+            </div>}
             
             {/* TAB 1: YOUR ORDERS */}
             {activeTab === 'orders' && (

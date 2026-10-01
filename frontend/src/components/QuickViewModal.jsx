@@ -87,7 +87,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-[#03101D]/55 backdrop-blur-xs transition-opacity duration-300"
+      className="film-quickview fixed inset-0 z-[80] flex items-end md:items-center justify-center p-0 md:p-6 bg-[#03101D]/55 backdrop-blur-xs transition-opacity duration-300"
       onClick={handleBackdropClick}
       role="dialog"
       ref={dialogRef}
@@ -100,7 +100,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
         Desktop (>=768px): Max Width 960px, Two Columns (Image Left, Details Right)
       */}
       <div 
-        className="relative w-[calc(100vw-16px)] max-w-[430px] md:max-w-4xl max-h-[calc(100dvh-16px)] sm:max-h-[90vh] bg-white rounded-[22px] sm:rounded-3xl shadow-[0_20px_60px_rgba(3,16,29,0.28)] border border-[#071A2F]/10 flex flex-col md:flex-row overflow-hidden animate-quickview-open select-none"
+        className="relative w-full max-w-[430px] md:max-w-4xl max-h-[92dvh] bg-white rounded-t-[18px] md:rounded-[4px] shadow-[0_20px_60px_rgba(3,16,29,0.28)] border border-[#071A2F]/10 flex flex-col md:flex-row overflow-hidden animate-quickview-open select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* [ X ] Close Button: Fixed top-right, clearly visible, never overlaps content */}

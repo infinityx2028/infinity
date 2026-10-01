@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Instagram } from "lucide-react";
+import { getWhatsAppUrl, WHATSAPP_DISPLAY_PHONE, WHATSAPP_PHONE } from '../utils/whatsapp';
 const GROUPS = [
   {
-    title: "EXPLORE",
+    title: "SHOP",
     links: [
       ["All gifts", "/shop"],
       ["Photo frames", "/shop/frames"],
@@ -13,7 +14,7 @@ const GROUPS = [
     ],
   },
   {
-    title: "LET’S TALK",
+    title: "ABOUT",
     links: [
       ["About us", "/about"],
       ["Contact", "/contact"],
@@ -22,7 +23,7 @@ const GROUPS = [
     ],
   },
   {
-    title: "THE DETAILS",
+    title: "HELP",
     links: [
       ["Shipping", "/shipping-policy"],
       ["Returns & refunds", "/refund-cancellation-policy"],
@@ -36,12 +37,11 @@ export default function Footer() {
     <footer className="motion-footer">
       <div className="motion-footer-top">
         <p>
-          GOOD GIFTS START
-          <br />
-          <em>with a little thought.</em>
+          Memories, <em>made physical.</em>
+          <small>Personalized gifts made from the moments you never want to forget.</small>
         </p>
         <a
-          href="https://wa.me/918985993948"
+          href={getWhatsAppUrl()}
           target="_blank"
           rel="noreferrer"
           className="motion-link"
@@ -51,21 +51,21 @@ export default function Footer() {
       </div>
       <div className="motion-footer-links">
         {GROUPS.map((group) => (
-          <div key={group.title}>
-            <h3>{group.title}</h3>
+          <details key={group.title} className="film-footer-group">
+            <summary>{group.title}<span>+</span></summary>
             {group.links.map(([label, to]) => (
               <Link key={to} to={to}>
                 {label}
               </Link>
             ))}
-          </div>
+          </details>
         ))}
         <div>
           <h3>THE STUDIO</h3>
           <a href="mailto:infinitycustomizations@gmail.com">
             Write to us <ArrowUpRight size={13} />
           </a>
-          <a href="tel:+918985993948">+91 89859 93948</a>
+          <a href={`tel:+${WHATSAPP_PHONE}`}>{WHATSAPP_DISPLAY_PHONE}</a>
           <a
             href="https://instagram.com/infinitycustomizations"
             target="_blank"
