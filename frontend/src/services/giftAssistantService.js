@@ -377,7 +377,7 @@ export async function getGiftRecommendations({ query = '', refinement = null, cu
       quickOptions: ["For Girlfriend", "For Best Friend", "Anniversary Gift", "Under ₹500", "Under ₹1000"],
       products: topBestSellers.map(p => ({
         ...p,
-        recommendationReason: "Popular personalized choice with verified customer reviews.",
+        recommendationReason: "A personalized choice from our gift catalog.",
         isTopPick: false
       })),
       refinementChips: ["Under ₹500", "Birthday", "For Couples", "Photo Gifts"]
@@ -414,4 +414,3 @@ export function getIntentTokens(intent) {
   }
   return tokens;
 }
-

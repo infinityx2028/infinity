@@ -4,6 +4,7 @@ import { Heart, ShoppingBag, Check, ArrowRight, Eye } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useQuickView } from '../contexts/QuickViewContext';
 import { getImageSrc } from '../utils/imageUtils';
+import { responsiveImage } from '../utils/responsiveImages';
 import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
 
@@ -94,7 +95,7 @@ const ProductCard = ({ product, showCategory = true }) => {
   return (
     <div 
       style={{ perspective: '800px', transformStyle: 'preserve-3d' }}
-      className="group relative bg-white rounded-2xl border border-[#071A2F]/8 p-2.5 sm:p-4 shadow-[0_2px_12px_rgba(7,26,47,0.04)] hover:shadow-[0_12px_28px_rgba(7,26,47,0.08)] active:scale-[0.985] transition-all duration-200 flex flex-col h-full justify-between select-none"
+      className="studio-product-card group relative bg-white rounded-2xl border border-[#071A2F]/8 p-2.5 sm:p-4 shadow-[0_2px_12px_rgba(7,26,47,0.04)] hover:shadow-[0_12px_28px_rgba(7,26,47,0.08)] active:scale-[0.985] transition-all duration-200 flex flex-col h-full justify-between select-none"
     >
       
       {/* 1. PRODUCT IMAGE CONTAINER (Strict 1:1 Aspect Ratio + 3D Depth) */}
@@ -119,7 +120,8 @@ const ProductCard = ({ product, showCategory = true }) => {
           type="button"
           onClick={toggleWishlist}
           aria-label="Save to Wishlist"
-          className="absolute top-1.5 right-1.5 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#071A2F] hover:bg-white shadow-xs transition-all duration-200 cursor-pointer"
+          aria-pressed={isWishlisted}
+          className="absolute top-1.5 right-1.5 z-10 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-[#071A2F] hover:bg-white shadow-xs transition-all duration-200 cursor-pointer"
         >
           <Heart 
             size={13} 
@@ -136,7 +138,7 @@ const ProductCard = ({ product, showCategory = true }) => {
               e.stopPropagation();
               openQuickView(product);
             }}
-            className="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-[#071A2F] text-[10.5px] sm:text-[11px] font-bold py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-full shadow-md backdrop-blur-md transition-all active:scale-95 sm:hover:scale-105 cursor-pointer"
+            className="inline-flex min-h-11 items-center gap-1.5 bg-white/95 hover:bg-white text-[#071A2F] text-[10.5px] sm:text-[11px] font-bold py-1 sm:py-1.5 px-2.5 sm:px-3 rounded-full shadow-md backdrop-blur-md transition-all active:scale-95 sm:hover:scale-105 cursor-pointer"
           >
             <Eye size={12} className="text-[#071A2F]" />
             <span>Quick View</span>
@@ -155,7 +157,7 @@ const ProductCard = ({ product, showCategory = true }) => {
             <img
               loading="lazy"
               decoding="async"
-              src={imageSrc}
+              {...responsiveImage(product.images?.[0] || product.image, '(max-width: 1023px) 45vw, 300px')}
               alt={product.name}
               onLoad={() => setIsImgLoaded(true)}
               onError={() => {

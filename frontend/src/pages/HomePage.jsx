@@ -6,10 +6,10 @@ import BestSellersSection from '../components/BestSellersSection';
 import MomentsStorySection from '../components/MomentsStorySection';
 import FeaturedProducts from '../components/FeaturedProducts';
 import PersonalizationProcess from '../components/PersonalizationProcess';
-import CustomerReviews from '../components/CustomerReviews';
 import WhyChooseUs from '../components/WhyChooseUs';
-import CommunityGallery from '../components/CommunityGallery';
 import PremiumCTA from '../components/PremiumCTA';
+import { CatalogProvider } from '../contexts/CatalogContext';
+import '../studio.css';
 
 const HomePage = () => {
   useEffect(() => {
@@ -17,7 +17,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <main className="w-full bg-[#FAF8F4] overflow-x-hidden">
+    <CatalogProvider><main className="studio-home w-full bg-[#FAF8F4]">
       {/* 03. COMPACT CINEMATIC 3D HERO */}
       <Hero3D />
 
@@ -30,12 +30,6 @@ const HomePage = () => {
       {/* 06. SIGNATURE KEEPSAKES (BEST SELLERS) */}
       <BestSellersSection />
 
-      {/* 07. HOW IT WORKS (THE GIFTING EXPERIENCE) */}
-      <PersonalizationProcess />
-
-      {/* 08. CUSTOMER MOMENTS & REVIEWS */}
-      <CustomerReviews />
-
       {/* BRAND STORY: FROM CAMERA ROLL TO SOMETHING REAL */}
       <MomentsStorySection />
 
@@ -45,14 +39,11 @@ const HomePage = () => {
       {/* THE INFINITY DIFFERENCE */}
       <WhyChooseUs />
 
-      {/* Real Social Proof & Community Studio Gallery (Desktop) */}
-      <div className="hidden lg:block">
-        <CommunityGallery />
-      </div>
+      <PersonalizationProcess />
 
       {/* 09. FINAL EMOTIONAL CTA / BRAND KEEPSAKE BANNER */}
       <PremiumCTA />
-    </main>
+    </main></CatalogProvider>
   );
 };
 

@@ -1,0 +1,522 @@
+{
+  "/images/4 x 6 black frame 199.jpg": {
+    "360": {
+      "src": "/images/responsive/4-x-6-black-frame-199-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/4-x-6-black-frame-199-720.webp",
+      "width": 720
+    }
+  },
+  "/images/4 x 6 white frame 199.jpg": {
+    "360": {
+      "src": "/images/responsive/4-x-6-white-frame-199-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/4-x-6-white-frame-199-720.webp",
+      "width": 720
+    }
+  },
+  "/images/mini.jpeg": {
+    "360": {
+      "src": "/images/responsive/mini-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/mini-720.webp",
+      "width": 720
+    }
+  },
+  "/images/medp.jpg": {
+    "360": {
+      "src": "/images/responsive/medp-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/medp-720.webp",
+      "width": 720
+    }
+  },
+  "/images/largep.jpg": {
+    "360": {
+      "src": "/images/responsive/largep-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/largep-720.webp",
+      "width": 720
+    }
+  },
+  "/images/polaroids album 169.jpg": {
+    "360": {
+      "src": "/images/responsive/polaroids-album-169-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/polaroids-album-169-720.webp",
+      "width": 720
+    }
+  },
+  "/images/4 x 4 149.jpg": {
+    "360": {
+      "src": "/images/responsive/4-x-4-149-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/4-x-4-149-720.webp",
+      "width": 720
+    }
+  },
+  "/images/white frame1.jpg": {
+    "360": {
+      "src": "/images/responsive/white-frame1-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/white-frame1-720.webp",
+      "width": 720
+    }
+  },
+  "/images/modi.jpg": {
+    "360": {
+      "src": "/images/responsive/modi-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/modi-720.webp",
+      "width": 720
+    }
+  },
+  "/images/half inch2.jpg": {
+    "360": {
+      "src": "/images/responsive/half-inch2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/half-inch2-720.webp",
+      "width": 709
+    }
+  },
+  "/images/8 x 12 mount.jpg": {
+    "360": {
+      "src": "/images/responsive/8-x-12-mount-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/8-x-12-mount-720.webp",
+      "width": 720
+    }
+  },
+  "/images/10 x 12 frame 1299.jpg": {
+    "360": {
+      "src": "/images/responsive/10-x-12-frame-1299-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/10-x-12-frame-1299-720.webp",
+      "width": 720
+    }
+  },
+  "/images/12x18 main.jpg": {
+    "360": {
+      "src": "/images/responsive/12x18-main-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/12x18-main-720.webp",
+      "width": 700
+    }
+  },
+  "/images/frame brown.jpeg": {
+    "360": {
+      "src": "/images/responsive/frame-brown-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/frame-brown-720.webp",
+      "width": 699
+    }
+  },
+  "/images/12 x 18 milestone .jpg": {
+    "360": {
+      "src": "/images/responsive/12-x-18-milestone--360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/12-x-18-milestone--720.webp",
+      "width": 720
+    }
+  },
+  "/images/collage frame 3999.jpg": {
+    "360": {
+      "src": "/images/responsive/collage-frame-3999-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/collage-frame-3999-720.webp",
+      "width": 720
+    }
+  },
+  "/images/vintage frame.jpg": {
+    "360": {
+      "src": "/images/responsive/vintage-frame-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/vintage-frame-720.webp",
+      "width": 720
+    }
+  },
+  "/images/12x18 new.jpg": {
+    "360": {
+      "src": "/images/responsive/12x18-new-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/12x18-new-720.webp",
+      "width": 714
+    }
+  },
+  "/images/wed frame.jpg": {
+    "360": {
+      "src": "/images/responsive/wed-frame-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/wed-frame-720.webp",
+      "width": 720
+    }
+  },
+  "/images/Lf.jpeg": {
+    "360": {
+      "src": "/images/responsive/lf-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/lf-720.webp",
+      "width": 720
+    }
+  },
+  "/images/aniv1.jpeg": {
+    "360": {
+      "src": "/images/responsive/aniv1-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/aniv1-720.webp",
+      "width": 720
+    }
+  },
+  "/images/mag 12pgs 599.jpg": {
+    "360": {
+      "src": "/images/responsive/mag-12pgs-599-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/mag-12pgs-599-720.webp",
+      "width": 720
+    }
+  },
+  "/images/MAG design2.jpg": {
+    "360": {
+      "src": "/images/responsive/mag-design2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/mag-design2-720.webp",
+      "width": 720
+    }
+  },
+  "/images/nf.jpeg": {
+    "360": {
+      "src": "/images/responsive/nf-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/nf-720.webp",
+      "width": 473
+    }
+  },
+  "/images/artificial single flower boq 199.jpg": {
+    "360": {
+      "src": "/images/responsive/artificial-single-flower-boq-199-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/artificial-single-flower-boq-199-720.webp",
+      "width": 720
+    }
+  },
+  "/images/artboqwith,pol,flow,choc 899.jpg": {
+    "360": {
+      "src": "/images/responsive/artboqwith-pol-flow-choc-899-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/artboqwith-pol-flow-choc-899-720.webp",
+      "width": 720
+    }
+  },
+  "/images/aflower2.jpeg": {
+    "360": {
+      "src": "/images/responsive/aflower2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/aflower2-720.webp",
+      "width": 720
+    }
+  },
+  "/images/artboqwith,pol,flow,cktpr,choc 999.jpg": {
+    "360": {
+      "src": "/images/responsive/artboqwith-pol-flow-cktpr-choc-999-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/artboqwith-pol-flow-cktpr-choc-999-720.webp",
+      "width": 720
+    }
+  },
+  "/images/rose.jpeg": {
+    "360": {
+      "src": "/images/responsive/rose-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/rose-720.webp",
+      "width": 720
+    }
+  },
+  "/images/HAMPER(1).jpg": {
+    "360": {
+      "src": "/images/responsive/hamper-1--360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/hamper-1--720.webp",
+      "width": 720
+    }
+  },
+  "/images/hamperc.jpeg": {
+    "360": {
+      "src": "/images/responsive/hamperc-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/hamperc-720.webp",
+      "width": 720
+    }
+  },
+  "/images/sweet.jpeg": {
+    "360": {
+      "src": "/images/responsive/sweet-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/sweet-720.webp",
+      "width": 720
+    }
+  },
+  "/images/cap1.jpeg": {
+    "360": {
+      "src": "/images/responsive/cap1-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/cap1-720.webp",
+      "width": 720
+    }
+  },
+  "/images/ct.jpeg": {
+    "360": {
+      "src": "/images/responsive/ct-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/ct-720.webp",
+      "width": 720
+    }
+  },
+  "/images/cless2.jpg": {
+    "360": {
+      "src": "/images/responsive/cless2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/cless2-720.webp",
+      "width": 720
+    }
+  },
+  "/images/st.jpg": {
+    "360": {
+      "src": "/images/responsive/st-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/st-720.webp",
+      "width": 720
+    }
+  },
+  "/images/phonec.jpeg": {
+    "360": {
+      "src": "/images/responsive/phonec-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/phonec-720.webp",
+      "width": 720
+    }
+  },
+  "/images/phonec2.jpeg": {
+    "360": {
+      "src": "/images/responsive/phonec2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/phonec2-720.webp",
+      "width": 720
+    }
+  },
+  "/images/phonec4.jpeg": {
+    "360": {
+      "src": "/images/responsive/phonec4-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/phonec4-720.webp",
+      "width": 720
+    }
+  },
+  "/images/phonec5.jpeg": {
+    "360": {
+      "src": "/images/responsive/phonec5-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/phonec5-720.webp",
+      "width": 720
+    }
+  },
+  "/images/photo cup 299.jpg": {
+    "360": {
+      "src": "/images/responsive/photo-cup-299-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/photo-cup-299-720.webp",
+      "width": 720
+    }
+  },
+  "/images/photo cup p2 299.jpg": {
+    "360": {
+      "src": "/images/responsive/photo-cup-p2-299-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/photo-cup-p2-299-720.webp",
+      "width": 720
+    }
+  },
+  "/images/exam.jpeg": {
+    "360": {
+      "src": "/images/responsive/exam-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/exam-720.webp",
+      "width": 720
+    }
+  },
+  "/images/calender 199.jpg": {
+    "360": {
+      "src": "/images/responsive/calender-199-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/calender-199-720.webp",
+      "width": 720
+    }
+  },
+  "/images/fridge magents 179.jpg": {
+    "360": {
+      "src": "/images/responsive/fridge-magents-179-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/fridge-magents-179-720.webp",
+      "width": 720
+    }
+  },
+  "/images/vintage letter 119.JPG": {
+    "360": {
+      "src": "/images/responsive/vintage-letter-119-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/vintage-letter-119-720.webp",
+      "width": 720
+    }
+  },
+  "/images/nfc.jpeg": {
+    "360": {
+      "src": "/images/responsive/nfc-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/nfc-720.webp",
+      "width": 720
+    }
+  },
+  "/images/ID.jpeg": {
+    "360": {
+      "src": "/images/responsive/id-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/id-720.webp",
+      "width": 720
+    }
+  },
+  "/images/DI2.JPG": {
+    "360": {
+      "src": "/images/responsive/di2-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/di2-720.webp",
+      "width": 720
+    }
+  },
+  "/images/reel1.jpeg": {
+    "360": {
+      "src": "/images/responsive/reel1-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/reel1-720.webp",
+      "width": 720
+    }
+  },
+  "/images/photo restoration (after).JPEG": {
+    "360": {
+      "src": "/images/responsive/photo-restoration-after--360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/photo-restoration-after--720.webp",
+      "width": 720
+    }
+  },
+  "/images/prp.jpg": {
+    "360": {
+      "src": "/images/responsive/prp-360.webp",
+      "width": 360
+    },
+    "720": {
+      "src": "/images/responsive/prp-720.webp",
+      "width": 720
+    }
+  }
+}

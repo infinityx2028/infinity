@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight, X, RefreshCw, CheckCircle2, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { extractIntent, getIntentTokens, getGiftRecommendations } from '../../services/giftAssistantService.js';
-import { API_BASE_URL } from '../../services/api.js';
-import { products as fallbackProducts } from '../../data.js';
+import { useCatalog } from '../../contexts/useCatalog';
+import { responsiveImage } from '../../utils/responsiveImages';
 
 const QUICK_SUGGESTIONS = [
   { label: 'Birthday', query: 'Birthday gift under ₹1000' },
@@ -21,29 +21,10 @@ export default function InfinityAISection() {
   const [intentTokens, setIntentTokens] = useState([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [catalogCache, setCatalogCache] = useState([]);
+  const { products: catalogCache, loading: catalogLoading, error: catalogError } = useCatalog();
   const [clarification, setClarification] = useState(null);
   const resultsRef = useRef(null);
 
-  // Load catalog cache once for instant deterministic recommendations
-  useEffect(() => {
-    let isMounted = true;
-    const fetchCatalog = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && Array.isArray(data) && data.length > 0) {
-            setCatalogCache(data);
-          }
-        }
-      } catch (e) {
-        if (isMounted) setCatalogCache(fallbackProducts);
-      }
-    };
-    fetchCatalog();
-    return () => { isMounted = false; };
-  }, []);
 
   // Real-time Magic Intent Token detection as user types
   useEffect(() => {
@@ -59,6 +40,7 @@ export default function InfinityAISection() {
   const runRecommendation = async (text, refinement = null) => {
     const clean = (text || inputVal).trim();
     if (!clean && !refinement) return;
+    if (catalogLoading || catalogError || !catalogCache.length) return;
 
     setLoading(true);
     setClarification(null);
@@ -151,9 +133,10 @@ export default function InfinityAISection() {
   return (
     <section 
       id="infinity-ai-concierge" 
-      className="py-8 sm:py-12 bg-white border-b border-[#071A2F]/6 relative select-none scroll-mt-20"
+      className="studio-concierge py-8 sm:py-12 bg-white border-b border-[#071A2F]/6 relative select-none scroll-mt-20"
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {(catalogLoading || catalogError) && <p role="status" className="text-sm text-[#687386] mb-3">{catalogLoading ? 'Opening the gift catalog…' : 'The gift catalog is temporarily unavailable. Please try the shop.'}</p>}
         
         {/* Concierge Editorial Frame */}
         <div className="relative rounded-3xl bg-[#FAF8F4] border border-[#071A2F]/8 p-5 sm:p-8 overflow-hidden shadow-[0_4px_24px_rgba(7,26,47,0.03)]">
@@ -198,6 +181,7 @@ export default function InfinityAISection() {
           <form onSubmit={handleSubmit} className="mb-3">
             <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white p-1.5 rounded-2xl border border-[#071A2F]/12 shadow-xs focus-within:border-[#071A2F]/60 transition-all">
               <input
+                aria-label="Describe who you are gifting and your budget"
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
@@ -206,7 +190,7 @@ export default function InfinityAISection() {
               />
               <button
                 type="submit"
-                disabled={!inputVal.trim() || loading}
+                disabled={!inputVal.trim() || loading || catalogLoading || catalogError || !catalogCache.length}
                 className="h-12 px-5 rounded-xl bg-[#071A2F] hover:bg-[#0B2748] disabled:bg-gray-200 disabled:text-gray-400 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 flex-shrink-0 disabled:cursor-not-allowed"
               >
                 <span>FIND THEIR GIFT</span>
@@ -339,7 +323,7 @@ export default function InfinityAISection() {
                       >
                         <img
                           loading="lazy"
-                          src={bestImg}
+                          {...responsiveImage(bestImg, '(max-width: 639px) 80vw, 180px')}
                           alt={best.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -401,7 +385,7 @@ export default function InfinityAISection() {
                           className="bg-white rounded-xl p-2.5 border border-[#071A2F]/8 flex sm:flex-col items-center sm:items-start gap-2.5 shadow-2xs hover:shadow-xs transition-all group"
                         >
                           <Link to={`/product/${pid}`} className="w-16 h-16 sm:w-full sm:aspect-square rounded-lg overflow-hidden bg-[#FAF8F4] flex-shrink-0">
-                            <img src={img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <img {...responsiveImage(img)} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           </Link>
                           <div className="min-w-0 flex-1 space-y-1">
                             <h4 className="font-bold text-xs text-[#071A2F] truncate">

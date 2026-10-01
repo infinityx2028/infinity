@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import ProductCard from './ProductCard';
-import { API_BASE_URL } from '../services/api';
-import { products as fallbackProducts } from '../data';
+import { useCatalog } from '../contexts/useCatalog';
 
 const FEATURED_TABS = [
   { id: 'all', label: 'All Gifts' },
@@ -19,33 +18,9 @@ const FEATURED_TABS = [
 
 const FeaturedProducts = () => {
   const [activeFilter, setActiveFilter] = useState('all');
-  const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { products: allProducts, loading } = useCatalog();
   const [isChangingTab, setIsChangingTab] = useState(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/products`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted) {
-            setAllProducts(Array.isArray(data) && data.length > 0 ? data : fallbackProducts);
-          }
-        } else {
-          if (isMounted) setAllProducts(fallbackProducts);
-        }
-      } catch (e) {
-        if (isMounted) setAllProducts(fallbackProducts);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchProducts();
-    return () => { isMounted = false; };
-  }, []);
 
   const handleTabChange = (tabId) => {
     if (tabId === activeFilter) return;
@@ -74,7 +49,7 @@ const FeaturedProducts = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-3.5 sm:mb-8 gap-1.5 sm:gap-4">
           <div>
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-[#071A2F] tracking-tight">
-              SHOP BY CATEGORY
+              MADE AROUND YOU
             </h2>
             <p className="text-xs sm:text-sm text-[#687386] font-normal mt-0.5">
               Find your perfect personalized gift.

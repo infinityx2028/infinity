@@ -39,7 +39,7 @@ const PremiumCTA = () => {
             </div>
 
             <p className="text-[10.5px] sm:text-[11.5px] text-gray-400 mt-5 font-light">
-              Archival quality • WhatsApp preview confirmation • Pan-India Delivery
+              Your photos. Your words. A gift that feels like you.
             </p>
 
           </div>

@@ -381,10 +381,10 @@ const Navbar = ({ cartCount = 0 }) => {
             </a>
 
             <a 
-              href="/#made-for-you" 
+              href="/#infinity-ai-concierge"
               className="hover:text-[#071A2F] transition-colors py-1 font-semibold text-xs tracking-wide uppercase"
             >
-              Gifts
+              Infinity AI
             </a>
 
             <Link 

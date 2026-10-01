@@ -11,6 +11,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
   const context = useQuickView();
   const [isImgLoaded, setIsImgLoaded] = React.useState(false);
   const scrollPositionRef = useRef(0);
+  const dialogRef = useRef(null);
 
   // Support both single-context and direct props (if any)
   const product = propProduct || context?.quickViewProduct;
@@ -23,15 +24,26 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
       scrollPositionRef.current = window.scrollY;
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+      const previousFocus = document.activeElement;
+      dialogRef.current?.querySelector('button')?.focus();
 
       const handleKeyDown = (e) => {
         if (e.key === 'Escape' && handleClose) handleClose();
+        if (e.key === 'Tab') {
+          const targets = dialogRef.current?.querySelectorAll('button:not([disabled]), a[href], input, select, textarea, [tabindex="0"]');
+          if (!targets?.length) return;
+          const first = targets[0];
+          const last = targets[targets.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
       };
       window.addEventListener('keydown', handleKeyDown);
 
       return () => {
         document.body.style.overflow = originalOverflow || 'unset';
         window.removeEventListener('keydown', handleKeyDown);
+        previousFocus?.focus({ preventScroll: true });
       };
     }
   }, [isOpen, handleClose]);
@@ -79,6 +91,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-[#03101D]/55 backdrop-blur-xs transition-opacity duration-300"
       onClick={handleBackdropClick}
       role="dialog"
+      ref={dialogRef}
       aria-modal="true"
       aria-labelledby="quickview-title"
     >
@@ -96,7 +109,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
           onClick={handleClose}
           type="button"
           aria-label="Close Quick View"
-          className="absolute top-3 right-3 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 hover:bg-white text-[#071A2F] flex items-center justify-center shadow-md border border-[#071A2F]/10 transition-transform active:scale-90 hover:scale-105 cursor-pointer"
+          className="absolute top-3 right-3 z-30 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-[#071A2F] flex items-center justify-center shadow-md border border-[#071A2F]/10 transition-transform active:scale-90 hover:scale-105 cursor-pointer"
         >
           <X size={17} />
         </button>

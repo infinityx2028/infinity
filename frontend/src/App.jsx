@@ -2259,7 +2259,7 @@ export default function App() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('intro') === 'true') return true;
       if (!isHome) return false;
-      return !sessionStorage.getItem('infinity_intro_seen');
+      return false;
     } catch (e) {
       return false;
     }
