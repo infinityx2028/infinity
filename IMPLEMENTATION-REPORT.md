@@ -31,7 +31,7 @@ Infinity AI no longer substitutes the static product list for an unavailable cat
 
 ## Deployment status
 
-Implementation commit `fcf4dcf` was pushed to GitHub on `redesign/memory-film`. GitHub's Vercel integration started a preview deployment. The machine's Vercel CLI is logged out. The existing GitHub `main` commit already reports a failed Vercel deployment. The custom domains currently serve different older bundles; this rebuild is **not production-deployed**.
+Implementation commit `fcf4dcf` was pushed to GitHub on `redesign/memory-film`. GitHub's Vercel integration attempted preview deployment `dpl_ADZV2zVejfCQ3XKJb7c8XWS4Cr5V` and reported failure. The local production build passed. Inspecting deployment logs requires Vercel authentication, which is unavailable on this machine; no deployment configuration was changed on speculation. The existing GitHub `main` commit also reports a failed Vercel deployment. Both custom domains still serve older bundles; this rebuild is **not production-deployed**.
 
 Prepared production files are in `frontend/dist`. Existing Vercel configuration and API proxy remain intact. Deploy this branch to the existing Vercel project through an authenticated project owner, then verify that the custom domain serves the generated JS/CSS filenames. Do not treat a Git push as deployment verification.
 
