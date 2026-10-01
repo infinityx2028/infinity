@@ -1,5 +1,6 @@
 chrome-profile/
 catalog.json
 lint-*.json
+deployment-verification.json
 local/
 live/
