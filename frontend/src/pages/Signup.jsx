@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { User, Mail, Phone, Lock, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import AuthMemoryCollage from '../components/AuthMemoryCollage';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -84,53 +85,10 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center py-6 sm:py-14 px-3 sm:px-6">
+    <div className="motion-auth-shell min-h-screen bg-[#FAF8F4] flex items-center justify-center py-6 sm:py-14 px-3 sm:px-6">
       <div className="w-full max-w-4xl bg-white rounded-[24px] sm:rounded-3xl border border-[#071A2F]/8 shadow-[0_12px_44px_rgba(7,26,47,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
         
-        {/* DESKTOP LEFT: Brand Showcase */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-10 bg-[#071A2F] text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-[#C5A46D]/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div>
-            <Link to="/" className="inline-block mb-8">
-              <span className="text-2xl font-extrabold tracking-tight text-white block">
-                Infinity
-              </span>
-              <span className="text-[10px] font-bold tracking-[0.28em] text-[#C5A46D] uppercase block mt-0.5">
-                CUSTOMIZATIONS
-              </span>
-            </Link>
-
-            <div className="w-full aspect-[4/4.2] rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6 relative group">
-              <img 
-                src="/images/4 x 6 black frame 199.jpg" 
-                alt="Customized Frames" 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071A2F]/90 via-[#071A2F]/20 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5A46D] block">
-                  Thoughtful Gifting
-                </span>
-                <p className="text-sm font-semibold mt-0.5">
-                  Save favourites, track parcels, order with ease
-                </p>
-              </div>
-            </div>
-
-            <p className="font-serif italic text-base text-[#DECBA6] leading-snug">
-              "Made for moments worth keeping."
-            </p>
-            <p className="text-xs text-gray-300 font-light mt-1.5 leading-relaxed">
-              Join thousands of thoughtful gifters creating personalized memories across India.
-            </p>
-          </div>
-
-          <div className="pt-6 border-t border-white/10 flex items-center gap-2 text-[11px] text-gray-400">
-            <ShieldCheck size={14} className="text-[#C5A46D] flex-shrink-0" />
-            <span>Fast Checkout • WhatsApp Personalization Flow</span>
-          </div>
-        </div>
+        <aside className="motion-auth-art hidden lg:flex lg:col-span-5"><p className="motion-kicker">INFINITY / THE PERSONALIZED GIFT STUDIO</p><h2>Your moments.<br /><em>A new beginning.</em></h2><AuthMemoryCollage /><p>Your photos. Your words. Your stories.<br />Something beautifully yours.</p></aside>
 
         {/* RIGHT: Signup Form */}
         <div className="col-span-1 lg:col-span-7 p-5 sm:p-10 md:p-12 flex flex-col justify-center bg-white">
@@ -146,6 +104,8 @@ const Signup = () => {
               </span>
             </Link>
           </div>
+
+          <div className="lg:hidden"><AuthMemoryCollage compact /></div>
 
           {/* Heading */}
           <div className="mb-5 sm:mb-6 text-center lg:text-left">
@@ -181,12 +141,13 @@ const Signup = () => {
             
             {/* Full Name */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
+              <label htmlFor="signup-name" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
                 Full Name
               </label>
               <div className="relative group">
                 <input
                   type="text"
+                  id="signup-name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -204,12 +165,13 @@ const Signup = () => {
 
             {/* Email */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
+              <label htmlFor="signup-email" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
                 Email Address
               </label>
               <div className="relative group">
                 <input
                   type="email"
+                  id="signup-email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -227,7 +189,7 @@ const Signup = () => {
 
             {/* Mobile Number */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
+              <label htmlFor="signup-phoneNumber" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
                 Mobile Number (for Order & WhatsApp updates)
               </label>
               <div className="relative group">
@@ -236,6 +198,7 @@ const Signup = () => {
                 </div>
                 <input
                   type="tel"
+                  id="signup-phoneNumber"
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
@@ -255,12 +218,13 @@ const Signup = () => {
             {/* Password & Confirm Password Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
+                <label htmlFor="signup-password" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
                   Password
                 </label>
                 <div className="relative group">
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    id="signup-password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -282,11 +246,12 @@ const Signup = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
+                <label htmlFor="signup-confirmPassword" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1">
                   Confirm Password
                 </label>
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  id="signup-confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}

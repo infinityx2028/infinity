@@ -45,13 +45,23 @@ import InfinityAIModal from './components/InfinityAI/InfinityAIModal';
 import { QuickViewProvider } from './contexts/QuickViewContext';
 import QuickViewModal from './components/QuickViewModal';
 import { getProductFullDescription } from './data/productDescriptions';
+import MemoryInteractions from './components/MemoryInteractions';
+import './memory-motion.css';
+import { responsiveImage } from './utils/responsiveImages';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
 const LoaderContext = createContext();
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const target = hash ? document.getElementById(hash.slice(1)) : null;
+      if (target) target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      else window.scrollTo(0, 0);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, hash]);
   return null;
 };
 
@@ -985,7 +995,7 @@ const ProductPage = ({ addToCart }) => {
           
           {/* ================= LEFT 55-60%: LARGE PRODUCT GALLERY (Sticky on Desktop) ================= */}
           <div className="lg:col-span-7 lg:sticky lg:top-28">
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(7,26,47,0.04)] border border-[#071A2F]/8 bg-[#FAF8F4] relative group flex items-center justify-center">
+            <div className="motion-product-gallery aspect-[4/5] rounded-sm overflow-hidden shadow-[0_8px_30px_rgba(7,26,47,0.06)] border border-[#071A2F]/8 bg-[#FAF8F4] relative group flex items-center justify-center">
               {!isMainImgLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F4] z-0">
                   <InfinityLoader size="md" />
@@ -1005,14 +1015,13 @@ const ProductPage = ({ addToCart }) => {
                     alt={product.name} 
                   />
                 ) : (
-                  <picture>
-                    <source type="image/webp" srcSet={`${src}?q=80&w=600 600w, ${src}?q=80&w=1000 1000w, ${src}?q=80&w=1400 1400w`} />
+                  <picture className="block w-full h-full">
+                    <source type="image/webp" srcSet={responsiveImage(mainImage).srcSet} sizes="(max-width: 1024px) 90vw, 55vw" />
                     <img 
-                      loading="lazy" 
+                      loading="eager"
+                      fetchPriority="high"
                       decoding="async" 
-                      src={src} 
-                      srcSet={`${src}?q=80&w=600 600w, ${src}?q=80&w=1000 1000w, ${src}?q=80&w=1400 1400w`} 
-                      sizes="(max-width: 1024px) 90vw, 55vw" 
+                      {...responsiveImage(mainImage, '(max-width: 1024px) 90vw, 55vw')}
                       onLoad={() => setIsMainImgLoaded(true)}
                       className={`w-full h-full object-cover group-hover:scale-[1.02] transition-opacity duration-300 ease-out ${
                         isMainImgLoaded ? 'opacity-100' : 'opacity-0'
@@ -1046,7 +1055,7 @@ const ProductPage = ({ addToCart }) => {
                         isActive ? 'border-[#071A2F] shadow-sm scale-95' : 'border-transparent opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <img src={thumbSrc} alt={`thumb-${idx}`} className="w-full h-full object-cover" />
+                      <img {...responsiveImage(img, '80px')} alt={`${product.name}, view ${idx+1}`} className="w-full h-full object-cover" />
                     </button>
                   );
                 })}
@@ -2203,6 +2212,7 @@ const AppContent = () => {
       isNavHidden ? '' : 'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom,0px)+16px)] md:pb-0'
     }`}>
       <AnnouncementBar />
+      <MemoryInteractions />
       <Navbar cartCount={cart.length} />
       <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />
       <React.Suspense fallback={

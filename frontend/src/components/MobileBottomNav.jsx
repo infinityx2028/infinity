@@ -63,7 +63,7 @@ const MobileBottomNav = () => {
   return (
     <nav 
       aria-label="Mobile Bottom Navigation"
-      className="md:hidden fixed bottom-3 inset-x-3 sm:inset-x-6 z-40 max-w-md mx-auto bg-[#FAF8F4]/95 backdrop-blur-xl border border-[#071A2F]/10 rounded-2xl shadow-[0_8px_30px_rgba(7,26,47,0.12)] px-2 py-1 h-[60px] flex items-center select-none"
+      className="motion-bottom-nav md:hidden fixed bottom-3 inset-x-3 sm:inset-x-6 z-40 max-w-md mx-auto bg-[#FAF8F4]/95 backdrop-blur-xl border border-[#071A2F]/10 rounded-2xl shadow-[0_8px_30px_rgba(7,26,47,0.12)] px-2 py-1 h-[60px] flex items-center select-none"
     >
       <div className="flex items-center justify-around w-full">
         {navItems.map((item) => {

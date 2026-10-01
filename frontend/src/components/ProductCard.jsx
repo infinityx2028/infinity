@@ -146,7 +146,7 @@ const ProductCard = ({ product, showCategory = true }) => {
         </div>
 
         {/* Product Image Link */}
-        <Link to={`/product/${productId}`} className="relative block w-full h-full overflow-hidden">
+        <Link to={`/product/${productId}`} data-cursor="VIEW" className="relative block w-full h-full overflow-hidden">
           {!isImgLoaded && !isImgError && imageSrc && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F4] z-0">
               <InfinityLoader size="sm" />

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, ArrowRight, MessageCircle } from 'lucide-react';
-import { getImageSrc } from '../utils/imageUtils';
 import { useQuickView } from '../contexts/QuickViewContext';
 import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
+import { responsiveImage } from '../utils/responsiveImages';
 
 const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: propOnClose }) => {
   const navigate = useNavigate();
@@ -56,7 +56,6 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
   if (!isOpen || !product) return null;
 
   const productId = product._id || product.id;
-  const imageSrc = getImageSrc(product.images?.[0] || product.image);
   const price = Number(product.price || 0);
   const hasRealDiscount = product.originalPrice && Number(product.originalPrice) > price;
   const discountPercent = hasRealDiscount
@@ -124,7 +123,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
 
           {/* Clean image without scaleX/scaleY/rotate transforms */}
           <img
-            src={imageSrc}
+            {...responsiveImage(product.images?.[0] || product.image, '(max-width: 767px) 90vw, 460px')}
             alt={product.name}
             onLoad={() => setIsImgLoaded(true)}
             className={`w-full h-full ${

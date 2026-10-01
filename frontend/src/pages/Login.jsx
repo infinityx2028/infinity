@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, X, MessageCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import AuthMemoryCollage from '../components/AuthMemoryCollage';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -55,57 +56,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F4] flex items-center justify-center py-6 sm:py-14 px-3 sm:px-6">
+    <div className="motion-auth-shell min-h-screen bg-[#FAF8F4] flex items-center justify-center py-6 sm:py-14 px-3 sm:px-6">
       {/* Container */}
       <div className="w-full max-w-4xl bg-white rounded-[24px] sm:rounded-3xl border border-[#071A2F]/8 shadow-[0_12px_44px_rgba(7,26,47,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
         
-        {/* DESKTOP LEFT: Editorial Brand Composition (lg+) */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-10 bg-[#071A2F] text-white relative overflow-hidden">
-          {/* Subtle Champagne Radial Glow */}
-          <div className="absolute top-0 right-0 w-72 h-72 bg-[#C5A46D]/15 rounded-full blur-3xl pointer-events-none" />
-
-          <div>
-            <Link to="/" className="inline-block mb-8">
-              <span className="text-2xl font-extrabold tracking-tight text-white block">
-                Infinity
-              </span>
-              <span className="text-[10px] font-bold tracking-[0.28em] text-[#C5A46D] uppercase block mt-0.5">
-                CUSTOMIZATIONS
-              </span>
-            </Link>
-
-            {/* Editorial Visual Composition */}
-            <div className="w-full aspect-[4/4.2] rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-6 relative group">
-              <img 
-                src="/images/mag 12pgs 599.jpg" 
-                alt="Girls Magazine — Special Birthday Edition" 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071A2F]/90 via-[#071A2F]/20 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#C5A46D] block">
-                  Girls Magazine Edition
-                </span>
-                <p className="text-sm font-semibold mt-0.5">
-                  Handcrafted around moments you love
-                </p>
-              </div>
-            </div>
-
-            <p className="font-serif italic text-base text-[#DECBA6] leading-snug">
-              "Every gift tells a memory."
-            </p>
-            <p className="text-xs text-gray-300 font-light mt-1.5 leading-relaxed">
-              Sign in to manage your addresses, track your orders, and revisit your saved gifts.
-            </p>
-          </div>
-
-          {/* Trust badges */}
-          <div className="pt-6 border-t border-white/10 flex items-center gap-2 text-[11px] text-gray-400">
-            <ShieldCheck size={14} className="text-[#C5A46D] flex-shrink-0" />
-            <span>256-Bit Encrypted • Verified Studio Production</span>
-          </div>
-        </div>
+        <aside className="motion-auth-art hidden lg:flex lg:col-span-5"><p className="motion-kicker">INFINITY / THE PERSONALIZED GIFT STUDIO</p><h2>Every gift.<br /><em>A little more personal.</em></h2><AuthMemoryCollage /><p>Your photos. Your words. Your stories.<br />Something beautifully yours.</p></aside>
 
         {/* RIGHT: Mobile & Desktop Form */}
         <div className="col-span-1 lg:col-span-7 p-5 sm:p-10 md:p-12 flex flex-col justify-center bg-white">
@@ -122,36 +77,7 @@ const Login = () => {
             </Link>
           </div>
 
-          {/* Compact Mobile Product/Memory Composition (130-170px area) */}
-          <div className="lg:hidden relative h-[140px] w-full max-w-[320px] mx-auto mb-4 flex items-center justify-center select-none overflow-hidden">
-            {/* Product 1: Polaroid / Frame Left */}
-            <div className="absolute left-4 top-2 w-[85px] h-[95px] rounded-xl overflow-hidden border border-[#071A2F]/10 shadow-md -rotate-6 transform transition-transform hover:rotate-0 hover:scale-105 duration-300 bg-white p-1">
-              <img 
-                src="/images/4 x 6 black frame 199.jpg" 
-                alt="Frame memory" 
-                className="w-full h-full object-cover rounded-lg" 
-              />
-            </div>
-            {/* Product 2: Magazine Center Hero (Girls Magazine) */}
-            <div className="absolute z-10 w-[95px] h-[115px] rounded-xl overflow-hidden border border-[#071A2F]/15 shadow-xl rotate-1 transform transition-transform hover:scale-105 duration-300 bg-white p-1">
-              <img 
-                src="/images/mag 12pgs 599.jpg" 
-                alt="Girls Magazine Keepsake" 
-                className="w-full h-full object-cover rounded-lg" 
-              />
-              <div className="absolute bottom-1.5 left-1.5 right-1.5 bg-[#071A2F]/80 backdrop-blur-xs text-[8px] font-bold text-white text-center py-0.5 rounded">
-                Keepsake
-              </div>
-            </div>
-            {/* Product 3: Phone Case Right */}
-            <div className="absolute right-4 top-2 w-[85px] h-[95px] rounded-xl overflow-hidden border border-[#071A2F]/10 shadow-md rotate-6 transform transition-transform hover:rotate-0 hover:scale-105 duration-300 bg-white p-1">
-              <img 
-                src="/images/CUSTOMIZED PHONE CASE.jpg" 
-                alt="Custom Phone Case" 
-                className="w-full h-full object-contain rounded-lg p-0.5" 
-              />
-            </div>
-          </div>
+          <div className="lg:hidden"><AuthMemoryCollage compact /></div>
 
           {/* Heading */}
           <div className="mb-5 sm:mb-6 text-center lg:text-left">
@@ -187,11 +113,12 @@ const Login = () => {
             
             {/* Email or Phone */}
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5">
+              <label htmlFor="login-identifier" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider mb-1.5">
                 Mobile Number or Email
               </label>
               <div className="relative group">
                 <input
+                  id="login-identifier"
                   type="text"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
@@ -210,7 +137,7 @@ const Login = () => {
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider">
+                <label htmlFor="login-password" className="block text-[11px] sm:text-xs font-bold text-[#071A2F] uppercase tracking-wider">
                   Password
                 </label>
                 <button
@@ -223,6 +150,7 @@ const Login = () => {
               </div>
               <div className="relative group">
                 <input
+                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
