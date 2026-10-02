@@ -4,3 +4,5 @@ lint-*.json
 deployment-verification.json
 local/
 live/
+alignment/
+chrome-alignment-profile/

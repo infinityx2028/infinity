@@ -1,0 +1,367 @@
+/* Shared guides for the existing memory film. Content caps at 1480px. */
+:root {
+  --page-gutter: clamp(24px, 4vw, 72px);
+  --page-inset: max(var(--page-gutter), calc((100vw - 1480px) / 2));
+  --grid-gap: clamp(16px, 2vw, 28px);
+}
+.memory-film > .film-scene,
+.memory-film > .motion-scene,
+.motion-footer {
+  padding-inline: var(--page-inset);
+}
+.memory-film .motion-chapter {
+  margin-inline: 0;
+}
+.memory-film .motion-ai-layout {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  align-items: center;
+  padding-top: 32px;
+}
+.memory-film .motion-ai-copy {
+  grid-column: 1 / 8;
+}
+.memory-film .motion-ai-visual {
+  grid-column: 8 / 13;
+  min-height: 470px;
+  display: grid;
+  place-items: center;
+}
+.memory-film .ai-memory-anchor {
+  position: relative;
+  inset: auto;
+  width: clamp(280px, 24vw, 350px);
+}
+.memory-film .motion-ai-form,
+.memory-film .motion-ai-suggestions,
+.memory-film .motion-ai-intents {
+  max-width: 640px;
+}
+.memory-film .motion-ai-form {
+  height: 62px;
+}
+.memory-film .motion-ai-form input,
+.memory-film .motion-ai-form button {
+  height: 60px;
+}
+.memory-film .motion-ai-form button {
+  width: 60px;
+  flex: 0 0 60px;
+}
+.memory-film .motion-ai-suggestions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+.memory-film .motion-ai-suggestions button {
+  min-height: 48px;
+}
+.memory-film .motion-ai-orbit-label {
+  display: none;
+}
+.memory-film .film-transformation {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  grid-template-rows: auto auto auto;
+  height: auto;
+  min-height: 650px;
+  padding-block: 30px 48px;
+  align-content: start;
+}
+.film-transformation > .motion-chapter {
+  grid-column: 1 / -1;
+}
+.memory-film .film-transformation h2 {
+  grid-column: 1 / 7;
+  grid-row: 2;
+  font-size: clamp(76px, 8vw, 130px);
+  line-height: 0.88;
+  margin: 40px 0 0;
+}
+.memory-film .film-transformation h2 > em {
+  font-size: clamp(52px, 6vw, 92px);
+  margin-top: 24px;
+  line-height: 1.03;
+}
+.memory-film .film-story-anchor {
+  position: relative;
+  inset: auto;
+  grid-column: 8 / 13;
+  grid-row: 2 / 4;
+  align-self: center;
+  justify-self: center;
+  width: clamp(300px, 26vw, 380px);
+}
+.memory-film .film-story-note {
+  grid-column: 1 / 7;
+  grid-row: 3;
+  margin-top: 36px;
+  max-width: 440px;
+}
+.memory-film .film-story-note .motion-link {
+  margin-top: 26px;
+}
+.memory-film .film-difference-layout,
+.memory-film .film-founder > div {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+.film-difference-layout > div:first-child,
+.film-founder > div > h2 {
+  grid-column: 1 / 7;
+}
+.film-difference-layout > .film-pillars,
+.film-founder > div > div {
+  grid-column: 8 / 13;
+}
+.memory-film .film-brand-anchor {
+  left: calc(var(--page-inset) + (100% - 2 * var(--page-inset)) / 4);
+  top: 420px;
+}
+.memory-film .film-process-anchor,
+.memory-film .film-founder-anchor,
+.memory-film .film-products-anchor {
+  right: var(--page-inset);
+}
+.memory-film .film-hero-anchor {
+  left: calc(var(--page-inset) + (100% - 2 * var(--page-inset)) * 0.72 - 152px);
+}
+.memory-film .film-final {
+  height: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.memory-film .film-final h2 {
+  margin-top: 28px;
+}
+.memory-film .film-final-anchor {
+  width: 250px;
+  top: 290px;
+  left: calc(50% - 125px);
+}
+.memory-film .film-final .motion-actions {
+  margin-top: 350px;
+}
+.film-final-watermark {
+  display: none;
+}
+
+/* Useful information first; the closing brand shot is always last. */
+.motion-footer {
+  padding-block: 36px 32px;
+}
+.footer-information {
+  width: 100%;
+}
+.motion-footer-top {
+  gap: var(--grid-gap);
+}
+.motion-footer-top > p {
+  max-width: 340px;
+}
+.motion-footer-links {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--grid-gap);
+  margin-block: 20px 8px;
+}
+.motion-footer-links > * {
+  grid-column: span 3;
+}
+.motion-footer-bottom {
+  border-top: 1px solid #faf8f425;
+}
+.footer-frame-stage {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+.motion-footer .film-footer-anchor {
+  width: 300px;
+  left: calc(50% - 150px);
+  right: auto;
+  top: 0;
+}
+.motion-footer-wordmark {
+  order: 0;
+  width: calc(100% + 2 * var(--page-inset) - 2 * var(--page-gutter));
+  max-width: none;
+  align-self: center;
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+  font-size: clamp(120px, 16vw, 300px);
+  line-height: 0.84;
+  translate: none;
+  z-index: 10;
+}
+.motion-footer-wordmark .footer-infinity-name {
+  display: block;
+  width: max-content;
+  font:
+    800 1em/0.84 Manrope,
+    sans-serif;
+  letter-spacing: -0.055em;
+  transform: scaleX(var(--wordmark-width, 1));
+  transform-origin: left center;
+  clip-path: none;
+  margin: 0;
+  color: #faf8f4;
+  transition: none;
+}
+.motion-footer-wordmark small {
+  font:
+    600 clamp(18px, 2vw, 32px)/1.4 Manrope,
+    sans-serif;
+  letter-spacing: 0.3em;
+  margin: 22px 0 0;
+  color: #c5a46d;
+}
+@media (min-width: 768px) and (max-width: 1099px) {
+  .memory-film .motion-ai-copy {
+    grid-column: 1 / 8;
+  }
+  .memory-film .ai-memory-anchor {
+    width: 245px;
+  }
+  .memory-film .film-transformation h2 {
+    font-size: clamp(60px, 8vw, 88px);
+  }
+  .memory-film .film-transformation h2 > em {
+    font-size: clamp(42px, 5vw, 60px);
+  }
+  .memory-film .film-story-anchor {
+    width: 260px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --page-gutter: 16px;
+    --grid-gap: 16px;
+  }
+  .memory-film .motion-ai-layout {
+    display: block;
+    padding-top: 24px;
+  }
+  .memory-film .motion-ai-visual {
+    display: block;
+    position: absolute;
+    min-height: 0;
+    top: 40px;
+    right: var(--page-inset);
+    width: 120px;
+    height: 160px;
+  }
+  .memory-film .ai-memory-anchor {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 120px;
+  }
+  .memory-film .motion-ai-form {
+    height: 58px;
+  }
+  .memory-film .motion-ai-form input,
+  .memory-film .motion-ai-form button {
+    height: 56px;
+  }
+  .memory-film .motion-ai-form button {
+    flex-basis: 56px;
+    width: 56px;
+  }
+  .memory-film .motion-ai-suggestions {
+    gap: 0 16px;
+  }
+  .memory-film .film-transformation {
+    display: block;
+    height: 615px;
+    min-height: 0;
+    padding-block: 32px;
+  }
+  .memory-film .film-transformation h2 {
+    font-size: 43px;
+    line-height: 0.95;
+    margin-top: 25px;
+  }
+  .memory-film .film-transformation h2 > em {
+    font-size: 28px;
+    line-height: 1.1;
+    margin-top: 18px;
+  }
+  .memory-film .film-story-anchor {
+    position: absolute;
+    width: 180px;
+    top: 230px;
+    left: calc(50% - 90px);
+  }
+  .memory-film .film-story-note {
+    margin-top: 272px;
+    max-width: 100%;
+  }
+  .memory-film .film-story-note .motion-link {
+    margin-top: 18px;
+  }
+  .memory-film .film-difference-layout {
+    display: block;
+  }
+  .memory-film .film-brand-anchor {
+    left: auto;
+    right: var(--page-inset);
+    top: 112px;
+  }
+  .memory-film .film-process-anchor {
+    right: var(--page-inset);
+  }
+  .memory-film .film-hero-anchor {
+    left: calc(50% - 100px);
+  }
+  .memory-film .film-final {
+    height: 620px;
+  }
+  .memory-film .film-final-anchor {
+    width: 205px;
+    left: calc(50% - 102.5px);
+    top: 184px;
+  }
+  .memory-film .film-final .motion-actions {
+    margin-top: 306px;
+  }
+  .motion-footer {
+    padding-block: 28px 86px;
+  }
+  .motion-footer-links {
+    display: block;
+    margin-block: 14px;
+  }
+  .motion-footer-links > div:last-child {
+    margin-top: 12px;
+  }
+  .footer-frame-stage {
+    height: 270px;
+  }
+  .motion-footer .film-footer-anchor {
+    width: 220px;
+    left: calc(50% - 110px);
+    top: 0;
+  }
+  .motion-footer-wordmark {
+    font-size: clamp(72px, 22vw, 104px);
+    margin-top: 12px;
+    width: 100%;
+  }
+  .motion-footer-wordmark small {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    margin-top: 14px;
+  }
+}
+@media (max-width: 359px) {
+  .memory-film .motion-ai-visual,
+  .memory-film .ai-memory-anchor {
+    width: 110px;
+  }
+  .memory-film .film-hero-anchor {
+    left: calc(50% - 95px);
+  }
+}

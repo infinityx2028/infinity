@@ -18,6 +18,7 @@ async function nav(route) {await send('Page.navigate',{url:base+route});await un
 async function size(width,height=844) { await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<768});await send('Emulation.setTouchEmulationEnabled',{enabled:width<768,maxTouchPoints:1}); }
 async function scene(selector,name) {
   await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({behavior:'instant',block:'start'})`);
+  if(selector==='footer')await evaluate('window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"})');
   await sleep(300);await shot(name);
   const visual=await evaluate(`(()=>{const frame=document.querySelector('.memory-object-position'),r=frame.getBoundingClientRect();const overlaps=[...document.querySelectorAll('main input,main .motion-button,main .motion-link,main .motion-category-object')].filter(el=>{const b=el.getBoundingClientRect();return b.width&&b.height&&b.top>=75&&b.bottom<innerHeight-55&&r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top;}).map(el=>el.textContent||el.id);return {scene:frame.dataset.scene,opacity:Number(frame.style.opacity),z:Number(frame.dataset.z),width:r.width,top:r.top,bottom:r.bottom,inViewport:r.bottom>75&&r.top<innerHeight-55&&r.right>0&&r.left<innerWidth,overlaps};})()`);
   check(name+' frame remains present',visual.opacity>=.15&&visual.inViewport,visual);

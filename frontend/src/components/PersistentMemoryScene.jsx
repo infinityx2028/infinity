@@ -91,7 +91,7 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
               key === "hero"
                 ? rect.top + sample + rect.height / 2
                 : key === "footer"
-                  ? rect.top + sample + rect.height / 2 - maximumScroll
+                  ? window.innerHeight * 0.48
                   : rect.top - sectionRect.top + header + rect.height / 2,
             ...poses[key],
           };
@@ -104,8 +104,18 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           ...poses.ending,
           key: "ending",
           start: Math.max(last.start + 1, bodyHeight - window.innerHeight),
-          y: last.y - 28,
-          size: last.size * 0.72,
+          y: (() => {
+            const rect = footer
+              .querySelector('[data-memory-anchor="footer"]')
+              .getBoundingClientRect();
+            return (
+              rect.top +
+              sample +
+              rect.height / 2 -
+              (bodyHeight - window.innerHeight)
+            );
+          })(),
+          size: last.size,
         });
       }
       update();
