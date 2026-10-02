@@ -6,7 +6,7 @@ import { useCatalog } from "../contexts/useCatalog";
 import { CANONICAL_CATEGORIES } from "../utils/categoryUtils";
 import { responsiveImage } from "../utils/responsiveImages";
 import { getWhatsAppUrl } from "../utils/whatsapp";
-import MemoryExperience from "../components/MemoryExperience";
+import MemoryFrameDirector from "../components/MemoryFrameDirector";
 import HomeGiftFinder from "../components/HomeGiftFinder";
 import { Chapter, FrameSlot, ShopLink } from "../home/SceneElements";
 
@@ -38,13 +38,16 @@ function Experience() {
       <div className="scene-environment" aria-hidden="true">
         <div className="scene-paper-grain" />
       </div>
-      <MemoryExperience
+      <MemoryFrameDirector
         rootRef={root}
         magazine={magazine}
         universe={universe}
         tokens={tokens}
       />
-      <section className="scene-scene scene-opening-hero" data-film-scene="hero">
+      <section
+        className="scene-scene scene-opening-hero"
+        data-film-scene="hero"
+      >
         <div className="scene-container">
           <div className="scene-hero-meta">
             <span>PERSONALIZED · MADE FOR YOU</span>
@@ -92,7 +95,6 @@ function Experience() {
         id="collections-section"
         className="scene-scene scene-categories"
         data-film-scene="categories"
-        data-pin-stage
       >
         <div className="scene-container">
           <Chapter number="04" title="THE CATEGORY UNIVERSE" />
@@ -160,7 +162,10 @@ function Experience() {
           )}
         </div>
       </section>
-      <section className="scene-scene scene-emotional" data-film-scene="emotion">
+      <section
+        className="scene-scene scene-emotional"
+        data-film-scene="emotion"
+      >
         <div className="scene-container">
           <p className="scene-eyebrow">05 / FOR THE PEOPLE WHO STAY WITH YOU</p>
           <h2>
@@ -181,7 +186,6 @@ function Experience() {
         id="made-around-your-story"
         className="scene-scene scene-camera"
         data-film-scene="camera"
-        data-pin-stage
       >
         <div className="scene-container">
           <Chapter number="06" title="SOME THINGS DESERVE MORE THAN A SCREEN" />
@@ -194,6 +198,8 @@ function Experience() {
                 <br />
                 ROLL.
               </h2>
+            </div>
+            <div className="scene-camera-followup">
               <p className="scene-body">
                 A favourite day. An inside joke. The people in every good
                 memory.
@@ -216,7 +222,6 @@ function Experience() {
       <section
         className="scene-scene scene-magazine"
         data-film-scene="magazine"
-        data-pin-stage
       >
         <div className="scene-container">
           <Chapter number="07" title="YOUR STORY, COVER TO COVER" />
@@ -255,7 +260,6 @@ function Experience() {
       <section
         className="scene-scene scene-product-universe"
         data-film-scene="universe"
-        data-pin-stage
       >
         <div className="scene-container">
           <Chapter number="08" title="A MEMORY. IN A DIFFERENT FORM." />
@@ -345,7 +349,6 @@ function Experience() {
         id="how-it-works"
         className="scene-scene scene-process"
         data-film-scene="process"
-        data-pin-stage
       >
         <div className="scene-container">
           <Chapter number="09" title="SIMPLE TO ORDER. PERSONAL TO KEEP." />
@@ -421,7 +424,6 @@ function Experience() {
         id="infinity-difference"
         className="scene-scene scene-difference"
         data-film-scene="difference"
-        data-pin-stage
       >
         <div className="scene-infinity-ghost" aria-hidden="true">
           INFINITY

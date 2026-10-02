@@ -8,6 +8,6 @@
     "postinstall": "npm --prefix backend ci --silent"
   },
   "engines": {
-    "node": "16.x || 18.x || 20.x"
+    "node": "24.x"
   }
 }

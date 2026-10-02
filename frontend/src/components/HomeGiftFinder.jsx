@@ -61,7 +61,6 @@ export default function HomeGiftFinder({ onIntent }) {
       className="scene-scene scene-ai"
       id="infinity-ai-concierge"
       data-film-scene="ai"
-      data-pin-stage
     >
       <div className="scene-container">
         <Chapter number="03" title="A LITTLE THOUGHT GOES A LONG WAY" />
@@ -83,7 +82,7 @@ export default function HomeGiftFinder({ onIntent }) {
               <br />A LOT OF MEANING.
             </span>
           </div>
-          <div className="scene-ai-controls">
+          <div className="scene-ai-controls" data-frame-exclusion>
             <p className="scene-body">
               Tell us who you're shopping for, the occasion and your budget. The
               right gift is already in our collection.
@@ -148,7 +147,11 @@ export default function HomeGiftFinder({ onIntent }) {
           </div>
         </div>
         {!!result?.length && (
-          <div className="scene-results" aria-live="polite">
+          <div
+            className="scene-results"
+            data-frame-exclusion
+            aria-live="polite"
+          >
             <div className="scene-results-heading">
               <h3>Found {result.length} gifts that fit.</h3>
               <button

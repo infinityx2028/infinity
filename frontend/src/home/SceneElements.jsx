@@ -12,11 +12,13 @@ export function Chapter({ number, title, aside = "MEMORIES, MADE PHYSICAL." }) {
 }
 export function FrameSlot({ scene, className = "" }) {
   return (
-    <div
-      className={`scene-frame-slot ${className}`}
-      data-film-anchor={scene}
-      aria-hidden="true"
-    />
+    <div className="frame-safe-zone" data-frame-safe-zone={scene}>
+      <div
+        className={`scene-frame-slot ${className}`}
+        data-film-anchor={scene}
+        aria-hidden="true"
+      />
+    </div>
   );
 }
 export function ShopLink({

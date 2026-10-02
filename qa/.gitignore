@@ -11,3 +11,8 @@ rebuild/
 v4-local/
 v4-live/
 v4-chrome/
+
+v5-local/
+v5-live/
+v5-debug/
+v5-chrome/
