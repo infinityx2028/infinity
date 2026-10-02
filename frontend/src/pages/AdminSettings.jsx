@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertCircle, CheckCircle, Lock } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import { adminAuth } from '../services/api';
 
 const AdminSettings = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import { AlertCircle, Plus, Trash2, Edit2, X, Save, ChevronRight, Check, Package, Pencil } from 'lucide-react';
 // Import the centralized API service
 import api from '../services/api';
@@ -64,11 +64,10 @@ const AdminCategories = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let saved;
       if (editingCategory) {
-        saved = await api.categories.update(editingCategory._id, formData, adminToken);
+        await api.categories.update(editingCategory._id, formData, adminToken);
       } else {
-        saved = await api.categories.create(formData, adminToken);
+        await api.categories.create(formData, adminToken);
       }
       
       setSuccess(editingCategory ? 'Category updated successfully!' : 'Category created successfully!');

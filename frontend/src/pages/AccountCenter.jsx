@@ -6,8 +6,8 @@ import {
   ChevronRight, ArrowRight, Eye, EyeOff, Loader, MessageCircle,
   ExternalLink, Sparkles, X, Phone, Mail, Calendar, Home, Briefcase
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useQuickView } from '../contexts/QuickViewContext';
+import { useAuth } from '../contexts/useAuth';
+import { useQuickView } from '../contexts/useQuickView';
 import { API_BASE_URL, orders as ordersApi, products as productsApi } from '../services/api';
 
 const AccountCenter = () => {
@@ -30,7 +30,6 @@ const AccountCenter = () => {
     setDefaultAddress,
     updatePreferences,
     deleteAccount,
-    refreshLoyalty,
     wishlist,
     toggleSavedGift
   } = useAuth();
@@ -47,7 +46,7 @@ const AccountCenter = () => {
   // Keep tab synced with query param
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab');
-    if (tabFromUrl && tabFromUrl !== activeTab) {
+    if (tabFromUrl) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
@@ -111,7 +110,7 @@ const AccountCenter = () => {
     offersWhatsApp: false,
     offersEmail: false
   });
-  const [preferencesSaving, setPreferencesSaving] = useState(false);
+  const [, setPreferencesSaving] = useState(false);
 
   // State: Delete Account Modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -155,7 +154,7 @@ const AccountCenter = () => {
         } else {
           setOrdersList([]);
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) setOrdersList([]);
       } finally {
         if (!cancelled) setOrdersLoading(false);
@@ -186,7 +185,7 @@ const AccountCenter = () => {
         const allList = Array.isArray(all) ? all : [];
         const matches = allList.filter(p => ids.includes(p.id) || ids.includes(p._id));
         setWishlistProducts(matches);
-      } catch (err) {
+      } catch {
         if (!cancelled) setWishlistProducts([]);
       } finally {
         if (!cancelled) setWishlistLoading(false);
@@ -234,7 +233,7 @@ const AccountCenter = () => {
       } else {
         showToast(res.error || 'Failed to update profile', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Error updating profile', 'error');
     } finally {
       setProfileSaving(false);
@@ -266,7 +265,7 @@ const AccountCenter = () => {
       } else {
         showToast(res.error || 'Failed to change password', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Error updating password', 'error');
     } finally {
       setPasswordSaving(false);
@@ -325,7 +324,7 @@ const AccountCenter = () => {
       } else {
         showToast(res.error || 'Failed to save address', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Error saving address', 'error');
     } finally {
       setAddressSaving(false);
@@ -361,7 +360,7 @@ const AccountCenter = () => {
       if (res.success) {
         showToast('Preference saved ✓');
       }
-    } catch (err) {
+    } catch {
       showToast('Failed to update preference', 'error');
     } finally {
       setPreferencesSaving(false);
@@ -382,7 +381,7 @@ const AccountCenter = () => {
       } else {
         showToast(res.error || 'Failed to deactivate account', 'error');
       }
-    } catch (err) {
+    } catch {
       showToast('Error deactivating account', 'error');
     } finally {
       setDeletingAccount(false);

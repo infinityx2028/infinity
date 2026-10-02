@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Eye } from "lucide-react";
-import { useQuickView } from "../contexts/QuickViewContext";
+import { useQuickView } from "../contexts/useQuickView";
 import { responsiveImage } from "../utils/responsiveImages";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/useAuth";
 
 export default function ProductCard({ product, showCategory = true }) {
   const { openQuickView } = useQuickView();

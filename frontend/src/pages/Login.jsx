@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, X, MessageCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import AuthMemoryCollage from '../components/AuthMemoryCollage';
 
 const Login = () => {
@@ -48,7 +48,7 @@ const Login = () => {
       } else {
         setError(res.error || 'Failed to sign in. Please verify your credentials.');
       }
-    } catch (err) {
+    } catch {
       setError('A network error occurred. Please check your connection.');
     } finally {
       setLoading(false);

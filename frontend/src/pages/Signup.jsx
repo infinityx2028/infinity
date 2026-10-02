@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { User, Mail, Phone, Lock, AlertCircle, CheckCircle, Loader, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import AuthMemoryCollage from '../components/AuthMemoryCollage';
 
 const Signup = () => {
@@ -77,7 +77,7 @@ const Signup = () => {
       } else {
         setError(res.error || 'Failed to create account. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during account creation. Please try again.');
     } finally {
       setLoading(false);

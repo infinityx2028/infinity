@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Compass, Sparkles, ShoppingBag } from 'lucide-react';
-import { useCart } from '../contexts/CartContext';
-import { useInfinityAI } from '../contexts/InfinityAIContext';
+import { useCart } from '../contexts/useCart';
+import { useInfinityAI } from '../contexts/useInfinityAI';
 
 const MobileBottomNav = () => {
   const location = useLocation();

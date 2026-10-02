@@ -1,38 +1,13 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { AlertCircle, Check } from 'lucide-react';
 
 const ProductVariantSelector = ({ product, onVariantChange }) => {
-  const [selectedFabric, setSelectedFabric] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedFabric, setSelectedFabric] = useState(product.fabrics?.[0] || null);
+  const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || null);
+  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || null);
   const [quantity, setQuantity] = useState(product.minimumOrderQuantity || 1);
-  const [currentPrice, setCurrentPrice] = useState(product.price);
-  const [priceBreakdown, setPriceBreakdown] = useState('');
-
-  // Initialize with first options
-  useEffect(() => {
-    if (product.fabrics && product.fabrics.length > 0) {
-      setSelectedFabric(product.fabrics[0]);
-      setCurrentPrice(product.fabrics[0].price);
-    } else {
-      setCurrentPrice(product.price);
-    }
-
-    if (product.colors && product.colors.length > 0) {
-      setSelectedColor(product.colors[0]);
-    }
-
-    if (product.sizes && product.sizes.length > 0) {
-      setSelectedSize(product.sizes[0]);
-    }
-
-    if (product.minimumOrderQuantity > 1) {
-      setQuantity(product.minimumOrderQuantity);
-    }
-  }, [product]);
-
   // Update price when fabric or quantity changes - apply quantity-based discounts
-  useEffect(() => {
+  const { currentPrice, priceBreakdown } = useMemo(() => {
     if (selectedFabric) {
       let fabricPrice = selectedFabric.price || product.price;
       let finalPrice = fabricPrice;
@@ -67,9 +42,9 @@ const ProductVariantSelector = ({ product, onVariantChange }) => {
         }
       }
 
-      setCurrentPrice(finalPrice);
-      setPriceBreakdown(breakdown);
+      return { currentPrice: finalPrice, priceBreakdown: breakdown };
     }
+    return { currentPrice: product.price, priceBreakdown: '' };
   }, [selectedFabric, quantity, product]);
 
   const handleQuantityChange = (newQty) => {
@@ -79,20 +54,12 @@ const ProductVariantSelector = ({ product, onVariantChange }) => {
     setQuantity(newQty);
   };
 
-  const getVariantDetails = () => {
-    return {
-      fabric: selectedFabric?.name || 'Default',
-      color: selectedColor || '',
-      size: selectedSize || '',
-      quantity: quantity,
-      unitPrice: currentPrice,
-      totalPrice: currentPrice * quantity
-    };
-  };
-
   useEffect(() => {
-    onVariantChange?.(getVariantDetails());
-  }, [selectedFabric, selectedColor, selectedSize, quantity, currentPrice]);
+    onVariantChange?.({
+      fabric: selectedFabric?.name || 'Default', color: selectedColor || '', size: selectedSize || '', quantity,
+      unitPrice: currentPrice, totalPrice: currentPrice * quantity
+    });
+  }, [selectedFabric, selectedColor, selectedSize, quantity, currentPrice, onVariantChange]);
 
   const isMOQProduct = product.minimumOrderQuantity && product.minimumOrderQuantity > 1;
   const isFabricBasedPricing = product.pricingType === 'fabric-based';

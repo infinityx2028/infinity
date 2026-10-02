@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, ArrowRight, MessageCircle } from 'lucide-react';
-import { useQuickView } from '../contexts/QuickViewContext';
+import { useQuickView } from '../contexts/useQuickView';
 import { getProductShortDescription } from '../data/productDescriptions';
 import InfinityLoader from './InfinityLoader';
 import { responsiveImage } from '../utils/responsiveImages';
@@ -9,7 +9,7 @@ import { responsiveImage } from '../utils/responsiveImages';
 const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: propOnClose }) => {
   const navigate = useNavigate();
   const context = useQuickView();
-  const [isImgLoaded, setIsImgLoaded] = React.useState(false);
+  const [loadedImageId, setLoadedImageId] = React.useState(null);
   const scrollPositionRef = useRef(0);
   const dialogRef = useRef(null);
 
@@ -48,14 +48,10 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
     }
   }, [isOpen, handleClose]);
 
-  // Reset image loaded state when product changes
-  useEffect(() => {
-    setIsImgLoaded(false);
-  }, [product?._id, product?.id]);
-
   if (!isOpen || !product) return null;
 
   const productId = product._id || product.id;
+  const isImgLoaded = loadedImageId === productId;
   const price = Number(product.price || 0);
   const hasRealDiscount = product.originalPrice && Number(product.originalPrice) > price;
   const discountPercent = hasRealDiscount
@@ -125,7 +121,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
           <img
             {...responsiveImage(product.images?.[0] || product.image, '(max-width: 767px) 90vw, 460px')}
             alt={product.name}
-            onLoad={() => setIsImgLoaded(true)}
+            onLoad={() => setLoadedImageId(productId)}
             className={`w-full h-full ${
               isCase ? 'object-contain p-4' : isPolaroid ? 'object-cover p-2 bg-white' : 'object-cover'
             } transition-opacity duration-300 ${

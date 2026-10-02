@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard';
 import InfinityLoader from '../components/InfinityLoader';
 import { products as localProducts } from '../data';
 import { Search, Sparkles, ArrowRight } from 'lucide-react';
-import { useInfinityAI } from '../contexts/InfinityAIContext';
+import { useInfinityAI } from '../contexts/useInfinityAI';
 
 import { getProductFullDescription } from '../data/productDescriptions';
 
@@ -37,7 +37,6 @@ export default function SearchResults() {
             const name = (p.name || '').toLowerCase();
             const cat = (p.categoryId || '').toLowerCase();
             const desc = (p.description || getProductFullDescription(p) || '').toLowerCase();
-            const fullText = `${name} ${cat} ${desc}`;
 
             let score = 0;
             if (name.includes(qLower)) score += 100;
@@ -68,7 +67,7 @@ export default function SearchResults() {
         } else {
           if (isMounted) setResults(filterAndRank(localProducts));
         }
-      } catch (err) {
+      } catch {
         if (isMounted) setResults(filterAndRank(localProducts));
       } finally {
         if (isMounted) setLoading(false);

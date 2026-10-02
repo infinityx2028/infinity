@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api, { userAuth } from '../services/api';
 
 // Create Auth Context
-const AuthContext = createContext();
+import { AuthContext } from './useAuth';
 
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
         const parsed = JSON.parse(storedUser);
         setUser(parsed);
         setIsAuthenticated(true);
-      } catch (e) {
+      } catch {
         localStorage.removeItem('user');
         localStorage.removeItem('userToken');
       }
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
       setAdminToken(storedAdminToken);
       try {
         setAdmin(JSON.parse(storedAdmin));
-      } catch (e) {}
+      } catch { /* Preserve the existing optional fallback. */ }
     }
 
     setLoading(false);
@@ -165,11 +165,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Legacy endpoints (kept for compatibility, not used anymore)
-  const verifyOTP = async (phoneNumber, otp) => {
+  const verifyOTP = async () => {
     return { success: true, message: 'OTP system removed' };
   };
 
-  const completeRegistration = async (phoneNumber, name) => {
+  const completeRegistration = async () => {
     return { success: true, message: 'OTP system removed' };
   };
 
@@ -411,13 +411,4 @@ export const AuthProvider = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-// Custom hook to use auth context
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
 };

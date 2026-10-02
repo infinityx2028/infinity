@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Minus, Package, IndianRupee } from 'lucide-react';
 
 const PolaroidPricingSelector = ({ onPricingChange, productId }) => {
@@ -12,30 +12,6 @@ const PolaroidPricingSelector = ({ onPricingChange, productId }) => {
   
   const selectedSize = getProductSize(productId);
   
-  // Pricing configuration
-  const pricingConfig = {
-    mini: {
-      name: 'Mini Polaroids',
-      pricePerUnit: 5,
-      minOrder: 12,
-      incrementStep: 6,
-      description: 'Compact size perfect for small spaces'
-    },
-    medium: {
-      name: 'Medium Polaroids',
-      pricePerUnit: 8,
-      minOrder: 8,
-      incrementStep: 4,
-      description: 'Standard size ideal for most displays'
-    },
-    large: {
-      name: 'Large Polaroids',
-      pricePerUnit: 15,
-      minOrder: 4,
-      incrementStep: 2,
-      description: 'Premium size for maximum impact'
-    }
-  };
   const formatPrice = (value) => (
     Number.isFinite(value) ? (Number.isInteger(value) ? value : value.toFixed(2)) : value
   );
@@ -44,26 +20,13 @@ const PolaroidPricingSelector = ({ onPricingChange, productId }) => {
     [selectedSize]: pricingConfig[selectedSize].minOrder
   });
 
-  const [pricing, setPricing] = useState({
-    [selectedSize]: { 
-      quantity: pricingConfig[selectedSize].minOrder, 
-      totalPrice: pricingConfig[selectedSize].minOrder * pricingConfig[selectedSize].pricePerUnit 
-    }
-  });
+  const pricing = useMemo(() => ({
+    [selectedSize]: { quantity: quantities[selectedSize], totalPrice: quantities[selectedSize] * pricingConfig[selectedSize].pricePerUnit, unitPrice: pricingConfig[selectedSize].pricePerUnit }
+  }), [quantities, selectedSize]);
 
   // Calculate pricing whenever quantities change
   useEffect(() => {
-    const config = pricingConfig[selectedSize];
-    const quantity = quantities[selectedSize];
-    const newPricing = {
-      [selectedSize]: {
-        quantity,
-        totalPrice: quantity * config.pricePerUnit,
-        unitPrice: config.pricePerUnit
-      }
-    };
-    setPricing(newPricing);
-    
+    const newPricing = pricing;
     // Notify parent component of changes
     if (onPricingChange) {
       onPricingChange({
@@ -73,7 +36,7 @@ const PolaroidPricingSelector = ({ onPricingChange, productId }) => {
         currentPricing: newPricing[selectedSize]
       });
     }
-  }, [quantities, selectedSize, onPricingChange]);
+  }, [quantities, selectedSize, onPricingChange, pricing]);
 
   const handleQuantityChange = (size, change) => {
     const config = pricingConfig[size];
@@ -297,4 +260,30 @@ const PolaroidPricingSelector = ({ onPricingChange, productId }) => {
 };
 
 export default PolaroidPricingSelector;
+
+
+  // Pricing configuration
+const pricingConfig = {
+    mini: {
+      name: 'Mini Polaroids',
+      pricePerUnit: 5,
+      minOrder: 12,
+      incrementStep: 6,
+      description: 'Compact size perfect for small spaces'
+    },
+    medium: {
+      name: 'Medium Polaroids',
+      pricePerUnit: 8,
+      minOrder: 8,
+      incrementStep: 4,
+      description: 'Standard size ideal for most displays'
+    },
+    large: {
+      name: 'Large Polaroids',
+      pricePerUnit: 15,
+      minOrder: 4,
+      incrementStep: 2,
+      description: 'Premium size for maximum impact'
+    }
+  };
 

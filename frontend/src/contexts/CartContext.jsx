@@ -1,9 +1,16 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const CartContext = createContext();
+import { CartContext } from './useCart';
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      try { return JSON.parse(savedCart); }
+      catch (error) { console.error('Error loading cart:', error); }
+    }
+    return [];
+  });
   const getCapUnitPrice = (quantity) => {
     if (quantity >= 30) return 59;
     if (quantity >= 20) return 69;
@@ -14,18 +21,6 @@ export const CartProvider = ({ children }) => {
     if (quantity === 2) return 149.5;
     return 179;
   };
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error loading cart:', error);
-      }
-    }
-  }, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -117,12 +112,4 @@ export const CartProvider = ({ children }) => {
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-};
-
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within CartProvider');
-  }
-  return context;
 };

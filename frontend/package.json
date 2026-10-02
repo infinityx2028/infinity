@@ -8,9 +8,11 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "optimize-images": "node ./scripts/optimize-images.cjs"
+    "optimize-images": "node ./scripts/optimize-images.cjs",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "gsap": "^3.15.0",
     "lucide-react": "^0.562.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",
@@ -31,6 +33,7 @@
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.17",
     "terser": "^5.46.0",
+    "typescript": "^7.0.2",
     "vite": "^7.2.4"
   }
 }

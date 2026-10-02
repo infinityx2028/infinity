@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useEffectEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, X, ArrowRight, CornerDownLeft, RefreshCw, ShoppingBag, ShieldCheck } from 'lucide-react';
-import { useInfinityAI } from '../../contexts/InfinityAIContext';
+import { useInfinityAI } from '../../contexts/useInfinityAI';
 import { getGiftRecommendations } from '../../services/giftAssistantService';
 import { API_BASE_URL } from '../../services/api';
 
@@ -38,7 +38,7 @@ export default function InfinityAIModal() {
             setCatalogCache(data.filter(product => product.isActive !== false));
           }
         }
-      } catch (e) {
+      } catch {
         if (isMounted) setCatalogCache([]);
       }
     };
@@ -46,14 +46,15 @@ export default function InfinityAIModal() {
     return () => { isMounted = false; };
   }, []);
 
+  const searchInitialQuery = useEffectEvent((text) => { handleSearch(text); clearInitialQuery(); });
+
   // When modal opens, handle initial query if passed
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       if (initialQuery && initialQuery.trim()) {
         setQuery(initialQuery);
-        handleSearch(initialQuery);
-        clearInitialQuery();
+        searchInitialQuery(initialQuery);
       } else {
         setTimeout(() => {
           inputRef.current?.focus();
@@ -90,7 +91,7 @@ export default function InfinityAIModal() {
       } else {
         setError(response?.message || 'Infinity AI is unavailable right now.');
       }
-    } catch (err) {
+    } catch {
       setError('Infinity AI is unavailable right now.');
     } finally {
       setLoading(false);

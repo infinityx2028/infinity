@@ -31,7 +31,7 @@ const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
       try {
         await new Promise(r => setTimeout(r, 600));
         response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-      } catch (retryErr) {
+      } catch {
         throw networkErr;
       }
     }
@@ -121,7 +121,7 @@ export const userAuth = {
     // 1. Try dedicated /auth/user/login first
     try {
       return await apiCall('/auth/user/login', 'POST', { emailOrPhone: rawInput, password });
-    } catch (err) {
+    } catch {
       // If endpoint doesn't exist on backend (404 / Invalid JSON response / Cannot POST)
       if (targetPhone && /^[6-9]\d{9}$/.test(targetPhone)) {
         return await apiCall('/auth/user/verify-credentials', 'POST', {
@@ -154,7 +154,7 @@ export const userAuth = {
     if (cleanEmail && cleanPhone) {
       try {
         localStorage.setItem(`infinity_phone_${cleanEmail}`, cleanPhone);
-      } catch (e) {}
+      } catch { /* Preserve the existing optional fallback. */ }
     }
 
     try {
@@ -199,10 +199,10 @@ export const userAuth = {
     const cleanPhone = String(phoneNumber || '').replace(/\D/g, '').slice(-10);
     return apiCall('/auth/user/verify-credentials', 'POST', { phoneNumber: cleanPhone, password, name });
   },
-  verifyOTP: async (phoneNumber, otp) => {
+  verifyOTP: async () => {
     return { success: true, message: 'OTP system removed' };
   },
-  completeRegistration: async (phoneNumber, name) => {
+  completeRegistration: async () => {
     return { success: true, message: 'OTP system removed' };
   },
   requestOTP: async (phoneNumber) => {

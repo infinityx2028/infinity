@@ -10,9 +10,9 @@ import {
   ArrowUpRight,
   LogOut,
 } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
-import { useCart } from "../contexts/CartContext";
-import { useInfinityAI } from "../contexts/InfinityAIContext";
+import { useAuth } from "../contexts/useAuth";
+import { useCart } from "../contexts/useCart";
+import { useInfinityAI } from "../contexts/useInfinityAI";
 import { API_BASE_URL } from "../services/api";
 import { CANONICAL_CATEGORIES } from "../utils/categoryUtils";
 import { responsiveImage } from "../utils/responsiveImages";

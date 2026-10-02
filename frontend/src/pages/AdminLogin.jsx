@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Loader, AlertCircle, CheckCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const AdminLogin = () => {
       } else {
         setError(response.error || 'Invalid credentials');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

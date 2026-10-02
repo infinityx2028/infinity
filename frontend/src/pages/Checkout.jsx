@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader, AlertCircle, CheckCircle, Copy, Truck, MapPin, Phone, Mail } from 'lucide-react';
-import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/useCart';
+import { useAuth } from '../contexts/useAuth';
 import api from '../services/api';
 import BackButton from '../components/BackButton';
 import UpiPaymentView from '../components/UpiPaymentView';
@@ -50,9 +50,7 @@ const Checkout = () => {
   useEffect(() => {
     if (user) {
       const defaultAddr = user.addresses?.find(a => a.isDefault) || user.addresses?.[0];
-      if (defaultAddr && !selectedAddressId) {
-        setSelectedAddressId(defaultAddr._id);
-      }
+      if (defaultAddr) setSelectedAddressId(current => current || defaultAddr._id);
       setOrderData(prev => ({
         ...prev,
         customerName: prev.customerName || defaultAddr?.fullName || user.name || '',
@@ -155,7 +153,7 @@ const Checkout = () => {
         const data = await api.loyalty.get(token);
         if (cancelled) return;
         setAvailableLoyaltyPoints(Number(data?.loyaltyPoints || 0));
-      } catch (err) {
+      } catch {
         if (!cancelled) {
           setAvailableLoyaltyPoints(Number(user?.loyaltyPoints || 0));
         }
@@ -310,7 +308,7 @@ const Checkout = () => {
         const currentId = String(purchasedProductId);
         const filtered = list.filter(p => String(p._id || p.id || '') !== currentId).slice(0, 4);
         if (!cancelled) setRelatedProducts(filtered);
-      } catch (err) {
+      } catch {
         if (!cancelled) setRelatedProducts([]);
       } finally {
         if (!cancelled) setRelatedLoading(false);

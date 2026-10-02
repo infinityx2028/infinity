@@ -32,7 +32,8 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       assetsDir: 'assets',
       minify: 'terser',
-      sourcemap: false
+      sourcemap: false,
+      rollupOptions: { output: { manualChunks: { motion: ['gsap', 'gsap/ScrollTrigger'], framework: ['react', 'react-dom', 'react-router-dom'] } } }
     }
   }
 })

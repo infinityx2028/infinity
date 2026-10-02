@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit2, Trash2, Search, X, Upload } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import api, { API_BASE_URL } from '../services/api';
 
 const AdminProducts = () => {
@@ -146,7 +146,7 @@ const AdminProducts = () => {
         setFormData(prev => ({ ...prev, image: fileUrl }));
         setPreviewImage(fileUrl);
       }
-      try { URL.revokeObjectURL(tempUrl); } catch (e) {}
+      try { URL.revokeObjectURL(tempUrl); } catch { /* Preserve the existing optional fallback. */ }
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image');
@@ -319,7 +319,7 @@ const AdminProducts = () => {
       // replace temporary preview with final server URL
       if (fileUrl) imgs[index] = fileUrl;
       setFormData(prev => ({ ...prev, images: imgs }));
-      try { URL.revokeObjectURL(tempUrl); } catch (e) {}
+      try { URL.revokeObjectURL(tempUrl); } catch { /* Preserve the existing optional fallback. */ }
     } catch (err) {
       console.error('Image upload failed:', err);
       alert('Image upload failed');

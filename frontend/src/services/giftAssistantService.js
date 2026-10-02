@@ -45,6 +45,7 @@ export function extractIntent(query = '') {
   else if (/boyfriend|bf|boy friend/i.test(text)) { recipient = 'boyfriend'; relationship = 'romantic'; }
   else if (/wife|wifey/i.test(text)) { recipient = 'wife'; relationship = 'romantic'; }
   else if (/husband|hubby/i.test(text)) { recipient = 'husband'; relationship = 'romantic'; }
+  else if (/\bpartner\b/i.test(text)) { recipient = 'partner'; relationship = 'romantic'; }
   else if (/parents|mom and dad|mother and father/i.test(text)) { recipient = 'parents'; relationship = 'family'; }
   else if (/\bmom\b|\bmother\b|\bmummy\b|\bmaa\b/i.test(text)) { recipient = 'mother'; relationship = 'family'; }
   else if (/\bdad\b|\bfather\b|\bpapa\b/i.test(text)) { recipient = 'father'; relationship = 'family'; }

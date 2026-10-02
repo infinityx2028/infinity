@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useEffectEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Edit2, Trash2, X, ChevronDown } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import { API_BASE_URL } from '../services/api';
 import BackButton from '../components/BackButton';
 
@@ -16,12 +16,13 @@ const AdminPhoneModels = () => {
   const [newModel, setNewModel] = useState('');
   const [expandedCompany, setExpandedCompany] = useState(null);
 
+  const fetchPhoneModelsFromEffect = useEffectEvent(() => fetchPhoneModels());
   useEffect(() => {
     if (!admin) {
       navigate('/admin/login');
       return;
     }
-    fetchPhoneModels();
+    fetchPhoneModelsFromEffect();
   }, [admin, navigate]);
 
   const fetchPhoneModels = async () => {
@@ -69,7 +70,7 @@ const AdminPhoneModels = () => {
       let errData;
       try {
         errData = JSON.parse(responseText);
-      } catch (e) {
+      } catch {
         errData = { message: 'Server error: Invalid response' };
       }
 

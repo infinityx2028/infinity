@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, Package, ShoppingCart, TrendingUp, ChevronRight, AlertCircle, Settings, BarChart3, Trash2 } from 'lucide-react';
 import api from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 // 1. Import the dynamic API URL from your service file
 import { API_BASE_URL } from '../services/api'; 
 
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
       try {
         const categoriesRes = await fetch(`${API_BASE_URL}/categories`);
         if (categoriesRes.ok) categories = await categoriesRes.json();
-      } catch (_) {
+      } catch {
         categories = [];
       }
       if (!Array.isArray(categories)) categories = [];

@@ -1,9 +1,11 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect, useCallback, createContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Link, useParams } from 'react-router-dom';
-import { storyCategories, showcaseData, products, categoryDetails, phoneModelOptions } from './data';
+import { products } from './data';
 import { ShoppingCart, ShoppingBag, Menu, X, Search, User, Heart, ChevronRight, Phone, Mail, Instagram, Truck, ShieldCheck, Gift, Star, ArrowRight, MessageCircle, Filter, CheckCircle, AlertCircle, Info, ChevronDown, Trash2, ArrowLeft, LogOut, Share2, Copy, Check, Clock } from 'lucide-react';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { CartProvider, useCart } from './contexts/CartContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { useAuth } from './contexts/useAuth';
+import { CartProvider } from './contexts/CartContext';
+import { useCart } from './contexts/useCart';
 import { API_BASE_URL } from './services/api';
 import { getImageSrc, isDataUrl } from './utils/imageUtils';
 import { getWhatsAppUrl, buildProductPersonalizationWhatsAppMessage } from './utils/whatsapp';
@@ -50,6 +52,7 @@ import './memory-film.css';
 import './memory-refinements.css';
 import './cinematic-commerce.css';
 import './cinematic-alignment.css';
+import './memory-world.css';
 import { responsiveImage } from './utils/responsiveImages';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
@@ -368,7 +371,7 @@ const CategoryPage = () => {
   );
 };
 
-const ProductPage = ({ addToCart }) => {
+const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart: addToCartContext, openCartDrawer } = useCart();
@@ -376,7 +379,7 @@ const ProductPage = ({ addToCart }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [, setSelectedVariant] = useState(null);
   const [mainImage, setMainImage] = useState("");
   const [isMainImgLoaded, setIsMainImgLoaded] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -406,9 +409,9 @@ const ProductPage = ({ addToCart }) => {
   const [tshirtNeck, setTshirtNeck] = useState('round');
   const [tshirtSize, setTshirtSize] = useState('M');
   const [tshirtColor, setTshirtColor] = useState('white'); // For round neck
-  const [tshirtBasePrice, setTshirtBasePrice] = useState(499);
+  const [, setTshirtBasePrice] = useState(499);
   // Signature Day T-Shirt states
-  const [signatureDayBasePrice, setSignatureDayBasePrice] = useState(179);
+  const [, setSignatureDayBasePrice] = useState(179);
   
   // New fabric-based t-shirt variant state
   const [currentVariant, setCurrentVariant] = useState({
@@ -438,12 +441,6 @@ const ProductPage = ({ addToCart }) => {
   const [addedToBagSuccess, setAddedToBagSuccess] = useState(false);
   
   // Color options for t-shirts
-  const coloredNeckColors = [
-    { name: 'maroon', hex: '#800000' },
-    { name: 'navy blue', hex: '#001a4d' },
-    { name: 'black', hex: '#000000' },
-    { name: 'white', hex: '#FFFFFF' }
-  ];
 
   const roundNeckColors = [
     { name: 'white', hex: '#FFFFFF' },
@@ -467,7 +464,6 @@ const ProductPage = ({ addToCart }) => {
     const isSignatureDayTShirt = product && product.id === 't2';
     const productId = product ? (product._id || product.id || '') : '';
     const isPremiumTransparentHamper = ['ham2', 'ham4'].includes(productId);
-    const isPremiumHamperCombo = productId === 'ham3';
     const isFridgeMagnet = productId === 'mag1';
   const isCapProduct = product && productId === 'cap1';
   const isPolaroid = product && ['pol1', 'pol2', 'pol3'].includes(productId);
@@ -550,7 +546,7 @@ const ProductPage = ({ addToCart }) => {
             setReviews(localProduct.reviews || []);
           }
         }
-      } catch (err) {
+      } catch {
         const localProduct = products.find(item => item.id === id);
         setProduct(localProduct);
         if (localProduct) {
@@ -621,7 +617,7 @@ const ProductPage = ({ addToCart }) => {
   }, [product]);
 
   // Add-on wrap price calculation
-  const computeWrapPrice = (price, type) => {
+  const computeWrapPrice = useCallback((price, type) => {
     if (!type || type === 'none') return 0;
     if (isNaturalRosesWrapProduct) {
       return 400;
@@ -636,11 +632,11 @@ const ProductPage = ({ addToCart }) => {
       return p < 300 ? 79 : 99;
     }
     return 0;
-  };
+  }, [isNaturalRosesWrapProduct]);
 
   useEffect(() => {
     setWrapPrice(computeWrapPrice(product?.price, wrapType));
-  }, [product, wrapType]);
+  }, [product, wrapType, computeWrapPrice]);
 
   const getBulkTotalQty = () => {
     return sizeOptions.reduce((sum, size) => sum + (Number(bulkSizes[size]) || 0), 0);
@@ -833,6 +829,7 @@ const ProductPage = ({ addToCart }) => {
     const bulkDetails = getBulkDetails();
     let itemQuantity = bulkTotalQty > 0 ? bulkTotalQty : qty;
     const capUnitPrice = isCapProduct ? getCapUnitPrice(itemQuantity) : null;
+    const fridgeMagnetUnitPrice = isFridgeMagnet ? (itemQuantity === 2 ? 149.5 : Number(product.price || 0)) : null;
     
     if (isNewStyleTShirt) {
       // Handle new fabric-based and quantity-based t-shirts
@@ -1253,7 +1250,7 @@ const ProductPage = ({ addToCart }) => {
 
               {/* New Style T-Shirt Variant Selector */}
               {isNewStyleTShirt && product && (
-                <ProductVariantSelector 
+                <ProductVariantSelector key={productId}
                   product={product} 
                   onVariantChange={setCurrentVariant}
                 />
@@ -1261,7 +1258,7 @@ const ProductPage = ({ addToCart }) => {
 
               {/* Polaroid Pricing Selector */}
               {isPolaroid && product && (
-                <PolaroidPricingSelector 
+                <PolaroidPricingSelector key={productId}
                   onPricingChange={setPolaroidPricing}
                   productId={productId}
                 />
@@ -1953,23 +1950,25 @@ const RelatedProducts = ({ currentProduct }) => {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const relatedProductId = String(currentProduct?._id || currentProduct?.id || '');
+  const relatedCategoryId = currentProduct?.categoryId;
   useEffect(() => {
     let cancelled = false;
     const loadRelated = async () => {
-      if (!currentProduct || !currentProduct.categoryId) {
+      if (!relatedCategoryId) {
         if (!cancelled) setRelated([]);
         return;
       }
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}/products/category/${currentProduct.categoryId}`);
+        const res = await fetch(`${API_BASE_URL}/products/category/${relatedCategoryId}`);
         if (!res.ok) throw new Error('Failed to load related products');
         const data = await res.json();
         const list = Array.isArray(data) ? data : [];
-        const currentId = String(currentProduct._id || currentProduct.id || '');
+        const currentId = relatedProductId;
         const filtered = list.filter(p => String(p._id || p.id || '') !== currentId).slice(0, 4);
         if (!cancelled) setRelated(filtered);
-      } catch (err) {
+      } catch {
         if (!cancelled) setRelated([]);
       } finally {
         if (!cancelled) setLoading(false);
@@ -1977,7 +1976,7 @@ const RelatedProducts = ({ currentProduct }) => {
     };
     loadRelated();
     return () => { cancelled = true; };
-  }, [currentProduct?._id, currentProduct?.id, currentProduct?.categoryId]);
+  }, [relatedProductId, relatedCategoryId]);
 
   if (!currentProduct || loading || related.length === 0) return null;
   return (
@@ -2200,10 +2199,10 @@ const AppContent = () => {
     location.pathname.startsWith('/admin');
 
   return (
-    <div className={`min-h-screen font-sans bg-[#F7F8FA] text-[#071A2F] flex flex-col ${
+    <div className={`${location.pathname === '/' ? 'home-shell' : ''} min-h-screen font-sans bg-[#F7F8FA] text-[#071A2F] flex flex-col ${
       isNavHidden ? '' : 'pb-[calc(var(--mobile-nav-height)+env(safe-area-inset-bottom,0px)+16px)] md:pb-0'
     }`}>
-      <AnnouncementBar />
+      {location.pathname !== '/' && <AnnouncementBar />}
       <MemoryInteractions />
       <Navbar cartCount={cart.length} />
       <CartDrawer isOpen={isCartDrawerOpen} onClose={closeCartDrawer} />
@@ -2246,7 +2245,7 @@ const AppContent = () => {
         </Routes>
       </React.Suspense>
       <Footer />
-      <MobileBottomNav />
+      {location.pathname !== '/' && <MobileBottomNav />}
     </div>
   );
 };

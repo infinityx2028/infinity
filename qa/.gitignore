@@ -7,3 +7,7 @@ live/
 alignment/
 chrome-alignment-profile/
 strict/
+rebuild/
+v4-local/
+v4-live/
+v4-chrome/

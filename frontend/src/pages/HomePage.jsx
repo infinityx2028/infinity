@@ -1,463 +1,551 @@
-import { useRef, useState } from "react";
-import useIsMobile from "../hooks/useIsMobile";
+﻿import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Gift,
-  MessageCircle,
-  Heart,
-} from "lucide-react";
-import Hero3D from "../components/Hero3D";
-import CategoryGrid from "../components/CategoryGrid";
-import InfinityAISection from "../components/InfinityAI/InfinityAISection";
-import ProductCard from "../components/ProductCard";
-import PersistentMemoryScene from "../components/PersistentMemoryScene";
+import { ArrowDown, ArrowUpRight, ArrowRight, Sparkles } from "lucide-react";
 import { CatalogProvider } from "../contexts/CatalogContext";
 import { useCatalog } from "../contexts/useCatalog";
-import { MemoryExperienceContext } from "../contexts/useMemoryExperience";
 import { CANONICAL_CATEGORIES } from "../utils/categoryUtils";
+import { responsiveImage } from "../utils/responsiveImages";
+import { getWhatsAppUrl } from "../utils/whatsapp";
+import MemoryExperience from "../components/MemoryExperience";
+import HomeGiftFinder from "../components/HomeGiftFinder";
+import { Chapter, FrameSlot, ShopLink } from "../home/SceneElements";
 
-const moments = [
-  ["01", "Birthdays", "For their next trip around the sun.", "Birthday gift"],
-  [
-    "02",
-    "Anniversaries",
-    "Your story. A little more tangible.",
-    "Anniversary gift for my partner",
-  ],
-  [
-    "03",
-    "Friendship",
-    "For the person in every good memory.",
-    "Photo gift for my best friend",
-  ],
-  [
-    "04",
-    "Just because",
-    "The little things say the most.",
-    "A thoughtful photo gift",
-  ],
-];
-function HomeExperience() {
-  const experienceRef = useRef(null);
-  const mobile = useIsMobile();
+function Experience() {
+  const root = useRef(null);
   const { products, loading, error } = useCatalog();
-  const [aiProduct, setAIProduct] = useState(null);
-  const [categoryProduct, setCategoryProduct] = useState(null);
   const [tokens, setTokens] = useState([]);
-  const [category, setCategory] = useState("all");
-  const [pillar, setPillar] = useState(0);
-  const [momentQuery, setMomentQuery] = useState("");
-  const available = CANONICAL_CATEGORIES.filter(
-    (item) =>
-      item.id === "all" ||
-      products.some((product) => product.categoryId === item.id),
-  );
-  const discovery = products
-    .filter((product) => category === "all" || product.categoryId === category)
-    .slice(0, 6);
-  const magazine = products.find(
-    (product) => product.categoryId === "magazines",
-  );
-
-  const processScene = (
-    <section
-      id="how-it-works"
-      className="film-process film-scene"
-      data-memory-scene="howItWorks"
-    >
-      <div className="motion-chapter">
-        <span>06 / SIMPLE TO ORDER. PERSONAL TO KEEP.</span>
-      </div>
-      <h2>
-        You bring the memory.
-        <br />
-        <em>We make it physical.</em>
-      </h2>
-      <div
-        className="memory-anchor film-process-anchor"
-        data-memory-anchor="howItWorks"
-      />
-      <div className="film-process-steps">
-        {[
-          [
-            Gift,
-            "Find their kind of gift",
-            "Explore the collection and choose your options.",
-          ],
-          [
-            Heart,
-            "Make it yours",
-            "Add to your bag and place your order through checkout.",
-          ],
-          [
-            MessageCircle,
-            "Send the memories",
-            "After ordering, send your photos and personalization details to us on WhatsApp.",
-          ],
-        ].map((step, index) => {
-          const [Icon, title, copy] = step;
-          return (
-            <article key={title}>
-              <div>
-                <Icon size={23} />
-                <span>0{index + 1}</span>
-              </div>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-  const differenceScene = (
-    <section
-      id="infinity-difference"
-      className="film-difference film-scene"
-      data-memory-scene="infinityDifference"
-    >
-      <div className="motion-chapter">
-        <span>05 / THE INFINITY DIFFERENCE</span>
-        <span>MADE TO MEAN MORE</span>
-      </div>
-      <p className="film-eyebrow">THE DETAILS MAKE THE DIFFERENCE.</p>
-      <div className="film-difference-layout">
-        <div>
-          <div
-            className="memory-anchor film-brand-anchor"
-            data-memory-anchor="infinityDifference"
-          />
-        </div>
-        <div className="film-pillars">
-          {[
-            [
-              "Personal, from the start.",
-              "Your photos, your words, your story. At the heart of everything we make.",
-            ],
-            [
-              "A little human attention.",
-              "Share your personalization details with our team on WhatsApp after you order.",
-            ],
-            [
-              "More than the moment.",
-              "Made to display, wear, gift and keep close. A memory in a different form.",
-            ],
-          ].map(([title, copy], index) => (
-            <button
-              key={title}
-              type="button"
-              aria-pressed={pillar === index}
-              onClick={() => setPillar(index)}
-              onMouseEnter={() => setPillar(index)}
-            >
-              <span>0{index + 1}</span>
-              <div>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </div>
-              <ArrowUpRight size={18} />
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  const [activeCategory, setActiveCategory] = useState(null);
+  const categories = CANONICAL_CATEGORIES.filter((c) => c.id !== "all")
+    .map((c) => {
+      const group = products.filter((p) => p.categoryId === c.id);
+      const preferred =
+        c.id === "apparel"
+          ? group.find((p) => /t.?shirt/i.test(p.name))
+          : c.id === "essentials"
+            ? group.find((p) => /case/i.test(p.name))
+            : null;
+      return { ...c, product: preferred || group[0] };
+    })
+    .filter((c) => c.product);
+  const magazine = products.find((p) => p.categoryId === "magazines");
+  const universe = ["frames", "memories", "essentials", "apparel", "addons"]
+    .map((id) => categories.find((c) => c.id === id))
+    .filter(Boolean)
+    .slice(0, 4);
+  const favourites = categories.slice(0, 4).map((c) => c.product);
   return (
-    <MemoryExperienceContext.Provider
-      value={{
-        aiProduct,
-        setAIProduct,
-        categoryProduct,
-        setCategoryProduct,
-        tokens,
-        setTokens,
-        momentQuery,
-      }}
-    >
-      <main className="memory-experience memory-film" ref={experienceRef}>
-        <PersistentMemoryScene experienceRef={experienceRef} pillar={pillar} />
-        <Hero3D />
-        <div className="film-ribbon" aria-hidden="true">
-          <span>YOUR PHOTOS</span>
-          <i>✦</i>
-          <span>YOUR PEOPLE</span>
-          <i>✦</i>
-          <span>YOUR STORIES</span>
-          <i>✦</i>
-          <span>MADE PERSONAL</span>
-          <i>✦</i>
-          <span>MADE TO KEEP</span>
+    <main className="memory-world" ref={root}>
+      <div className="scene-environment" aria-hidden="true">
+        <div className="scene-paper-grain" />
+      </div>
+      <MemoryExperience
+        rootRef={root}
+        magazine={magazine}
+        universe={universe}
+        tokens={tokens}
+      />
+      <section className="scene-scene scene-opening-hero" data-film-scene="hero">
+        <div className="scene-container">
+          <div className="scene-hero-meta">
+            <span>PERSONALIZED · MADE FOR YOU</span>
+            <span>01 / A MEMORY ENTERS INFINITY</span>
+          </div>
+          <div className="scene-hero-layout">
+            <h1>
+              <span className="scene-hero-line">YOUR</span>
+              <span className="scene-hero-line scene-hero-memories">
+                MEMORIES.
+              </span>
+              <span className="scene-hero-personal">Made personal.</span>
+            </h1>
+            <div className="scene-hero-object">
+              <FrameSlot scene="hero" />
+              <span className="scene-photo-id">
+                FIG. 01 — YOUR PEOPLE. YOUR STORY.
+              </span>
+            </div>
+            <div className="scene-hero-intro">
+              <span className="scene-cross" aria-hidden="true">
+                ✦
+              </span>
+              <p>
+                Turn photos, stories and moments
+                <br /> into gifts made just for them.
+              </p>
+            </div>
+            <div className="scene-hero-actions">
+              <ShopLink />
+              <a className="scene-link" href="#infinity-ai-concierge">
+                Ask Infinity AI
+                <Sparkles size={16} />
+              </a>
+            </div>
+          </div>
+          <a className="scene-scroll" href="#infinity-ai-concierge">
+            <ArrowDown size={15} /> SCROLL TO FOLLOW THE MEMORY{" "}
+            <span>02 — 13</span>
+          </a>
         </div>
-        <InfinityAISection />
-        <CategoryGrid />
-        {!mobile && (
-          <section
-            id="made-for-you"
-            className="film-discovery film-scene"
-            data-memory-scene="products"
-          >
-            <div className="motion-chapter">
-              <span>03 / OUR FAVOURITES</span>
-              <Link to="/shop">
-                ALL PERSONALIZED GIFTS <ArrowUpRight size={15} />
-              </Link>
-            </div>
-            <div className="film-section-heading">
+      </section>
+      <HomeGiftFinder onIntent={setTokens} />
+      <section
+        id="collections-section"
+        className="scene-scene scene-categories"
+        data-film-scene="categories"
+        data-pin-stage
+      >
+        <div className="scene-container">
+          <Chapter number="04" title="THE CATEGORY UNIVERSE" />
+          <div className="scene-category-heading">
+            <div>
+              <p className="scene-eyebrow">SHOP BY CATEGORY</p>
               <h2>
-                A few favourites.
+                A whole world
                 <br />
-                <em>Made personal.</em>
+                of <em>personal.</em>
               </h2>
-              <p>
-                Big celebrations. Little surprises.
-                <br />
-                Find something that feels like them.
-              </p>
             </div>
-            <div
-              className="memory-anchor film-products-anchor"
-              data-memory-anchor="products"
-            />
-            <div
-              className="motion-product-filters"
-              aria-label="Filter gifts by category"
-            >
-              {available.map((item) => (
-                <button
-                  type="button"
-                  key={item.id}
-                  aria-pressed={category === item.id}
-                  onClick={() => setCategory(item.id)}
-                >
-                  {item.name}
-                </button>
-              ))}
+            <div className="scene-category-background">
+              <FrameSlot scene="categories" />
             </div>
-            {loading && (
-              <p className="film-status" role="status">
-                Opening the collection…
-              </p>
-            )}
-            {error && (
-              <p className="film-status" role="status">
-                The collection is temporarily unavailable.{" "}
-                <Link to="/shop">Try again in the shop →</Link>
-              </p>
-            )}
-            {!loading && !error && !discovery.length && (
-              <p className="film-status">
-                There are no gifts in this collection right now.
-              </p>
-            )}
-            <div className="motion-product-grid">
-              {discovery.map((product) => (
-                <ProductCard
-                  key={product._id || product.id}
-                  product={product}
-                />
-              ))}
-            </div>
-            <Link
-              className="motion-link film-collection-link"
-              to={category === "all" ? "/shop" : `/shop/${category}`}
-            >
-              Explore the collection <ArrowRight size={17} />
+            <Link className="scene-link" to="/shop">
+              Every gift
+              <ArrowUpRight size={17} />
             </Link>
-          </section>
-        )}
-        <section
-          id="memory-transformation"
-          className="film-photo-transformation film-scene"
-        >
-          <div className="motion-chapter">
-            <span>05 / SAME MEMORY. A NEW FORM.</span>
           </div>
-          <div className="film-gift-feeling" data-memory-scene="giftFeeling">
-            <h2>
-              A gift.
-              <br />A feeling.
-              <br />
-              <em>A forever thing.</em>
-            </h2>
-          </div>
-          <div className="film-one-photo" data-memory-scene="onePhotoChapter">
-            <h2>
-              One photo.
-              <br />
-              <em>A whole new chapter.</em>
-            </h2>
-            <div className="film-transform-copy">
-              <p>
-                A print to hold. A magazine to revisit. Your story, made
-                personal.
-              </p>
+          <div
+            className={`scene-category-universe ${activeCategory ? "has-selection" : ""}`}
+            data-cursor="DRAG"
+            onMouseLeave={() => setActiveCategory(null)}
+          >
+            {categories.map((c, i) => (
               <Link
-                className="motion-link"
-                to={
-                  magazine
-                    ? `/product/${magazine._id || magazine.id}`
-                    : "/shop/magazines"
-                }
+                key={c.id}
+                to={`/shop/${c.slug}`}
+                className={`scene-category-object ${activeCategory === c.id ? "is-selected" : ""}`}
+                style={{ "--depth": i % 3, "--angle": i % 2 === 0 ? -3 : 3 }}
+                onMouseEnter={() => setActiveCategory(c.id)}
+                onFocus={() => setActiveCategory(c.id)}
+                onBlur={() => setActiveCategory(null)}
+                data-cursor="VIEW"
               >
-                Make your own magazine <ArrowRight size={17} />
+                <div>
+                  <img
+                    {...responsiveImage(
+                      c.product.images?.[0] || c.product.image,
+                      "(max-width: 767px) 110px, 250px",
+                    )}
+                    alt={c.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <span>
+                  <small>{String(i + 1).padStart(2, "0")}</small>
+                  {c.name}
+                  <ArrowUpRight size={14} />
+                </span>
               </Link>
+            ))}
+          </div>
+          {(loading || error || !categories.length) && (
+            <p className="scene-status" role="status">
+              {loading
+                ? "Opening the collections…"
+                : error
+                  ? "The catalog is temporarily unavailable."
+                  : "New gifts will appear here when available."}{" "}
+              <Link to="/shop">Visit the shop ↗</Link>
+            </p>
+          )}
+        </div>
+      </section>
+      <section className="scene-scene scene-emotional" data-film-scene="emotion">
+        <div className="scene-container">
+          <p className="scene-eyebrow">05 / FOR THE PEOPLE WHO STAY WITH YOU</p>
+          <h2>
+            A GIFT
+            <br />
+            FOR TODAY.
+            <br />
+            <span>A memory</span>
+            <br />
+            <em>for much longer.</em>
+          </h2>
+          <span className="scene-emotional-star" aria-hidden="true">
+            ✦
+          </span>
+        </div>
+      </section>
+      <section
+        id="made-around-your-story"
+        className="scene-scene scene-camera"
+        data-film-scene="camera"
+        data-pin-stage
+      >
+        <div className="scene-container">
+          <Chapter number="06" title="SOME THINGS DESERVE MORE THAN A SCREEN" />
+          <div className="scene-grid">
+            <div className="scene-camera-copy">
+              <h2>
+                FROM
+                <br />
+                CAMERA
+                <br />
+                ROLL.
+              </h2>
+              <p className="scene-body">
+                A favourite day. An inside joke. The people in every good
+                memory.
+              </p>
+              <span className="scene-link">
+                To something real.
+                <ArrowRight size={18} />
+              </span>
+            </div>
+            <div className="scene-camera-stage">
+              <FrameSlot scene="camera" />
+              <span className="scene-annotation">
+                ONE PHOTO.
+                <br />A WHOLE NEW CHAPTER.
+              </span>
             </div>
           </div>
-        </section>
-        <section
-          className="film-transformation film-scene"
-          id="made-around-your-story"
-          data-memory-scene="cameraRoll"
-          data-memory-touch
-        >
-          <div className="motion-chapter">
-            <span>04 / A MEMORY, IN A DIFFERENT FORM</span>
-            <span>FROM DIGITAL TO TANGIBLE</span>
-          </div>
-          <div className="film-camera-copy">
-            <h2>
-              From
-              <br />
-              <span>camera roll.</span>
-              <em>To something real.</em>
-            </h2>
-            <div className="film-story-note">
-              <span>ONE PHOTO. A WHOLE NEW CHAPTER.</span>
-              <p>
-                A favourite day. An inside joke. Your entire love story.
+        </div>
+      </section>
+      <section
+        className="scene-scene scene-magazine"
+        data-film-scene="magazine"
+        data-pin-stage
+      >
+        <div className="scene-container">
+          <Chapter number="07" title="YOUR STORY, COVER TO COVER" />
+          <div className="scene-magazine-layout">
+            <div className="scene-magazine-aside">
+              <span className="scene-eyebrow">
+                THE PHOTOS ALIGN.
                 <br />
-                Some things deserve more than a screen.
+                THE STORY TAKES SHAPE.
+              </span>
+              <p className="scene-body">
+                Turn the photos on your phone into something you can hold, gift
+                and remember.
               </p>
-              <Link
-                className="motion-link"
+            </div>
+            <div className="scene-magazine-stage">
+              <FrameSlot scene="magazine" />
+            </div>
+            <div className="scene-magazine-copy">
+              <h2>
+                To something
+                <br />
+                <em>real.</em>
+              </h2>
+              <ShopLink
                 to={
                   magazine ? `/product/${magazine._id || magazine.id}` : "/shop"
                 }
               >
-                {magazine ? "Make your own magazine" : "Discover photo gifts"}{" "}
+                {magazine ? "Create your magazine" : "Discover photo gifts"}
+              </ShopLink>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        className="scene-scene scene-product-universe"
+        data-film-scene="universe"
+        data-pin-stage
+      >
+        <div className="scene-container">
+          <Chapter number="08" title="A MEMORY. IN A DIFFERENT FORM." />
+          <div className="scene-grid">
+            <div className="scene-universe-stage">
+              <FrameSlot scene="universe" />
+              <span className="scene-annotation">
+                SAME MOMENT.
+                <br />
+                INFINITE POSSIBILITIES.
+              </span>
+            </div>
+            <div className="scene-universe-copy">
+              <p className="scene-eyebrow">
+                FROM A PHOTO. TO YOUR KIND OF GIFT.
+              </p>
+              <h2>
+                Keep it.
+                <br />
+                Wear it.
+                <br />
+                <em>Make it yours.</em>
+              </h2>
+              <div className="scene-universe-links">
+                {universe.map((c, i) => (
+                  <Link
+                    key={c.id}
+                    to={`/product/${c.product._id || c.product.id}`}
+                    data-universe-link={i}
+                  >
+                    <span>0{i + 1}</span>
+                    {c.name}
+                    <ArrowUpRight size={16} />
+                  </Link>
+                ))}
+              </div>
+              <Link className="scene-link" to="/shop">
+                Find your form of personal
                 <ArrowRight size={17} />
               </Link>
             </div>
           </div>
-          <div
-            className="memory-anchor film-story-anchor"
-            data-memory-anchor="cameraRoll"
-          />
-        </section>
-        {!mobile && (
-          <section
-            className="film-moments film-scene"
-            data-memory-scene="moments"
-          >
-            <div
-              className="memory-anchor film-moments-anchor"
-              data-memory-anchor="moments"
-            />
-            <div className="film-section-heading">
-              <div>
-                <p className="film-eyebrow">
-                  THE OCCASION IS ONLY THE BEGINNING
-                </p>
-                <h2>
-                  For every kind
-                  <br />
-                  of <em>“you matter”.</em>
-                </h2>
+        </div>
+      </section>
+      <section
+        id="made-for-you"
+        className="scene-scene scene-favourites"
+        data-film-scene="favourites"
+      >
+        <div className="scene-container">
+          <div className="scene-favourites-heading">
+            <p className="scene-eyebrow">MADE FOR YOUR MOMENTS.</p>
+            <Link className="scene-link" to="/shop">
+              Shop all
+              <ArrowUpRight size={18} />
+            </Link>
+          </div>
+          <div className="scene-favourites-grid">
+            {favourites.map((p) => (
+              <Link
+                key={p._id || p.id}
+                to={`/product/${p._id || p.id}`}
+                data-cursor="VIEW"
+              >
+                <div>
+                  <img
+                    {...responsiveImage(
+                      p.images?.[0] || p.image,
+                      "(max-width: 1023px) 40vw, 320px",
+                    )}
+                    alt={p.name}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <h3>{p.name}</h3>
+                <span>
+                  FROM{" "}
+                  <strong>₹{Number(p.price).toLocaleString("en-IN")}</strong>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section
+        id="how-it-works"
+        className="scene-scene scene-process"
+        data-film-scene="process"
+        data-pin-stage
+      >
+        <div className="scene-container">
+          <Chapter number="09" title="SIMPLE TO ORDER. PERSONAL TO KEEP." />
+          <div className="scene-process-heading">
+            <h2>
+              You bring
+              <br />
+              the <em>memory.</em>
+            </h2>
+            <p className="scene-body">
+              We turn it into something physical.
+              <br />
+              Here's how your moment becomes a gift.
+            </p>
+            <FrameSlot scene="process" />
+          </div>
+          <div className="scene-process-path">
+            <div className="scene-path-track" aria-hidden="true">
+              <div className="scene-travelling-photo">
+                <img src="/images/memory-core-480.webp" alt="" loading="lazy" />
               </div>
-              <span>GIFT BY MOMENT</span>
             </div>
-            <div className="film-moment-list">
-              {moments.map(([number, title, copy, query]) => (
-                <a
-                  key={title}
-                  href="#infinity-ai-concierge"
-                  onClick={() => setMomentQuery(query)}
-                >
-                  <span>{number}</span>
+            <ol className="scene-steps">
+              {[
+                [
+                  "Choose your gift",
+                  "Find a product, select options and add it to your bag.",
+                ],
+                [
+                  "Place your order",
+                  "Complete checkout and payment. Keep your order confirmation.",
+                ],
+                [
+                  "Send your photos",
+                  "After confirmation, send photos and customization details on WhatsApp.",
+                ],
+                [
+                  "We personalize it",
+                  "Your photos, words and story become part of your chosen gift.",
+                ],
+                [
+                  "Your memory is real",
+                  "Something to display, wear, gift and hold close.",
+                ],
+              ].map(([title, copy], i) => (
+                <li key={title}>
+                  <span>0{i + 1}</span>
                   <h3>{title}</h3>
                   <p>{copy}</p>
-                  <ArrowUpRight size={23} />
-                </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="scene-process-note">
+            <p>
+              Personalization happens after order confirmation.
+              <br />
+              No website photo upload needed.
+            </p>
+            <a
+              className="scene-link"
+              href={getWhatsAppUrl()}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Questions? Talk to the studio
+              <ArrowUpRight size={17} />
+            </a>
+          </div>
+        </div>
+      </section>
+      <section
+        id="infinity-difference"
+        className="scene-scene scene-difference"
+        data-film-scene="difference"
+        data-pin-stage
+      >
+        <div className="scene-infinity-ghost" aria-hidden="true">
+          INFINITY
+        </div>
+        <div className="scene-container">
+          <Chapter
+            number="10"
+            title="THE INFINITY DIFFERENCE"
+            aside="MADE TO MEAN MORE"
+          />
+          <div className="scene-grid">
+            <div className="scene-difference-copy">
+              <p className="scene-eyebrow">NOT JUST A GIFT.</p>
+              <h2>
+                A MEMORY
+                <br />
+                MADE
+                <br />
+                <em>tangible.</em>
+              </h2>
+              <FrameSlot scene="difference" />
+            </div>
+            <div className="scene-difference-rows">
+              {[
+                [
+                  "Personalized",
+                  "Made around your photos, stories and moments.",
+                ],
+                [
+                  "Made with care",
+                  "Thoughtfully created with attention to every detail.",
+                ],
+                [
+                  "Made to mean more",
+                  "Personal gifts created to become lasting memories.",
+                ],
+              ].map(([title, copy], i) => (
+                <article key={title}>
+                  <span>0{i + 1}</span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{copy}</p>
+                  </div>
+                  <ArrowUpRight size={20} />
+                </article>
               ))}
             </div>
-          </section>
-        )}
-        {differenceScene}
-        {processScene}
-        {!mobile && (
-          <section
-            className="film-founder film-scene"
-            data-memory-scene="founder"
-          >
-            <div
-              className="memory-anchor film-founder-anchor"
-              data-memory-anchor="founder"
-            />
-            <p className="film-eyebrow">
-              THE STORY BEHIND INFINITY / EST. 20 APRIL 2025
-            </p>
-            <div>
+          </div>
+        </div>
+      </section>
+      <section className="scene-scene scene-studio" data-film-scene="studio">
+        <div className="scene-container">
+          <Chapter
+            number="11"
+            title="THE STORY BEHIND INFINITY"
+            aside="EST. 20 APRIL 2025"
+          />
+          <div className="scene-grid">
+            <div className="scene-studio-title">
               <h2>
-                Started small.
+                STARTED
+                <br />
+                SMALL.
                 <br />
                 <em>Made to grow.</em>
               </h2>
-              <div>
-                <p>
-                  Infinity Customizations began with a simple idea: make
-                  memories feel physical again.
-                </p>
-                <p>
-                  Founded by Jashwanth Reddy on April 20, 2025 while studying
-                  B.Tech, the studio brings photos, printing and personal
-                  attention together to create meaningful gifts.
-                </p>
-                <Link className="motion-link" to="/about">
-                  Meet Infinity <ArrowUpRight size={16} />
-                </Link>
-              </div>
             </div>
-          </section>
-        )}
-        <section
-          id="start-creating"
-          className="film-final film-scene"
-          data-memory-scene="finalMemory"
-          data-memory-touch
-        >
-          <span className="film-final-watermark" aria-hidden="true">
-            INFINITY
-          </span>
-          <p className="film-eyebrow">SOMETHING WORTH KEEPING.</p>
-          <div
-            className="memory-anchor film-final-anchor"
-            data-memory-anchor="finalMemory"
-          />
+            <div className="scene-studio-copy">
+              <p>
+                It began with a simple idea.
+                <br />
+                Some moments deserve to become real.
+              </p>
+              <p>
+                Jashwanth Reddy started Infinity Customizations on April 20,
+                2025 while studying B.Tech. Personalized gifts, custom printing
+                and creative products became a way to turn that ambition into
+                something people could hold.
+              </p>
+              <p>
+                Today, the idea stays personal. Your photos. Your people. Your
+                story.
+              </p>
+              <Link className="scene-link" to="/about">
+                Meet Infinity
+                <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        id="start-creating"
+        className="scene-scene scene-final"
+        data-film-scene="final"
+      >
+        <div className="scene-container">
+          <p className="scene-eyebrow">12 / SOMETHING WORTH KEEPING.</p>
+          <FrameSlot scene="final" />
           <h2>
-            Make the
+            MAKE THE
             <br />
             <em>memory real.</em>
           </h2>
-          <div className="motion-actions">
-            <Link className="motion-button" to="/shop" data-magnetic>
-              Let's customize <ArrowRight size={17} />
-            </Link>
-            <Link className="motion-link" to="/shop">
-              Shop gifts <ArrowUpRight size={16} />
+          <p>Turn a moment into something they can hold.</p>
+          <div className="scene-final-actions">
+            <ShopLink>Let's customize</ShopLink>
+            <Link className="scene-link" to="/shop">
+              Explore gifts
+              <ArrowRight size={16} />
             </Link>
           </div>
-          <p className="film-final-signoff">YOUR MOMENTS. INFINITE MEANING.</p>
-        </section>
-      </main>
-    </MemoryExperienceContext.Provider>
+          <span className="scene-final-signoff">
+            YOUR MOMENTS. INFINITE MEANING.
+          </span>
+        </div>
+      </section>
+    </main>
   );
 }
 export default function HomePage() {
   return (
     <CatalogProvider>
-      <HomeExperience />
+      <Experience />
     </CatalogProvider>
   );
 }

@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+﻿import React, { useState, useEffect, useEffectEvent } from 'react';
+import { useAuth } from '../contexts/useAuth';
 import { AlertCircle, ChevronDown, Save, Phone, MapPin, Mail, Package, Download, Trash2 } from 'lucide-react';
 import { orders as ordersApi } from '../services/api';
 
@@ -97,13 +97,15 @@ const AdminOrders = () => {
     return totalShipping;
   };
 
+  const fetchOrdersFromEffect = useEffectEvent(() => fetchOrders());
   useEffect(() => {
     if (!admin || admin.role !== 'super_admin') return;
-    fetchOrders();
+    fetchOrdersFromEffect();
   }, [admin, adminToken]);
 
+  const filterOrdersFromEffect = useEffectEvent(() => filterOrders());
   useEffect(() => {
-    filterOrders();
+    filterOrdersFromEffect();
   }, [orders, filterStatus]);
 
   const fetchOrders = async () => {

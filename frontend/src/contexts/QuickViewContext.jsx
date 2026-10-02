@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
-const QuickViewContext = createContext(null);
+import { QuickViewContext } from './useQuickView';
 
 export const QuickViewProvider = ({ children }) => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
@@ -25,12 +25,4 @@ export const QuickViewProvider = ({ children }) => {
       {children}
     </QuickViewContext.Provider>
   );
-};
-
-export const useQuickView = () => {
-  const context = useContext(QuickViewContext);
-  if (!context) {
-    throw new Error('useQuickView must be used within a QuickViewProvider');
-  }
-  return context;
 };
