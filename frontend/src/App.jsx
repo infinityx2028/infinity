@@ -48,6 +48,7 @@ import MemoryInteractions from './components/MemoryInteractions';
 import './memory-motion.css';
 import './memory-film.css';
 import './memory-refinements.css';
+import './cinematic-commerce.css';
 import { responsiveImage } from './utils/responsiveImages';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---
@@ -143,6 +144,8 @@ const WhatsAppIcon = ({ size = 22, className = "" }) => (
 
 const CategoryPage = () => {
   const { id } = useParams();
+  const shopLocation = useLocation();
+  const bestOnly = new URLSearchParams(shopLocation.search).get("best") === "1";
   const resolvedCategory = resolveCategorySlug(id);
   const isInvalidCategory = Boolean(id && resolvedCategory === null);
   const currentCategory = isInvalidCategory ? null : (resolvedCategory || 'all');
@@ -160,6 +163,7 @@ const CategoryPage = () => {
   
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [priceFilter, setPriceFilter] = useState('all'); // all, under-300, 300-600, above-600
 
@@ -176,28 +180,14 @@ const CategoryPage = () => {
       }
 
       try {
-        const url = (currentCategory && currentCategory !== 'all')
-          ? `${API_BASE_URL}/products/category/${currentCategory}`
-          : `${API_BASE_URL}/products`;
-        const res = await fetch(url);
+        setCatalogError(false);
+        const res = await fetch(`${API_BASE_URL}/products`);
+        if (!res.ok) throw new Error('Catalog unavailable');
         const data = await res.json();
-        if (isMounted) {
-          if (Array.isArray(data) && data.length > 0) {
-            setAllProducts(data);
-          } else {
-            const fallback = (currentCategory && currentCategory !== 'all')
-              ? products.filter(p => p.categoryId === currentCategory)
-              : products;
-            setAllProducts(fallback);
-          }
-        }
-      } catch (err) {
-        if (isMounted) {
-          const fallback = (currentCategory && currentCategory !== 'all')
-            ? products.filter(p => p.categoryId === currentCategory)
-            : products;
-          setAllProducts(fallback);
-        }
+        if (!Array.isArray(data)) throw new Error('Invalid catalog');
+        if (isMounted) setAllProducts(data.filter(product => product && product.isActive !== false));
+      } catch {
+        if (isMounted) { setAllProducts([]); setCatalogError(true); }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -208,6 +198,8 @@ const CategoryPage = () => {
 
   // Filter products by price
   const filteredProducts = allProducts.filter(p => {
+    if (currentCategory !== "all" && p.categoryId !== currentCategory) return false;
+    if (bestOnly && p.isBestSeller !== true) return false;
     const price = Number(p.price || 0);
     if (priceFilter === 'under-300') return price < 300;
     if (priceFilter === '300-600') return price >= 300 && price <= 600;
@@ -228,7 +220,7 @@ const CategoryPage = () => {
   const activeFilterCount = (priceFilter !== 'all' ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
+    <div className="shop-page min-h-screen bg-[#F7F8FA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         
         {/* Simple Breadcrumbs: Home / Shop / Collection */}
@@ -249,7 +241,7 @@ const CategoryPage = () => {
               Infinity Store
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#071A2F] tracking-tight">
-              {details.title}
+              {bestOnly ? "Best sellers" : details.title}
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-[#687386] max-w-md font-light">
@@ -258,10 +250,10 @@ const CategoryPage = () => {
         </div>
 
         {/* Filter & Sort Controls Bar */}
-        <div className="space-y-3.5 mb-8">
+        <div className="shop-controls space-y-3.5 mb-8">
           {/* Quick Category Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-            {CANONICAL_CATEGORIES.map((tab) => {
+          <div className="shop-category-strip flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+            {CANONICAL_CATEGORIES.filter(tab => tab.id === "all" || allProducts.some(product => product.categoryId === tab.id)).map((tab) => {
               const isActive = (tab.id === 'all' && currentCategory === 'all') || (tab.id === currentCategory);
               return (
                 <Link
@@ -280,7 +272,7 @@ const CategoryPage = () => {
           </div>
 
           {/* Secondary Controls: Price Pills + Sorting Dropdown */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-[#071A2F]/8 shadow-xs">
+          <div className="shop-filter-bar flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 sm:p-3 rounded-2xl border border-[#071A2F]/8 shadow-xs">
             {/* Price Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
               <span className="text-[#687386] font-medium mr-1 hidden sm:inline">Price:</span>
@@ -330,8 +322,8 @@ const CategoryPage = () => {
         </div>
 
         {/* Product Grid / Loading / Empty States */}
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
+        {catalogError ? <p role="status" className="py-12 text-center text-sm text-[#687386]">The catalog is temporarily unavailable. Please reload to try again.</p> : loading ? (
+          <div className="shop-product-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white rounded-2xl p-2.5 border border-[#071A2F]/6 animate-pulse">
                 <div className="aspect-square bg-gray-100 rounded-xl mb-2" />
@@ -342,7 +334,7 @@ const CategoryPage = () => {
           </div>
         ) : sortedProducts.length > 0 ? (
           <div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
+            <div className="shop-product-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6">
               {sortedProducts.map(p => (
                 <ProductCard key={p._id || p.id} product={p} />
               ))}

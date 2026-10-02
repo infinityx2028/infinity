@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import useIsMobile from "../hooks/useIsMobile";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -16,7 +17,6 @@ import { CatalogProvider } from "../contexts/CatalogContext";
 import { useCatalog } from "../contexts/useCatalog";
 import { MemoryExperienceContext } from "../contexts/useMemoryExperience";
 import { CANONICAL_CATEGORIES } from "../utils/categoryUtils";
-import { responsiveImage } from "../utils/responsiveImages";
 
 const moments = [
   ["01", "Birthdays", "For their next trip around the sun.", "Birthday gift"],
@@ -41,6 +41,7 @@ const moments = [
 ];
 function HomeExperience() {
   const experienceRef = useRef(null);
+  const mobile = useIsMobile();
   const { products, loading, error } = useCatalog();
   const [aiProduct, setAIProduct] = useState(null);
   const [categoryProduct, setCategoryProduct] = useState(null);
@@ -55,11 +56,120 @@ function HomeExperience() {
   );
   const discovery = products
     .filter((product) => category === "all" || product.categoryId === category)
-    .slice(0, 8);
+    .slice(0, 6);
   const magazine = products.find(
     (product) => product.categoryId === "magazines",
   );
-  const best = products.filter((product) => product.isBestSeller).slice(0, 4);
+
+  const processScene = (
+    <section
+      id="how-it-works"
+      className="film-process film-scene"
+      data-memory-scene="process"
+    >
+      <div className="motion-chapter">
+        <span>06 / SIMPLE TO ORDER. PERSONAL TO KEEP.</span>
+      </div>
+      <h2>
+        You bring the memory.
+        <br />
+        <em>We make it physical.</em>
+      </h2>
+      <div
+        className="memory-anchor film-process-anchor"
+        data-memory-anchor="process"
+      />
+      <div className="film-process-steps">
+        {[
+          [
+            Gift,
+            "Find their kind of gift",
+            "Explore the collection and choose your options.",
+          ],
+          [
+            Heart,
+            "Make it yours",
+            "Add to your bag and place your order through checkout.",
+          ],
+          [
+            MessageCircle,
+            "Send the memories",
+            "After ordering, send your photos and personalization details to us on WhatsApp.",
+          ],
+        ].map((step, index) => {
+          const [Icon, title, copy] = step;
+          return (
+            <article key={title}>
+              <div>
+                <Icon size={23} />
+                <span>0{index + 1}</span>
+              </div>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+  const differenceScene = (
+    <section
+      id="infinity-difference"
+      className="film-difference film-scene"
+      data-memory-scene="brand"
+    >
+      <div className="motion-chapter">
+        <span>05 / THE INFINITY DIFFERENCE</span>
+        <span>MADE TO MEAN MORE</span>
+      </div>
+      <div className="film-difference-layout">
+        <div>
+          <p className="film-eyebrow">THE DETAILS MAKE THE DIFFERENCE.</p>
+          <h2>
+            A gift.
+            <br />A feeling.
+            <br />
+            <em>A forever thing.</em>
+          </h2>
+          <div
+            className="memory-anchor film-brand-anchor"
+            data-memory-anchor="brand"
+          />
+        </div>
+        <div className="film-pillars">
+          {[
+            [
+              "Personal, from the start.",
+              "Your photos, your words, your story. At the heart of everything we make.",
+            ],
+            [
+              "A little human attention.",
+              "Share your personalization details with our team on WhatsApp after you order.",
+            ],
+            [
+              "More than the moment.",
+              "Made to display, wear, gift and keep close. A memory in a different form.",
+            ],
+          ].map(([title, copy], index) => (
+            <button
+              key={title}
+              type="button"
+              aria-pressed={pillar === index}
+              onClick={() => setPillar(index)}
+              onMouseEnter={() => setPillar(index)}
+            >
+              <span>0{index + 1}</span>
+              <div>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </div>
+              <ArrowUpRight size={18} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
   return (
     <MemoryExperienceContext.Provider
       value={{
@@ -88,96 +198,81 @@ function HomeExperience() {
         </div>
         <InfinityAISection />
         <CategoryGrid />
-        <section
-          id="made-for-you"
-          className="film-discovery film-scene"
-          data-memory-scene="products"
-        >
-          <div className="motion-chapter">
-            <span>03 / THE COLLECTION</span>
-            <Link to="/shop">
-              ALL PERSONALIZED GIFTS <ArrowUpRight size={15} />
-            </Link>
-          </div>
-          <div className="film-section-heading">
-            <h2>
-              Made for
-              <br />
-              <em>your moments.</em>
-            </h2>
-            <p>
-              Big celebrations. Little surprises.
-              <br />
-              Find something that feels like them.
-            </p>
-          </div>
-          <div
-            className="memory-anchor film-products-anchor"
-            data-memory-anchor="products"
-          />
-          <div
-            className="motion-product-filters"
-            aria-label="Filter gifts by category"
+        {!mobile && (
+          <section
+            id="made-for-you"
+            className="film-discovery film-scene"
+            data-memory-scene="products"
           >
-            {available.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                aria-pressed={category === item.id}
-                onClick={() => setCategory(item.id)}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-          {loading && (
-            <p className="film-status" role="status">
-              Opening the collection…
-            </p>
-          )}
-          {error && (
-            <p className="film-status" role="status">
-              The collection is temporarily unavailable.{" "}
-              <Link to="/shop">Try again in the shop →</Link>
-            </p>
-          )}
-          {!loading && !error && !discovery.length && (
-            <p className="film-status">
-              There are no gifts in this collection right now.
-            </p>
-          )}
-          <div className="motion-product-grid">
-            {discovery.map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
-          </div>
-          <Link
-            className="motion-link film-collection-link"
-            to={category === "all" ? "/shop" : `/shop/${category}`}
-          >
-            Explore the collection <ArrowRight size={17} />
-          </Link>
-          <div id="best-sellers" className="film-best-sellers">
-            {best.length > 0 && (
-              <>
-                <div className="film-section-heading">
-                  <h3>
-                    Favourites, <em>made personal.</em>
-                  </h3>
-                  <span>BEST SELLERS</span>
-                </div>
-                <div className="motion-product-grid">
-                  {best.map((product) => (
-                    <ProductCard
-                      key={product._id || product.id}
-                      product={product}
-                    />
-                  ))}
-                </div>
-              </>
+            <div className="motion-chapter">
+              <span>03 / OUR FAVOURITES</span>
+              <Link to="/shop">
+                ALL PERSONALIZED GIFTS <ArrowUpRight size={15} />
+              </Link>
+            </div>
+            <div className="film-section-heading">
+              <h2>
+                A few favourites.
+                <br />
+                <em>Made personal.</em>
+              </h2>
+              <p>
+                Big celebrations. Little surprises.
+                <br />
+                Find something that feels like them.
+              </p>
+            </div>
+            <div
+              className="memory-anchor film-products-anchor"
+              data-memory-anchor="products"
+            />
+            <div
+              className="motion-product-filters"
+              aria-label="Filter gifts by category"
+            >
+              {available.map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
+                  aria-pressed={category === item.id}
+                  onClick={() => setCategory(item.id)}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+            {loading && (
+              <p className="film-status" role="status">
+                Opening the collection…
+              </p>
             )}
-          </div>
-        </section>
+            {error && (
+              <p className="film-status" role="status">
+                The collection is temporarily unavailable.{" "}
+                <Link to="/shop">Try again in the shop →</Link>
+              </p>
+            )}
+            {!loading && !error && !discovery.length && (
+              <p className="film-status">
+                There are no gifts in this collection right now.
+              </p>
+            )}
+            <div className="motion-product-grid">
+              {discovery.map((product) => (
+                <ProductCard
+                  key={product._id || product.id}
+                  product={product}
+                />
+              ))}
+            </div>
+            <Link
+              className="motion-link film-collection-link"
+              to={category === "all" ? "/shop" : `/shop/${category}`}
+            >
+              Explore the collection <ArrowRight size={17} />
+            </Link>
+          </section>
+        )}
         <section
           className="film-transformation film-scene"
           id="made-around-your-story"
@@ -198,21 +293,6 @@ function HomeExperience() {
             className="memory-anchor film-story-anchor"
             data-memory-anchor="story"
           />
-          <div className="film-story-memories" aria-hidden="true">
-            {["memory-monika", "memory-yellow-saree"].map((memory) => (
-              <picture key={memory}>
-                <source
-                  type="image/avif"
-                  srcSet={`/images/${memory}-480.avif`}
-                />
-                <img
-                  src={`/images/${memory}-480.webp`}
-                  alt=""
-                  decoding="async"
-                />
-              </picture>
-            ))}
-          </div>
           <div className="film-story-note">
             <span>ONE PHOTO. A WHOLE NEW CHAPTER.</span>
             <p>
@@ -230,181 +310,124 @@ function HomeExperience() {
               <ArrowRight size={17} />
             </Link>
           </div>
-          {magazine && (
-            <Link
-              className="film-magazine-detail"
-              to={`/product/${magazine._id || magazine.id}`}
-            >
-              <img
-                {...responsiveImage(
-                  magazine.images?.[0] || magazine.image,
-                  "(max-width: 767px) 100px, 180px",
-                )}
-                alt={magazine.name}
-                loading="lazy"
-              />
-              <span>PERSONALIZED MAGAZINES ↗</span>
-            </Link>
-          )}
-        </section>
-        <section className="film-moments film-scene">
-          <div className="film-section-heading">
-            <div>
-              <p className="film-eyebrow">THE OCCASION IS ONLY THE BEGINNING</p>
-              <h2>
-                For every kind
-                <br />
-                of <em>“you matter”.</em>
-              </h2>
-            </div>
-            <span>GIFT BY MOMENT</span>
-          </div>
-          <div className="film-moment-list">
-            {moments.map(([number, title, copy, query]) => (
-              <a
-                key={title}
-                href="#infinity-ai-concierge"
-                onClick={() => setMomentQuery(query)}
-              >
-                <span>{number}</span>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-                <ArrowUpRight size={23} />
-              </a>
-            ))}
-          </div>
         </section>
         <section
-          id="infinity-difference"
-          className="film-difference film-scene"
-          data-memory-scene="brand"
+          id="memory-transformation"
+          className="film-photo-transformation film-scene"
+          data-memory-scene="transformation"
         >
           <div className="motion-chapter">
-            <span>05 / THE INFINITY DIFFERENCE</span>
-            <span>MADE TO MEAN MORE</span>
-          </div>
-          <div className="film-difference-layout">
-            <div>
-              <p className="film-eyebrow">THE DETAILS MAKE THE DIFFERENCE.</p>
-              <h2>
-                A gift.
-                <br />A feeling.
-                <br />
-                <em>A forever thing.</em>
-              </h2>
-              <div
-                className="memory-anchor film-brand-anchor"
-                data-memory-anchor="brand"
-              />
-            </div>
-            <div className="film-pillars">
-              {[
-                [
-                  "Personal, from the start.",
-                  "Your photos, your words, your story. At the heart of everything we make.",
-                ],
-                [
-                  "A little human attention.",
-                  "Share your personalization details with our team on WhatsApp after you order.",
-                ],
-                [
-                  "More than the moment.",
-                  "Made to display, wear, gift and keep close. A memory in a different form.",
-                ],
-              ].map(([title, copy], index) => (
-                <button
-                  key={title}
-                  type="button"
-                  aria-pressed={pillar === index}
-                  onClick={() => setPillar(index)}
-                  onMouseEnter={() => setPillar(index)}
-                >
-                  <span>0{index + 1}</span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{copy}</p>
-                  </div>
-                  <ArrowUpRight size={18} />
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-        <section
-          id="how-it-works"
-          className="film-process film-scene"
-          data-memory-scene="process"
-        >
-          <div className="motion-chapter">
-            <span>06 / SIMPLE TO ORDER. PERSONAL TO KEEP.</span>
+            <span>05 / SAME MEMORY. A NEW FORM.</span>
           </div>
           <h2>
-            You bring the memory.
+            One photo.
             <br />
-            <em>We make it physical.</em>
+            <em>A whole new chapter.</em>
           </h2>
           <div
-            className="memory-anchor film-process-anchor"
-            data-memory-anchor="process"
+            className="memory-anchor film-transform-anchor"
+            data-memory-anchor="transformation"
           />
-          <div className="film-process-steps">
-            {[
-              [
-                Gift,
-                "Find their kind of gift",
-                "Explore the collection and choose your options.",
-              ],
-              [
-                Heart,
-                "Make it yours",
-                "Add to your bag and place your order through checkout.",
-              ],
-              [
-                MessageCircle,
-                "Send the memories",
-                "After ordering, send your photos and personalization details to us on WhatsApp.",
-              ],
-            ].map((step, index) => {
-              const [Icon, title, copy] = step;
-              return (
-                <article key={title}>
-                  <div>
-                    <Icon size={23} />
-                    <span>0{index + 1}</span>
-                  </div>
+          <div className="film-transform-copy">
+            <p>
+              A print to hold. A magazine to revisit. Your story, made personal.
+            </p>
+            <Link
+              className="motion-link"
+              to={
+                magazine
+                  ? `/product/${magazine._id || magazine.id}`
+                  : "/shop/magazines"
+              }
+            >
+              Make your own magazine <ArrowRight size={17} />
+            </Link>
+          </div>
+        </section>
+        {!mobile && (
+          <section
+            className="film-moments film-scene"
+            data-memory-scene="moments"
+          >
+            <div
+              className="memory-anchor film-moments-anchor"
+              data-memory-anchor="moments"
+            />
+            <div className="film-section-heading">
+              <div>
+                <p className="film-eyebrow">
+                  THE OCCASION IS ONLY THE BEGINNING
+                </p>
+                <h2>
+                  For every kind
+                  <br />
+                  of <em>“you matter”.</em>
+                </h2>
+              </div>
+              <span>GIFT BY MOMENT</span>
+            </div>
+            <div className="film-moment-list">
+              {moments.map(([number, title, copy, query]) => (
+                <a
+                  key={title}
+                  href="#infinity-ai-concierge"
+                  onClick={() => setMomentQuery(query)}
+                >
+                  <span>{number}</span>
                   <h3>{title}</h3>
                   <p>{copy}</p>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-        <section className="film-founder film-scene">
-          <p className="film-eyebrow">
-            THE STORY BEHIND INFINITY / EST. 20 APRIL 2025
-          </p>
-          <div>
-            <h2>
-              Started small.
-              <br />
-              <em>Made to grow.</em>
-            </h2>
-            <div>
-              <p>
-                Infinity Customizations began with a simple idea: make memories
-                feel physical again.
-              </p>
-              <p>
-                Founded by Jashwanth Reddy on April 20, 2025 while studying
-                B.Tech, the studio brings photos, printing and personal
-                attention together to create meaningful gifts.
-              </p>
-              <Link className="motion-link" to="/about">
-                Meet Infinity <ArrowUpRight size={16} />
-              </Link>
+                  <ArrowUpRight size={23} />
+                </a>
+              ))}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+        {mobile ? (
+          <>
+            {processScene}
+            {differenceScene}
+          </>
+        ) : (
+          <>
+            {differenceScene}
+            {processScene}
+          </>
+        )}
+        {!mobile && (
+          <section
+            className="film-founder film-scene"
+            data-memory-scene="founder"
+          >
+            <div
+              className="memory-anchor film-founder-anchor"
+              data-memory-anchor="founder"
+            />
+            <p className="film-eyebrow">
+              THE STORY BEHIND INFINITY / EST. 20 APRIL 2025
+            </p>
+            <div>
+              <h2>
+                Started small.
+                <br />
+                <em>Made to grow.</em>
+              </h2>
+              <div>
+                <p>
+                  Infinity Customizations began with a simple idea: make
+                  memories feel physical again.
+                </p>
+                <p>
+                  Founded by Jashwanth Reddy on April 20, 2025 while studying
+                  B.Tech, the studio brings photos, printing and personal
+                  attention together to create meaningful gifts.
+                </p>
+                <Link className="motion-link" to="/about">
+                  Meet Infinity <ArrowUpRight size={16} />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
         <section
           id="start-creating"
           className="film-final film-scene"
@@ -420,32 +443,20 @@ function HomeExperience() {
             data-memory-anchor="final"
           />
           <h2>
-            Turn a memory
+            Make the
             <br />
-            into something
-            <br />
-            <em>they can hold.</em>
+            <em>memory real.</em>
           </h2>
           <div className="motion-actions">
             <Link className="motion-button" to="/shop" data-magnetic>
-              Start creating <ArrowRight size={17} />
+              Let's customize <ArrowRight size={17} />
             </Link>
-            <a className="motion-link" href="#infinity-ai-concierge">
-              Ask Infinity AI <span>✦</span>
-            </a>
+            <Link className="motion-link" to="/shop">
+              Shop gifts <ArrowUpRight size={16} />
+            </Link>
           </div>
           <p className="film-final-signoff">YOUR MOMENTS. INFINITE MEANING.</p>
         </section>
-        <div
-          className="film-footer-settle"
-          data-memory-scene="footer"
-          aria-hidden="true"
-        >
-          <div
-            className="memory-anchor film-footer-anchor"
-            data-memory-anchor="footer"
-          />
-        </div>
       </main>
     </MemoryExperienceContext.Provider>
   );

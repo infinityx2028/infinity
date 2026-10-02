@@ -19,9 +19,11 @@ export default function Hero3D() {
         <i /> PERSONALIZED · MADE FOR YOU
       </p>
       <h1>
-        <span>Make</span>
-        <span>memories</span>
-        <em>physical.</em>
+        <span className="film-desktop-copy">Make</span>
+        <span className="film-desktop-copy">memories</span>
+        <em className="film-desktop-copy">physical.</em>
+        <span className="film-mobile-copy">Your memories.</span>
+        <span className="film-mobile-copy">Made personal.</span>
       </h1>
       <div
         className="memory-anchor film-hero-anchor"
@@ -41,14 +43,10 @@ export default function Hero3D() {
       </div>
       <div className="film-hero-bottom">
         <div>
-          <p>
-            Not just another gift.
-            <br />
-            Their favourite moment, made personal.
-          </p>
+          <p>Turn photos and moments into gifts made just for them.</p>
           <div className="motion-actions">
             <Link className="motion-button" to="/shop" data-magnetic>
-              Shop personalized gifts <ArrowRight size={17} />
+              Explore gifts <ArrowRight size={17} />
             </Link>
             <a className="motion-link" href="#infinity-ai-concierge">
               Ask Infinity AI <span>✦</span>

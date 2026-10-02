@@ -50,9 +50,11 @@ export default function Footer() {
     observer.observe(footer.current);
     const desktop = window.matchMedia("(min-width: 768px)");
     const syncGroups = () => {
-      footer.current?.querySelectorAll(".film-footer-group").forEach((group) => {
-        group.open = desktop.matches;
-      });
+      footer.current
+        ?.querySelectorAll(".film-footer-group")
+        .forEach((group) => {
+          group.open = desktop.matches;
+        });
     };
     syncGroups();
     desktop.addEventListener("change", syncGroups);
@@ -62,13 +64,15 @@ export default function Footer() {
     };
   }, []);
   return (
-    <footer className="motion-footer" ref={footer}>
+    <footer className="motion-footer" ref={footer} data-memory-scene="footer">
+      <div
+        className="memory-anchor film-footer-anchor"
+        data-memory-anchor="footer"
+        aria-hidden="true"
+      />
       <div className="motion-footer-top">
         <p>
-          Memories, <em>made physical.</em>
-          <small>
-            Personalized gifts made from the moments you never want to forget.
-          </small>
+          Personalized gifts made from the moments you never want to forget.
         </p>
         <a
           href={getWhatsAppUrl()}
@@ -112,7 +116,7 @@ export default function Footer() {
         className="motion-footer-wordmark"
         aria-label="Infinity Customizations"
       >
-        <span className="footer-infinity-name">Infinity</span>
+        <span className="footer-infinity-name">INFINITY</span>
         <small>CUSTOMIZATIONS</small>
       </div>
       <div className="motion-footer-bottom">

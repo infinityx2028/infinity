@@ -58,7 +58,12 @@ export default function CategoryGrid() {
           data-cursor="DRAG"
           onScroll={() => {
             if (window.innerWidth < 768)
-              select(Math.min(categories.length - 1, Math.round(rail.current.scrollLeft / 188)));
+              select(
+                Math.min(
+                  categories.length - 1,
+                  Math.round(rail.current.scrollLeft / 120),
+                ),
+              );
           }}
         >
           {categories.map((category, index) => (
@@ -104,7 +109,10 @@ export default function CategoryGrid() {
             type="button"
             aria-label="Previous category"
             onClick={() =>
-              rail.current.scrollBy({ left: -190, behavior: "smooth" })
+              rail.current.scrollBy({
+                left: window.innerWidth < 768 ? -120 : -190,
+                behavior: "smooth",
+              })
             }
           >
             <ArrowLeft size={16} />
@@ -113,7 +121,10 @@ export default function CategoryGrid() {
             type="button"
             aria-label="Next category"
             onClick={() =>
-              rail.current.scrollBy({ left: 190, behavior: "smooth" })
+              rail.current.scrollBy({
+                left: window.innerWidth < 768 ? 120 : 190,
+                behavior: "smooth",
+              })
             }
           >
             <ArrowRight size={16} />

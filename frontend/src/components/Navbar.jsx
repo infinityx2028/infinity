@@ -95,7 +95,7 @@ export default function Navbar() {
       })
       .then((data) => {
         if (!Array.isArray(data)) throw new Error("Invalid catalog");
-        setCatalog(data.filter(product => product.isActive !== false));
+        setCatalog(data.filter((product) => product.isActive !== false));
         setSearchStatus("");
       })
       .catch(() => {
@@ -109,14 +109,11 @@ export default function Navbar() {
   function ai() {
     close();
     if (location.pathname === "/")
-      document
-        .getElementById("infinity-ai-concierge")
-        ?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-            .matches
-            ? "auto"
-            : "smooth",
-        });
+      document.getElementById("infinity-ai-concierge")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
     else openInfinityAI();
   }
   function search(event) {
@@ -130,7 +127,7 @@ export default function Navbar() {
     { label: "Shop", to: "/shop" },
     { label: "Collections", to: "/#collections-section" },
     { label: "Infinity AI", action: ai },
-    { label: "Best sellers", to: "/#best-sellers" },
+    { label: "Best sellers", to: "/shop?best=1" },
     { label: "About", to: "/about" },
   ];
   return (
@@ -214,7 +211,7 @@ export default function Navbar() {
         >
           <div className="motion-overlay-top">
             <Link to="/" className="motion-wordmark" onClick={close}>
-              <span>infinity✦</span>
+              <span>INFINITY</span>
               <small>CUSTOMIZATIONS</small>
             </Link>
             <button type="button" onClick={close} aria-label={`Close ${open}`}>
@@ -223,6 +220,9 @@ export default function Navbar() {
           </div>
           {open === "menu" && (
             <>
+              <div className="motion-menu-memory" aria-hidden="true">
+                <img src="/images/memory-rukmini-480.webp" alt="" />
+              </div>
               <h2 id="motion-overlay-title" className="sr-only">
                 Explore Infinity
               </h2>
@@ -230,7 +230,7 @@ export default function Navbar() {
                 {[
                   ...links.slice(0, 4),
                   {
-                    label: isAuthenticated ? "Account" : "Sign in / Account",
+                    label: "Account",
                     to: isAuthenticated ? "/account" : "/login",
                   },
                   links[4],
@@ -243,6 +243,7 @@ export default function Navbar() {
                     >
                       <span>0{index + 1}</span>
                       {link.label}
+                      <i className="motion-menu-ai-star" aria-hidden="true">✦</i>
                       <ArrowUpRight size={25} />
                     </button>
                   ) : (

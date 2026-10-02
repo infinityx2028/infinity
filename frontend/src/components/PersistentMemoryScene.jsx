@@ -1,62 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { useCatalog } from "../contexts/useCatalog";
-import { useMemoryExperience } from "../contexts/useMemoryExperience";
+import { useEffect, useRef } from "react";
+import { FRAME_SCENES } from "../utils/frameJourney";
 
-const STATES = {
-  hero: { rotate: -9, tilt: -10, opacity: 1, dark: 0 },
-  ai: { rotate: 6, tilt: 8, opacity: 1, dark: 0 },
-  categories: { rotate: -4, tilt: -5, opacity: 1, dark: 0 },
-  products: { rotate: 12, tilt: 8, opacity: 0, dark: 0 },
-  story: { rotate: -5, tilt: -8, opacity: 1, dark: 0 },
-  wall: { rotate: 8, tilt: 5, opacity: 0.65, dark: 0.15 },
-  brand: { rotate: -12, tilt: 12, opacity: 0.5, dark: 1 },
-  process: { rotate: 3, tilt: -6, opacity: 0, dark: 0 },
-  final: { rotate: -5, tilt: -4, opacity: 1, dark: 0 },
-  footer: { rotate: 3, tilt: 7, opacity: 0.3, dark: 1 },
-};
 const interpolate = (a, b, progress) => a + (b - a) * progress;
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const MEMORIES = ["memory-rukmini", "memory-monika", "memory-yellow-saree"];
-const MEMORY_BY_SCENE = {
-  hero: 0,
-  ai: 1,
-  categories: 2,
-  products: 2,
-  story: 2,
-  brand: 1,
-  process: 1,
-  final: 0,
-  footer: 0,
-};
 
 export default function PersistentMemoryScene({ experienceRef, pillar }) {
-  const { products } = useCatalog();
-  const { aiProduct, categoryProduct, tokens } = useMemoryExperience();
-  const [scene, setScene] = useState("hero");
   const position = useRef(null);
   const frameBody = useRef(null);
   const world = useRef(null);
-  const sceneRef = useRef("hero");
-  const frameProduct = products.find(
-    (product) => product.categoryId === "frames",
-  );
-  const product =
-    scene === "ai"
-      ? aiProduct || frameProduct
-      : scene === "categories"
-        ? categoryProduct || frameProduct
-        : frameProduct;
-  const form =
-    scene === "story"
-      ? "magazine"
-      : scene === "categories"
-        ? "polaroid"
-        : scene === "ai" && product?.categoryId === "magazines"
-          ? "magazine"
-          : scene === "ai" && product?.categoryId === "memories"
-            ? "polaroid"
-            : scene === "ai" && product?.categoryId === "essentials"
-              ? "case"
-              : "frame";
 
   useEffect(() => {
     const root = experienceRef.current;
@@ -77,37 +29,85 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           : "medium";
     root.dataset.quality = quality;
 
+    let mobile = false;
+    let footer = null;
+    let story = null;
+    let bodyHeight = 0;
+    let rootStart = 0;
+    let rootEnd = 0;
     function measure() {
-      root.dataset.quality = window.innerWidth < 768 ? "low" : quality;
-      anchors = [...root.querySelectorAll("[data-memory-anchor]")].map(
-        (node) => {
+      mobile = window.innerWidth < 768;
+      root.dataset.quality = mobile ? "low" : quality;
+      root.dataset.journey = mobile
+        ? "mobile"
+        : window.innerWidth < 1100
+          ? "tablet"
+          : "desktop";
+      const poses = FRAME_SCENES[root.dataset.journey];
+      const header = mobile ? 76 : 90;
+      const sample = window.scrollY;
+      const rootRect = root.getBoundingClientRect();
+      rootStart = rootRect.top + sample;
+      rootEnd = rootRect.bottom + sample;
+      bodyHeight = document.documentElement.scrollHeight;
+      footer = document.querySelector(".motion-footer");
+      story = root.querySelector('[data-memory-scene="transformation"]');
+      const nodes = [
+        ...root.querySelectorAll("[data-memory-anchor]"),
+        ...document.querySelectorAll("footer [data-memory-anchor]"),
+      ];
+      anchors = nodes
+        .filter(
+          (node) =>
+            node.getClientRects().length && poses[node.dataset.memoryAnchor],
+        )
+        .map((node) => {
           const rect = node.getBoundingClientRect();
           const sectionRect = node
             .closest("[data-memory-scene]")
             .getBoundingClientRect();
           const key = node.dataset.memoryAnchor;
-          const header = window.innerWidth < 768 ? 75 : 85;
+          const maximumScroll = Math.max(0, bodyHeight - window.innerHeight);
+          const start =
+            key === "hero"
+              ? 0
+              : key === "footer"
+                ? Math.max(
+                    0,
+                    Math.min(
+                      sectionRect.top + sample - header,
+                      maximumScroll - 180,
+                    ),
+                  )
+                : Math.max(0, sectionRect.top + sample - header);
           return {
             key,
-            x: rect.left + rect.width / 2,
-            // Document coordinates keep the object inside the reserved safe zone.
-            y: rect.top + window.scrollY + rect.height / 2,
-            start:
-              key === "hero"
-                ? 0
-                : sectionRect.top +
-                  window.scrollY -
-                  header -
-                  Math.min(100, window.innerHeight * 0.12),
+            start,
             size: rect.width,
-            ...STATES[key],
-            opacity:
-              window.innerWidth < 768 && ["ai", "categories"].includes(key)
-                ? 0
-                : STATES[key].opacity,
+            x: rect.left + rect.width / 2,
+            // Each breakpoint's reserved slot supplies a viewport pose. Long sections
+            // never send the frame off screen while waiting for a document anchor.
+            y:
+              key === "hero"
+                ? rect.top + sample + rect.height / 2
+                : key === "footer"
+                  ? rect.top + sample + rect.height / 2 - maximumScroll
+                  : rect.top - sectionRect.top + header + rect.height / 2,
+            ...poses[key],
           };
-        },
-      );
+        })
+        .sort((a, b) => a.start - b.start);
+      const last = anchors.at(-1);
+      if (last?.key === "footer") {
+        anchors.push({
+          ...last,
+          ...poses.ending,
+          key: "ending",
+          start: Math.max(last.start + 1, bodyHeight - window.innerHeight),
+          y: last.y - 28,
+          size: last.size * 0.72,
+        });
+      }
       update();
     }
     function update() {
@@ -122,90 +122,80 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           right = anchors[index + 1];
         }
       }
-      if (sample >= anchors[anchors.length - 1].start)
-        left = right = anchors[anchors.length - 1];
+      if (sample >= anchors.at(-1).start) left = right = anchors.at(-1);
       const sectionProgress =
         left === right
           ? 0
-          : Math.max(
-              0,
-              Math.min(1, (sample - left.start) / (right.start - left.start)),
-            );
-      // Native scroll is the timing authority: no late gate, spring or scrub delay.
+          : clamp((sample - left.start) / (right.start - left.start), 0, 1);
       const progress = media.matches
         ? sectionProgress >= 0.5
           ? 1
           : 0
         : sectionProgress;
-      const current = sectionProgress >= 0.5 ? right : left;
-      const leavingCommerce = left.opacity === 0 && right.opacity > 0;
-      const enteringCommerce = left.opacity > 0 && right.opacity === 0;
-      const x = leavingCommerce
-        ? right.x
-        : enteringCommerce
-          ? left.x
-          : interpolate(left.x, right.x, progress);
-      const y =
-        (leavingCommerce
-          ? right.y
-          : enteringCommerce
-            ? left.y
-            : interpolate(left.y, right.y, progress)) - sample;
-      const size = interpolate(left.size, right.size, progress);
-      const rootBounds = root.getBoundingClientRect();
-      const visible = rootBounds.bottom > -100 && rootBounds.top < viewport;
-      const opacity = !visible
-        ? 0
-        : leavingCommerce
-          ? right.opacity * Math.max(0, (progress - 0.8) / 0.2)
-          : enteringCommerce
-            ? left.opacity * Math.max(0, 1 - progress * 4)
-            : interpolate(left.opacity, right.opacity, progress);
+      const current = progress >= 0.5 ? right : left;
+      const x = interpolate(left.x, right.x, progress);
+      const size =
+        interpolate(left.size, right.size, progress) *
+        (mobile && viewport < 700 ? viewport / 760 : 1);
+      const depth = media.matches ? 0 : interpolate(left.z, right.z, progress);
+      const apparentScale = ((size / 260) * 1200) / (1200 - depth);
+      const halfHeight = 165 * apparentScale;
+      const y = clamp(
+        interpolate(left.y, right.y, progress),
+        78 + halfHeight,
+        Math.max(78 + halfHeight, viewport - (mobile ? 72 : 18) - halfHeight),
+      );
+      const visible = sample + viewport > rootStart && sample < bodyHeight;
+      const opacity = visible
+        ? interpolate(left.opacity, right.opacity, progress)
+        : 0;
       const tilt =
-        current.key === "brand"
-          ? [0, 12, -8][pillar]
-          : interpolate(left.tilt, right.tilt, progress);
-      const scale =
-        (size / 260) * (current.key === "brand" ? 1 - pillar * 0.04 : 1);
-      object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) scale(${scale}) rotateZ(${media.matches ? 0 : interpolate(left.rotate, right.rotate, progress)}deg) rotateY(${media.matches ? 0 : tilt}deg) rotateX(${media.matches ? 0 : interpolate(2, -2, progress)}deg)`;
+        interpolate(left.tilt, right.tilt, progress) +
+        (current.key === "brand" ? (pillar - 1) * 2 : 0);
+      object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) perspective(1200px) translateZ(${depth}px) scale(${size / 260}) rotateZ(${media.matches ? 0 : interpolate(left.rotate, right.rotate, progress)}deg) rotateY(${media.matches ? 0 : tilt}deg) rotateX(${media.matches ? 0 : interpolate(left.pitch, right.pitch, progress)}deg)`;
       object.style.opacity = opacity;
+      object.style.zIndex = current.layer === "back" ? "1" : "6";
       object.dataset.scene = current.key;
-      object.dataset.memory = MEMORY_BY_SCENE[current.key] ?? 0;
-      object.dataset.depth = scale > 1 ? "near" : "far";
+      object.dataset.form = current.form;
+      object.dataset.memory = current.photo;
+      object.dataset.depth = depth >= 0 ? "near" : "far";
+      object.dataset.z = depth;
       object.dataset.scrollSample = sample;
+      object.style.setProperty(
+        "--shadow-scale",
+        interpolate(1.14, 0.6, clamp(-depth / 760, 0, 1)),
+      );
+      object.style.setProperty(
+        "--shadow-opacity",
+        interpolate(0.32, 0.09, clamp(-depth / 760, 0, 1)),
+      );
       frameBody.current.style.setProperty(
         "--scroll-light",
         `${interpolate(-12, 12, progress)}%`,
       );
       root.style.setProperty(
         "--type-parallax",
-        `${media.matches ? 0 : Math.min(sample, anchors[1]?.start || 0) * 0.08}px`,
+        `${media.matches || mobile ? 0 : Math.min(sample, anchors[1]?.start || 0) * 0.04}px`,
       );
       root.style.setProperty(
         "--paper-parallax",
-        `${media.matches ? 0 : Math.min(sample, anchors[1]?.start || 0) * -0.06}px`,
+        `${media.matches || mobile ? 0 : Math.min(sample, anchors[1]?.start || 0) * -0.04}px`,
       );
-      atmosphere.style.opacity = visible ? 1 : 0;
-      atmosphere.style.clipPath = `inset(0 0 ${Math.max(0, viewport - rootBounds.bottom)}px 0)`;
+      atmosphere.style.opacity = sample < rootEnd ? 1 : 0;
+      atmosphere.style.clipPath = `inset(0 0 ${Math.max(0, viewport - (rootEnd - sample))}px 0)`;
       atmosphere.style.setProperty(
         "--world-dark",
-        interpolate(left.dark, right.dark, progress),
+        interpolate(left.light, right.light, progress),
       );
       root.style.setProperty("--scene-progress", sectionProgress);
-      root
-        .querySelector('[data-memory-scene="story"]')
-        ?.style.setProperty(
-          "--story-progress",
-          current.key === "story"
-            ? sectionProgress
-            : current.key === "wall"
-              ? 1
-              : 0,
-        );
-      if (sceneRef.current !== current.key) {
-        sceneRef.current = current.key;
-        setScene(current.key);
-      }
+      story?.style.setProperty(
+        "--story-progress",
+        current.key === "transformation" ? sectionProgress : 0,
+      );
+      footer?.style.setProperty(
+        "--footer-parallax",
+        `${media.matches ? 0 : clamp(sample - (anchors.find((a) => a.key === "footer")?.start || bodyHeight), 0, 400) * -0.035}px`,
+      );
     }
     function move(event) {
       if (media.matches || document.hidden) return;
@@ -243,6 +233,10 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
     }
     const observer = new ResizeObserver(measure);
     observer.observe(root);
+    const footerNode = document.querySelector(".motion-footer");
+    if (footerNode) observer.observe(footerNode);
+    const mutation = new MutationObserver(measure);
+    mutation.observe(root, { childList: true, subtree: true });
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", measure);
     window.addEventListener("pointermove", move, { passive: true });
@@ -253,6 +247,7 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
     measure();
     return () => {
       observer.disconnect();
+      mutation.disconnect();
       cancelAnimationFrame(pointerFrame);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", measure);
@@ -273,13 +268,21 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
       <div
         className="memory-object-position"
         ref={position}
-        data-form={form}
+        data-form="frame"
         data-memory="0"
         aria-hidden="true"
       >
         <div className="memory-frame-body" ref={frameBody}>
-          <div className="memory-paper-back" />
-          <div className="memory-paper-back" />
+          <div className="memory-paper-back">
+            <img
+              src="/images/memory-rukmini-480.webp"
+              alt=""
+              decoding="async"
+            />
+          </div>
+          <div className="memory-paper-back">
+            <img src="/images/memory-monika-480.webp" alt="" decoding="async" />
+          </div>
           <div className="memory-frame-edge" />
           <div className="memory-depth-side memory-depth-right" />
           <div className="memory-depth-side memory-depth-left" />
@@ -324,15 +327,6 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           </div>
         </div>
         <div className="memory-object-shadow" />
-        {scene === "ai" && (
-          <div className="memory-intent-orbit">
-            {tokens.slice(0, 4).map((token, index) => (
-              <span key={token.key} style={{ "--token-index": index }}>
-                {token.label}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </>
   );
