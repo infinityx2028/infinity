@@ -12,8 +12,21 @@ const STATES = {
   brand: { rotate: -12, tilt: 12, opacity: 0.5, dark: 1 },
   process: { rotate: 3, tilt: -6, opacity: 0, dark: 0 },
   final: { rotate: -5, tilt: -4, opacity: 1, dark: 0 },
+  footer: { rotate: 3, tilt: 7, opacity: 0.3, dark: 1 },
 };
 const interpolate = (a, b, progress) => a + (b - a) * progress;
+const MEMORIES = ["memory-core", "memory-family", "memory-celebration"];
+const MEMORY_BY_SCENE = {
+  hero: 0,
+  ai: 1,
+  categories: 2,
+  products: 2,
+  story: 0,
+  brand: 1,
+  process: 1,
+  final: 0,
+  footer: 0,
+};
 
 export default function PersistentMemoryScene({ experienceRef, pillar }) {
   const { products } = useCatalog();
@@ -32,18 +45,24 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
       : scene === "categories"
         ? categoryProduct || frameProduct
         : frameProduct;
-  const form = scene === 'story' ? 'magazine'
-    : scene === 'categories' ? 'polaroid'
-    : scene === 'ai' && product?.categoryId === 'magazines' ? 'magazine'
-    : scene === 'ai' && product?.categoryId === 'memories' ? 'polaroid'
-    : scene === 'ai' && product?.categoryId === 'essentials' ? 'case' : 'frame';
+  const form =
+    scene === "story"
+      ? "magazine"
+      : scene === "categories"
+        ? "polaroid"
+        : scene === "ai" && product?.categoryId === "magazines"
+          ? "magazine"
+          : scene === "ai" && product?.categoryId === "memories"
+            ? "polaroid"
+            : scene === "ai" && product?.categoryId === "essentials"
+              ? "case"
+              : "frame";
 
   useEffect(() => {
     const root = experienceRef.current;
     const object = position.current;
     const atmosphere = world.current;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let raf;
     let pointerFrame;
     let anchors = [];
     let touch = null;
@@ -59,6 +78,7 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
     root.dataset.quality = quality;
 
     function measure() {
+      root.dataset.quality = window.innerWidth < 768 ? "low" : quality;
       anchors = [...root.querySelectorAll("[data-memory-anchor]")].map(
         (node) => {
           const rect = node.getBoundingClientRect();
@@ -72,82 +92,120 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
             x: rect.left + rect.width / 2,
             // Document coordinates keep the object inside the reserved safe zone.
             y: rect.top + window.scrollY + rect.height / 2,
-            start: sectionRect.top + window.scrollY - header,
+            start:
+              key === "hero"
+                ? 0
+                : sectionRect.top +
+                  window.scrollY -
+                  header -
+                  Math.min(100, window.innerHeight * 0.12),
             size: rect.width,
             ...STATES[key],
+            opacity:
+              window.innerWidth < 768 && ["ai", "categories"].includes(key)
+                ? 0
+                : STATES[key].opacity,
           };
         },
       );
       update();
     }
     function update() {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = null;
-        if (!anchors.length) return;
-        const viewport = window.innerHeight;
-        const sample = window.scrollY;
-        let left = anchors[0];
-        let right = left;
-        for (let index = 0; index < anchors.length - 1; index++) {
-          if (sample >= anchors[index].start) {
-            left = anchors[index];
-            right = anchors[index + 1];
-          }
+      if (!anchors.length) return;
+      const viewport = window.innerHeight;
+      const sample = window.scrollY;
+      let left = anchors[0];
+      let right = left;
+      for (let index = 0; index < anchors.length - 1; index++) {
+        if (sample >= anchors[index].start) {
+          left = anchors[index];
+          right = anchors[index + 1];
         }
-        if (sample >= anchors[anchors.length - 1].start)
-          left = right = anchors[anchors.length - 1];
-        const sectionProgress =
-          left === right
-            ? 0
-            : Math.max(
-                0,
-                Math.min(1, (sample - left.start) / (right.start - left.start)),
-              );
-        const raw = Math.max(0, Math.min(1, (sectionProgress - 0.65) / 0.35));
-        const progress = media.matches ? 0 : raw * raw * (3 - 2 * raw);
-        const current = raw > 0.5 ? right : left;
-        const x = interpolate(left.x, right.x, progress);
-        const y = interpolate(left.y, right.y, progress) - sample;
-        const size = interpolate(left.size, right.size, progress);
-        const rootBounds = root.getBoundingClientRect();
-        const visible = rootBounds.bottom > 100 && rootBounds.top < viewport;
-        const mobileCategory =
-          window.innerWidth < 768 && current.key === "categories";
-        const opacity = visible
-          ? interpolate(left.opacity, right.opacity, progress) *
-            (mobileCategory ? 0 : 1)
-          : 0;
-        const tilt =
-          current.key === "brand"
-            ? [0, 12, -8][pillar]
-            : interpolate(left.tilt, right.tilt, progress);
-        const scale =
-          (size / 260) * (current.key === "brand" ? 1 - pillar * 0.04 : 1);
-        object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) scale(${scale}) rotateZ(${media.matches ? 0 : interpolate(left.rotate, right.rotate, progress)}deg) rotateY(${media.matches ? 0 : tilt}deg)`;
-        object.style.opacity = opacity;
-        object.dataset.scene = current.key;
-        atmosphere.style.opacity = visible ? 1 : 0;
-        atmosphere.style.setProperty(
-          "--world-dark",
-          interpolate(left.dark, right.dark, progress),
+      }
+      if (sample >= anchors[anchors.length - 1].start)
+        left = right = anchors[anchors.length - 1];
+      const sectionProgress =
+        left === right
+          ? 0
+          : Math.max(
+              0,
+              Math.min(1, (sample - left.start) / (right.start - left.start)),
+            );
+      // Native scroll is the timing authority: no late gate, spring or scrub delay.
+      const progress = media.matches
+        ? sectionProgress >= 0.5
+          ? 1
+          : 0
+        : sectionProgress;
+      const current = sectionProgress >= 0.5 ? right : left;
+      const leavingCommerce = left.opacity === 0 && right.opacity > 0;
+      const enteringCommerce = left.opacity > 0 && right.opacity === 0;
+      const x = leavingCommerce
+        ? right.x
+        : enteringCommerce
+          ? left.x
+          : interpolate(left.x, right.x, progress);
+      const y =
+        (leavingCommerce
+          ? right.y
+          : enteringCommerce
+            ? left.y
+            : interpolate(left.y, right.y, progress)) - sample;
+      const size = interpolate(left.size, right.size, progress);
+      const rootBounds = root.getBoundingClientRect();
+      const visible = rootBounds.bottom > -100 && rootBounds.top < viewport;
+      const opacity = !visible
+        ? 0
+        : leavingCommerce
+          ? right.opacity * Math.max(0, (progress - 0.8) / 0.2)
+          : enteringCommerce
+            ? left.opacity * Math.max(0, 1 - progress * 4)
+            : interpolate(left.opacity, right.opacity, progress);
+      const tilt =
+        current.key === "brand"
+          ? [0, 12, -8][pillar]
+          : interpolate(left.tilt, right.tilt, progress);
+      const scale =
+        (size / 260) * (current.key === "brand" ? 1 - pillar * 0.04 : 1);
+      object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) scale(${scale}) rotateZ(${media.matches ? 0 : interpolate(left.rotate, right.rotate, progress)}deg) rotateY(${media.matches ? 0 : tilt}deg) rotateX(${media.matches ? 0 : interpolate(2, -2, progress)}deg)`;
+      object.style.opacity = opacity;
+      object.dataset.scene = current.key;
+      object.dataset.memory = MEMORY_BY_SCENE[current.key] ?? 0;
+      object.dataset.depth = scale > 1 ? "near" : "far";
+      object.dataset.scrollSample = sample;
+      frameBody.current.style.setProperty(
+        "--scroll-light",
+        `${interpolate(-12, 12, progress)}%`,
+      );
+      root.style.setProperty(
+        "--type-parallax",
+        `${media.matches ? 0 : Math.min(sample, anchors[1]?.start || 0) * 0.08}px`,
+      );
+      root.style.setProperty(
+        "--paper-parallax",
+        `${media.matches ? 0 : Math.min(sample, anchors[1]?.start || 0) * -0.06}px`,
+      );
+      atmosphere.style.opacity = visible ? 1 : 0;
+      atmosphere.style.clipPath = `inset(0 0 ${Math.max(0, viewport - rootBounds.bottom)}px 0)`;
+      atmosphere.style.setProperty(
+        "--world-dark",
+        interpolate(left.dark, right.dark, progress),
+      );
+      root.style.setProperty("--scene-progress", sectionProgress);
+      root
+        .querySelector('[data-memory-scene="story"]')
+        ?.style.setProperty(
+          "--story-progress",
+          current.key === "story"
+            ? sectionProgress
+            : current.key === "wall"
+              ? 1
+              : 0,
         );
-        root.style.setProperty("--scene-progress", sectionProgress);
-        root
-          .querySelector('[data-memory-scene="story"]')
-          ?.style.setProperty(
-            "--story-progress",
-            current.key === "story"
-              ? sectionProgress
-              : current.key === "wall"
-                ? 1
-                : 0,
-          );
-        if (sceneRef.current !== current.key) {
-          sceneRef.current = current.key;
-          setScene(current.key);
-        }
-      });
+      if (sceneRef.current !== current.key) {
+        sceneRef.current = current.key;
+        setScene(current.key);
+      }
     }
     function move(event) {
       if (media.matches || document.hidden) return;
@@ -195,7 +253,6 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
     measure();
     return () => {
       observer.disconnect();
-      cancelAnimationFrame(raf);
       cancelAnimationFrame(pointerFrame);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", measure);
@@ -213,24 +270,56 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
         <div className="memory-light" />
         <div className="memory-grain" />
       </div>
-      <div className="memory-object-position" ref={position} data-form={form} aria-hidden="true">
+      <div
+        className="memory-object-position"
+        ref={position}
+        data-form={form}
+        data-memory="0"
+        aria-hidden="true"
+      >
         <div className="memory-frame-body" ref={frameBody}>
-          {form === 'polaroid' && <><div className="memory-paper-back" /><div className="memory-paper-back" /></>}
+          <div className="memory-paper-back" />
+          <div className="memory-paper-back" />
           <div className="memory-frame-edge" />
+          <div className="memory-depth-side memory-depth-right" />
+          <div className="memory-depth-side memory-depth-left" />
+          <div className="memory-depth-side memory-depth-top" />
+          <div className="memory-depth-side memory-depth-bottom" />
+          <div className="memory-outer-bevel" />
           <div className="memory-frame-face">
-            <picture>
-              <source type="image/avif" srcSet="/images/memory-core-480.avif 480w, /images/memory-core-1024.avif 1024w" sizes="(max-width: 767px) 220px, 400px" />
-              <img
-                src="/images/memory-core-480.webp"
-                srcSet="/images/memory-core-480.webp 480w, /images/memory-core-1024.webp 1024w"
-                sizes="(max-width: 767px) 220px, 400px"
-                alt=""
-                fetchPriority="high"
-                decoding="async"
-              />
-            </picture>
-            <span className="memory-magazine-type">Our story.<small>THE MOMENTS THAT MADE US / INFINITY</small></span>
+            <div className="memory-inner-bevel" />
+            <div className="memory-photo-cavity">
+              {MEMORIES.map((memory, index) => (
+                <picture
+                  key={memory}
+                  className="memory-photo-layer"
+                  data-photo={index}
+                >
+                  <source
+                    type="image/avif"
+                    srcSet={`/images/${memory}-480.avif 480w, /images/${memory}-1024.avif 1024w`}
+                    sizes="(max-width: 767px) 220px, 400px"
+                  />
+                  <img
+                    src={`/images/${memory}-480.webp`}
+                    srcSet={`/images/${memory}-480.webp 480w, /images/${memory}-1024.webp 1024w`}
+                    sizes="(max-width: 767px) 220px, 400px"
+                    alt=""
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                    loading="eager"
+                    decoding="async"
+                    onLoad={(event) => {
+                      event.currentTarget.decode?.().catch(() => {});
+                    }}
+                  />
+                </picture>
+              ))}
+            </div>
+            <span className="memory-magazine-type">
+              Our story.<small>THE MOMENTS THAT MADE US / INFINITY</small>
+            </span>
             <div className="memory-frame-glass" />
+            <div className="memory-glass-highlight" />
             <span className="memory-frame-stamp">INFINITY / MADE PERSONAL</span>
           </div>
         </div>

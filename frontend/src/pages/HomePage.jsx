@@ -198,6 +198,21 @@ function HomeExperience() {
             className="memory-anchor film-story-anchor"
             data-memory-anchor="story"
           />
+          <div className="film-story-memories" aria-hidden="true">
+            {["memory-family", "memory-celebration"].map((memory) => (
+              <picture key={memory}>
+                <source
+                  type="image/avif"
+                  srcSet={`/images/${memory}-480.avif`}
+                />
+                <img
+                  src={`/images/${memory}-480.webp`}
+                  alt=""
+                  decoding="async"
+                />
+              </picture>
+            ))}
+          </div>
           <div className="film-story-note">
             <span>ONE PHOTO. A WHOLE NEW CHAPTER.</span>
             <p>
@@ -421,6 +436,16 @@ function HomeExperience() {
           </div>
           <p className="film-final-signoff">YOUR MOMENTS. INFINITE MEANING.</p>
         </section>
+        <div
+          className="film-footer-settle"
+          data-memory-scene="footer"
+          aria-hidden="true"
+        >
+          <div
+            className="memory-anchor film-footer-anchor"
+            data-memory-anchor="footer"
+          />
+        </div>
       </main>
     </MemoryExperienceContext.Provider>
   );

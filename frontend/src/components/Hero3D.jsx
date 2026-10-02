@@ -31,6 +31,14 @@ export default function Hero3D() {
         a little moment.
         <br />a forever feeling.<span>↙</span>
       </div>
+      <div className="film-supporting-memories" aria-hidden="true">
+        {["memory-family", "memory-celebration"].map((memory) => (
+          <picture key={memory}>
+            <source type="image/avif" srcSet={`/images/${memory}-480.avif`} />
+            <img src={`/images/${memory}-480.webp`} alt="" decoding="async" />
+          </picture>
+        ))}
+      </div>
       <div className="film-hero-bottom">
         <div>
           <p>

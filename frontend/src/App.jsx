@@ -47,6 +47,7 @@ import { getProductFullDescription } from './data/productDescriptions';
 import MemoryInteractions from './components/MemoryInteractions';
 import './memory-motion.css';
 import './memory-film.css';
+import './memory-refinements.css';
 import { responsiveImage } from './utils/responsiveImages';
 
 // --- 1. GLOBAL CONTEXT & UTILITIES ---

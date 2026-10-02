@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import { ArrowUpRight, Instagram } from "lucide-react";
-import { getWhatsAppUrl, WHATSAPP_DISPLAY_PHONE, WHATSAPP_PHONE } from '../utils/whatsapp';
+import {
+  getWhatsAppUrl,
+  WHATSAPP_DISPLAY_PHONE,
+  WHATSAPP_PHONE,
+} from "../utils/whatsapp";
 const GROUPS = [
   {
     title: "SHOP",
@@ -33,12 +38,37 @@ const GROUPS = [
   },
 ];
 export default function Footer() {
+  const footer = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting))
+          footer.current?.classList.add("is-visible");
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(footer.current);
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const syncGroups = () => {
+      footer.current?.querySelectorAll(".film-footer-group").forEach((group) => {
+        group.open = desktop.matches;
+      });
+    };
+    syncGroups();
+    desktop.addEventListener("change", syncGroups);
+    return () => {
+      observer.disconnect();
+      desktop.removeEventListener("change", syncGroups);
+    };
+  }, []);
   return (
-    <footer className="motion-footer">
+    <footer className="motion-footer" ref={footer}>
       <div className="motion-footer-top">
         <p>
           Memories, <em>made physical.</em>
-          <small>Personalized gifts made from the moments you never want to forget.</small>
+          <small>
+            Personalized gifts made from the moments you never want to forget.
+          </small>
         </p>
         <a
           href={getWhatsAppUrl()}
@@ -52,7 +82,10 @@ export default function Footer() {
       <div className="motion-footer-links">
         {GROUPS.map((group) => (
           <details key={group.title} className="film-footer-group">
-            <summary>{group.title}<span>+</span></summary>
+            <summary>
+              {group.title}
+              <span>+</span>
+            </summary>
             {group.links.map(([label, to]) => (
               <Link key={to} to={to}>
                 {label}
@@ -79,7 +112,8 @@ export default function Footer() {
         className="motion-footer-wordmark"
         aria-label="Infinity Customizations"
       >
-        infinity<span>✦</span>
+        <span className="footer-infinity-name">Infinity</span>
+        <small>CUSTOMIZATIONS</small>
       </div>
       <div className="motion-footer-bottom">
         <span>© {new Date().getFullYear()} INFINITY CUSTOMIZATIONS</span>

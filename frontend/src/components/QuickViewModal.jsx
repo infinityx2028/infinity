@@ -96,11 +96,11 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
     >
       {/* 
         Modal Container:
-        Mobile (<768px): Width calc(100vw - 16px), Max Width 430px, Max Height calc(100dvh - 16px), Margin 8px, Radius 22px
+        Mobile (<768px): 12px outer margins, max-width 400px, max-height min(82dvh,720px).
         Desktop (>=768px): Max Width 960px, Two Columns (Image Left, Details Right)
       */}
       <div 
-        className="relative w-full max-w-[430px] md:max-w-4xl max-h-[92dvh] bg-white rounded-t-[18px] md:rounded-[4px] shadow-[0_20px_60px_rgba(3,16,29,0.28)] border border-[#071A2F]/10 flex flex-col md:flex-row overflow-hidden animate-quickview-open select-none"
+        className="quickview-panel relative w-full max-w-[430px] md:max-w-4xl max-h-[92dvh] bg-white rounded-t-[18px] md:rounded-[4px] shadow-[0_20px_60px_rgba(3,16,29,0.28)] border border-[#071A2F]/10 flex flex-col md:flex-row overflow-hidden animate-quickview-open select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* [ X ] Close Button: Fixed top-right, clearly visible, never overlaps content */}
@@ -113,8 +113,8 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
           <X size={17} />
         </button>
 
-        {/* 1. PRODUCT IMAGE CONTAINER (1:1 Ratio, max-height 300-340px) */}
-        <div className="w-full md:w-1/2 aspect-square max-h-[300px] sm:max-h-[340px] md:max-h-none bg-[#FAF8F4] relative overflow-hidden flex-shrink-0 flex items-center justify-center border-b md:border-b-0 md:border-r border-[#071A2F]/8">
+        {/* Mobile image height is clamped to 165–235px in the refinement stylesheet. */}
+        <div className="quickview-image w-full md:w-1/2 aspect-square max-h-[300px] sm:max-h-[340px] md:max-h-none bg-[#FAF8F4] relative overflow-hidden flex-shrink-0 flex items-center justify-center border-b md:border-b-0 md:border-r border-[#071A2F]/8">
           {!isImgLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F4] z-0">
               <InfinityLoader size="md" />
@@ -141,7 +141,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
         </div>
 
         {/* 2. PRODUCT DETAILS CONTAINER (Strict information order, vertical scroll only) */}
-        <div className="w-full md:w-1/2 p-4 sm:p-7 flex flex-col justify-between overflow-y-auto overflow-x-hidden min-h-0">
+        <div className="quickview-details w-full md:w-1/2 p-4 sm:p-7 flex flex-col justify-between overflow-y-auto overflow-x-hidden min-h-0">
           
           <div className="space-y-2.5">
             {/* CATEGORY (10-11px) */}
@@ -175,12 +175,12 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
             </div>
 
             {/* PRODUCT-SPECIFIC DESCRIPTION (14px, line-height 1.5-1.6, full-width lines) */}
-            <p className="text-[14px] text-[#4A5568] leading-[1.55] font-normal pt-1">
+            <p className="quickview-description text-[14px] text-[#4A5568] leading-[1.55] font-normal pt-1">
               {shortDescription}
             </p>
 
             {/* CUSTOMIZATION / ORDER NOTE (Clear, NO in-app photo upload) */}
-            <div className="bg-[#FAF8F4] border border-[#071A2F]/8 rounded-xl p-3 flex items-start gap-2.5 my-2">
+            <div className="quickview-note bg-[#FAF8F4] border border-[#071A2F]/8 rounded-xl p-3 flex items-start gap-2.5 my-2">
               <MessageCircle size={16} className="text-[#25D366] flex-shrink-0 mt-0.5" />
               <p className="text-[11.5px] sm:text-xs text-[#071A2F]/85 font-medium leading-relaxed">
                 After placing your order, send your photos and personalization details to us on WhatsApp.
@@ -189,7 +189,7 @@ const QuickViewModal = ({ product: propProduct, isOpen: propIsOpen, onClose: pro
           </div>
 
           {/* ACTIONS: CUSTOMIZE & BUY (48-52px height) + VIEW FULL PRODUCT */}
-          <div className="pt-3 sm:pt-4 space-y-2 mt-auto">
+          <div className="quickview-actions pt-3 sm:pt-4 space-y-2 mt-auto">
             {/* Primary: CUSTOMIZE & BUY (Deep Navy, 48-52px) */}
             <button
               type="button"
