@@ -58,4 +58,10 @@ Screenshots and reports are ignored local artifacts in `qa/strict/` and `qa/loca
 
 Production build **passes**. Changed components/pages/director pass ESLint. Full-project lint still has **73 inherited errors, zero introduced findings** compared by file/rule/message. Typecheck was attempted: this JavaScript project has no typecheck script or TypeScript configuration. Existing chunk-size and Browserslist warnings remain.
 
-Commit and actual production verification are recorded after push. Local review: [localhost:5173](http://localhost:5173). Compiled QA bundle: [127.0.0.1:4173](http://127.0.0.1:4173).
+Implementation commit **`067084a82c6275b03ff30d77dce2a46cd930d4ee`** was pushed successfully to the verified Production branch `main` and `redesign/memory-film` using normal fast-forwards. This report follow-up changes documentation only.
+
+Vercel Production deployment **`6806849259`** for that exact commit reports **failure**. Deployment identifier: `dpl_GzVghUQ9T5a9Cri1rqR3ShDYDUHK`; [Production dashboard](https://vercel.com/infinityx2028/i/GzVghUQ9T5a9Cri1rqR3ShDYDUHK). Preview also failed. Deployment logs require Vercel authentication (API returns 403 for a missing token), which is unavailable in this workspace. Vercel login or the owner's build-error text is needed to diagnose the failure.
+
+Actual domain checks show **neither live site serves this implementation**. Expected assets are `index-DSDiDtqC.js` and `index-Cl4_esZV.css`. www.infinitycustomizations.com still serves `index-gVFY4kzs.js` / `index-CWT2oU5a.css`; i.infinitycustomizationz.com still serves `index-MZaSSesk.js` / `index-BMqasS5B.css`. **Live mobile/desktop acceptance remains incomplete.** The passing checks above are against the local compiled production bundle, not the old deployed sites.
+
+Local review: [localhost:5173](http://localhost:5173), confirmed HTTP 200. Compiled QA bundle: [127.0.0.1:4173](http://127.0.0.1:4173).
