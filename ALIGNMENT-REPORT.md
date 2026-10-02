@@ -49,6 +49,19 @@ Reproduce with `node qa/serve-build.cjs`, then `node qa/alignment.cjs http://127
 
 `npm.cmd run build` passes. Lint has **73 inherited errors and zero introduced findings**, compared by file/rule/message against the previous pass. Typecheck was attempted; this JavaScript project has no typecheck script or TypeScript configuration. Existing chunk-size and stale Browserslist warnings remain. No dependencies or backend/payment behavior changed.
 
-Implementation commit and production verification are recorded after push. The production branch remains the verified `main`; updates also go to `redesign/memory-film` using normal fast-forwards.
+Implementation commit: **`a6f21ecf41e82964ffbc1ef1909b8716cd7969b1`**, pushed successfully to verified production branch `main` and `redesign/memory-film` using normal fast-forwards. The report follow-up changes documentation only.
+
+## Production verification
+
+Vercel Production deployment **`6806270150`**, for this exact implementation commit, reports **failure**. The deployment identifier is `dpl_CgasDecXPyjMMLBnvCEnFHTqp4Tj`: [Production deployment dashboard](https://vercel.com/infinityx2028/i/CgasDecXPyjMMLBnvCEnFHTqp4Tj). Preview also failed. The Vercel deployment-log API requires authentication and returns HTTP 403 for a missing token. The underlying error remains unavailable without Vercel authentication or the owner's build-error text.
+
+Actual live asset checks confirmed both domains still serve older bundles:
+
+| Domain | Live JavaScript | Live CSS | Alignment bundle present |
+| --- | --- | --- | --- |
+| www.infinitycustomizations.com | `index-gVFY4kzs.js` | `index-CWT2oU5a.css` | No |
+| i.infinitycustomizationz.com | `index-MZaSSesk.js` | `index-BMqasS5B.css` | No |
+
+The expected final assets are **`index-BIe2ofUy.js`** and **`index-CEp_Xkyf.css`**. Live mobile/desktop acceptance of this pass is therefore **not complete**. All successful browser results above apply to the local production build. Push success is not treated as deployment success.
 
 Local site: [localhost:5173](http://localhost:5173). Compiled QA bundle: [127.0.0.1:4173](http://127.0.0.1:4173).
