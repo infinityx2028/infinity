@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { ArrowUpRight, Instagram } from "lucide-react";
 import {
@@ -39,7 +39,6 @@ const GROUPS = [
 ];
 export default function Footer() {
   const footer = useRef(null);
-  const home = useLocation().pathname === "/";
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -130,14 +129,6 @@ export default function Footer() {
           <a href="#root">BACK TO TOP ↑</a>
         </div>
       </div>
-      {home && (
-        <div className="footer-frame-stage" aria-hidden="true">
-          <div
-            className="memory-anchor film-footer-anchor"
-            data-memory-anchor="footer"
-          />
-        </div>
-      )}
       <div
         className="motion-footer-wordmark"
         aria-label="Infinity Customizations"

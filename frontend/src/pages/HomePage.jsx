@@ -65,7 +65,7 @@ function HomeExperience() {
     <section
       id="how-it-works"
       className="film-process film-scene"
-      data-memory-scene="process"
+      data-memory-scene="howItWorks"
     >
       <div className="motion-chapter">
         <span>06 / SIMPLE TO ORDER. PERSONAL TO KEEP.</span>
@@ -77,7 +77,7 @@ function HomeExperience() {
       </h2>
       <div
         className="memory-anchor film-process-anchor"
-        data-memory-anchor="process"
+        data-memory-anchor="howItWorks"
       />
       <div className="film-process-steps">
         {[
@@ -116,24 +116,18 @@ function HomeExperience() {
     <section
       id="infinity-difference"
       className="film-difference film-scene"
-      data-memory-scene="brand"
+      data-memory-scene="infinityDifference"
     >
       <div className="motion-chapter">
         <span>05 / THE INFINITY DIFFERENCE</span>
         <span>MADE TO MEAN MORE</span>
       </div>
+      <p className="film-eyebrow">THE DETAILS MAKE THE DIFFERENCE.</p>
       <div className="film-difference-layout">
         <div>
-          <p className="film-eyebrow">THE DETAILS MAKE THE DIFFERENCE.</p>
-          <h2>
-            A gift.
-            <br />A feeling.
-            <br />
-            <em>A forever thing.</em>
-          </h2>
           <div
             className="memory-anchor film-brand-anchor"
-            data-memory-anchor="brand"
+            data-memory-anchor="infinityDifference"
           />
         </div>
         <div className="film-pillars">
@@ -274,75 +268,83 @@ function HomeExperience() {
           </section>
         )}
         <section
+          id="memory-transformation"
+          className="film-photo-transformation film-scene"
+        >
+          <div className="motion-chapter">
+            <span>05 / SAME MEMORY. A NEW FORM.</span>
+          </div>
+          <div className="film-gift-feeling" data-memory-scene="giftFeeling">
+            <h2>
+              A gift.
+              <br />A feeling.
+              <br />
+              <em>A forever thing.</em>
+            </h2>
+          </div>
+          <div className="film-one-photo" data-memory-scene="onePhotoChapter">
+            <h2>
+              One photo.
+              <br />
+              <em>A whole new chapter.</em>
+            </h2>
+            <div className="film-transform-copy">
+              <p>
+                A print to hold. A magazine to revisit. Your story, made
+                personal.
+              </p>
+              <Link
+                className="motion-link"
+                to={
+                  magazine
+                    ? `/product/${magazine._id || magazine.id}`
+                    : "/shop/magazines"
+                }
+              >
+                Make your own magazine <ArrowRight size={17} />
+              </Link>
+            </div>
+          </div>
+        </section>
+        <section
           className="film-transformation film-scene"
           id="made-around-your-story"
-          data-memory-scene="story"
+          data-memory-scene="cameraRoll"
           data-memory-touch
         >
           <div className="motion-chapter">
             <span>04 / A MEMORY, IN A DIFFERENT FORM</span>
             <span>FROM DIGITAL TO TANGIBLE</span>
           </div>
-          <h2>
-            From
-            <br />
-            <span>camera roll.</span>
-            <em>To something real.</em>
-          </h2>
+          <div className="film-camera-copy">
+            <h2>
+              From
+              <br />
+              <span>camera roll.</span>
+              <em>To something real.</em>
+            </h2>
+            <div className="film-story-note">
+              <span>ONE PHOTO. A WHOLE NEW CHAPTER.</span>
+              <p>
+                A favourite day. An inside joke. Your entire love story.
+                <br />
+                Some things deserve more than a screen.
+              </p>
+              <Link
+                className="motion-link"
+                to={
+                  magazine ? `/product/${magazine._id || magazine.id}` : "/shop"
+                }
+              >
+                {magazine ? "Make your own magazine" : "Discover photo gifts"}{" "}
+                <ArrowRight size={17} />
+              </Link>
+            </div>
+          </div>
           <div
             className="memory-anchor film-story-anchor"
-            data-memory-anchor="story"
+            data-memory-anchor="cameraRoll"
           />
-          <div className="film-story-note">
-            <span>ONE PHOTO. A WHOLE NEW CHAPTER.</span>
-            <p>
-              A favourite day. An inside joke. Your entire love story.
-              <br />
-              Some things deserve more than a screen.
-            </p>
-            <Link
-              className="motion-link"
-              to={
-                magazine ? `/product/${magazine._id || magazine.id}` : "/shop"
-              }
-            >
-              {magazine ? "Make your own magazine" : "Discover photo gifts"}{" "}
-              <ArrowRight size={17} />
-            </Link>
-          </div>
-        </section>
-        <section
-          id="memory-transformation"
-          className="film-photo-transformation film-scene"
-          data-memory-scene="transformation"
-        >
-          <div className="motion-chapter">
-            <span>05 / SAME MEMORY. A NEW FORM.</span>
-          </div>
-          <h2>
-            One photo.
-            <br />
-            <em>A whole new chapter.</em>
-          </h2>
-          <div
-            className="memory-anchor film-transform-anchor"
-            data-memory-anchor="transformation"
-          />
-          <div className="film-transform-copy">
-            <p>
-              A print to hold. A magazine to revisit. Your story, made personal.
-            </p>
-            <Link
-              className="motion-link"
-              to={
-                magazine
-                  ? `/product/${magazine._id || magazine.id}`
-                  : "/shop/magazines"
-              }
-            >
-              Make your own magazine <ArrowRight size={17} />
-            </Link>
-          </div>
         </section>
         {!mobile && (
           <section
@@ -382,17 +384,8 @@ function HomeExperience() {
             </div>
           </section>
         )}
-        {mobile ? (
-          <>
-            {processScene}
-            {differenceScene}
-          </>
-        ) : (
-          <>
-            {differenceScene}
-            {processScene}
-          </>
-        )}
+        {differenceScene}
+        {processScene}
         {!mobile && (
           <section
             className="film-founder film-scene"
@@ -431,7 +424,7 @@ function HomeExperience() {
         <section
           id="start-creating"
           className="film-final film-scene"
-          data-memory-scene="final"
+          data-memory-scene="finalMemory"
           data-memory-touch
         >
           <span className="film-final-watermark" aria-hidden="true">
@@ -440,7 +433,7 @@ function HomeExperience() {
           <p className="film-eyebrow">SOMETHING WORTH KEEPING.</p>
           <div
             className="memory-anchor film-final-anchor"
-            data-memory-anchor="final"
+            data-memory-anchor="finalMemory"
           />
           <h2>
             Make the

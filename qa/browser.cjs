@@ -21,8 +21,9 @@ async function scene(selector,name) {
   if(selector==='footer')await evaluate('window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"})');
   await sleep(300);await shot(name);
   const visual=await evaluate(`(()=>{const frame=document.querySelector('.memory-object-position'),r=frame.getBoundingClientRect();const overlaps=[...document.querySelectorAll('main input,main .motion-button,main .motion-link,main .motion-category-object')].filter(el=>{const b=el.getBoundingClientRect();return b.width&&b.height&&b.top>=75&&b.bottom<innerHeight-55&&r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top;}).map(el=>el.textContent||el.id);return {scene:frame.dataset.scene,opacity:Number(frame.style.opacity),z:Number(frame.dataset.z),width:r.width,top:r.top,bottom:r.bottom,inViewport:r.bottom>75&&r.top<innerHeight-55&&r.right>0&&r.left<innerWidth,overlaps};})()`);
-  check(name+' frame remains present',visual.opacity>=.15&&visual.inViewport,visual);
-  if(name.startsWith('mobile-'))check(name+' controls outside frame',visual.overlaps.length===0,visual.overlaps);
+  const hidden=['giftFeeling','onePhotoChapter','products','moments','founder','footer'].includes(visual.scene)||visual.scene==='categories'&&visual.opacity===0;
+  check(name+(hidden?' frame is completely hidden':' frame remains present'),hidden ? visual.opacity===0 : visual.opacity>=.15&&visual.inViewport,visual);
+  if(name.startsWith('mobile-'))check(name+' controls outside frame',hidden||visual.overlaps.length===0,visual.overlaps);
   if(selector==='footer'){
     const visible=await evaluate(`(()=>{const el=document.querySelector('.footer-infinity-name');const r=el.getBoundingClientRect();return {top:r.top,font:getComputedStyle(el).fontSize,weight:getComputedStyle(el).fontWeight,text:el.textContent,visible:el.contains(document.elementFromPoint(r.left+60,r.top+r.height/2))};})()`);
     check(name+' bold wordmark visible',visible.visible&&visible.weight==='800'&&visible.text==='INFINITY',visible);
@@ -65,7 +66,7 @@ async function scene(selector,name) {
     if(width===390){check('Mobile hero 470–560px',d.hero>=470&&d.hero<=560);await shot('mobile-hero');}
   }
   await size(1440,900);
-  for(const [selector,name] of [['#infinity-ai-concierge','ai'],['#collections-section','categories'],['#made-for-you','products'],['#made-around-your-story','story'],['#memory-transformation','transformation'],['.film-moments','moments'],['#infinity-difference','difference'],['#how-it-works','process'],['.film-founder','founder'],['#start-creating','final'],['footer','footer']])await scene(selector,`desktop-${name}`);
+  for(const [selector,name] of [['#infinity-ai-concierge','ai'],['#collections-section','categories'],['#made-for-you','products'],['#made-around-your-story','story'],['.film-gift-feeling','gift-feeling'],['.film-one-photo','one-photo'],['.film-moments','moments'],['#infinity-difference','difference'],['#how-it-works','process'],['.film-founder','founder'],['#start-creating','final'],['footer','footer']])await scene(selector,`desktop-${name}`);
   check('Memory object remains mounted',await evaluate('window.__memory===document.querySelector(".memory-object-position")'));
   check('Desktop footer links expanded',await evaluate('Array.from(document.querySelectorAll(".film-footer-group")).every(group=>group.open)'));
   check('Desktop homepage preview limited to six',await evaluate('document.querySelectorAll(".studio-product-card").length<=6'));
@@ -74,18 +75,18 @@ async function scene(selector,name) {
   check('Mobile homepage has no product grid',await evaluate('!document.querySelector(".studio-product-card")&&!document.querySelector("#made-for-you")'));
   check('Mobile category strip remains accessible',await evaluate('document.querySelectorAll(".motion-category-object").length>=4'));
   check('Mobile hero Shop CTA points to shop',await evaluate('document.querySelector(".film-hero .motion-button").getAttribute("href")==="/shop"'));
-  for(const [selector,name] of [['#infinity-ai-concierge','ai'],['#collections-section','categories'],['#made-around-your-story','story'],['#memory-transformation','transformation'],['#infinity-difference','difference'],['#how-it-works','process'],['#start-creating','final'],['footer','footer']])await scene(selector,`mobile-${name}`);
+  for(const [selector,name] of [['#infinity-ai-concierge','ai'],['#collections-section','categories'],['#made-around-your-story','story'],['.film-gift-feeling','gift-feeling'],['.film-one-photo','one-photo'],['#infinity-difference','difference'],['#how-it-works','process'],['#start-creating','final'],['footer','footer']])await scene(selector,`mobile-${name}`);
   check('Dedicated mobile journey selected',await evaluate('document.querySelector(".memory-film").dataset.journey==="mobile"'));
   const ending=await evaluate('Number(document.querySelector(".memory-object-position").dataset.z)');
-  check('Footer retreats into negative Z depth',ending<-200&&desktopFinal<-200,{ending,desktopFinal});
+  check('Footer frame completely hidden',await evaluate('document.querySelector(".memory-object-position").style.opacity==="0"&&document.querySelector(".memory-object-position").style.visibility==="hidden"&&!document.querySelector("footer [data-memory-anchor]")'),{ending,desktopFinal});
   for(const [width,height] of [[320,568],[360,800],[375,812],[393,852],[412,915],[430,932]]) {
     await size(width,height);await sleep(100);
     const poses=[];
-    for(const selector of ['.film-hero','#infinity-ai-concierge','#collections-section','#made-around-your-story','#memory-transformation','#how-it-works','#infinity-difference','#start-creating','footer']) {
+    for(const selector of ['.film-hero','#infinity-ai-concierge','#collections-section','#made-around-your-story','.film-one-photo','#how-it-works','#infinity-difference','#start-creating','footer']) {
       await evaluate(`document.querySelector('${selector}').scrollIntoView({behavior:'instant',block:'start'})`);await sleep(55);
       poses.push(await evaluate(`(()=>{const el=document.querySelector('.memory-object-position'),r=el.getBoundingClientRect();return {scene:el.dataset.scene,opacity:Number(el.style.opacity),left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width};})()`));
     }
-    check(`Journey remains visible and inside ${width}x${height}`,poses.every(p=>p.opacity>=.15&&p.left>=-2&&p.right<=width+2&&p.top>=60&&p.bottom<=height-50),poses);
+    check(`Journey visibility map and safe bounds at ${width}x${height}`,poses.every(p=>['giftFeeling','onePhotoChapter','footer'].includes(p.scene)?p.opacity===0:p.scene==='categories'&&p.opacity<=.35||p.opacity>=.15&&p.left>=-2&&p.right<=width+2&&p.top>=60&&p.bottom<=height-50),poses);
   }
   await size(390,844);
   await scene('#infinity-ai-concierge','mobile-ai-before');

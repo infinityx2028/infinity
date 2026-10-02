@@ -30,11 +30,8 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
     root.dataset.quality = quality;
 
     let mobile = false;
-    let footer = null;
-    let story = null;
-    let bodyHeight = 0;
-    let rootStart = 0;
     let rootEnd = 0;
+    let footerStart = 0;
     function measure() {
       mobile = window.innerWidth < 768;
       root.dataset.quality = mobile ? "low" : quality;
@@ -44,168 +41,146 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
           ? "tablet"
           : "desktop";
       const poses = FRAME_SCENES[root.dataset.journey];
-      const header = mobile ? 76 : 90;
       const sample = window.scrollY;
-      const rootRect = root.getBoundingClientRect();
-      rootStart = rootRect.top + sample;
-      rootEnd = rootRect.bottom + sample;
-      bodyHeight = document.documentElement.scrollHeight;
-      footer = document.querySelector(".motion-footer");
-      story = root.querySelector('[data-memory-scene="transformation"]');
-      const nodes = [
-        ...root.querySelectorAll("[data-memory-anchor]"),
-        ...document.querySelectorAll("footer [data-memory-anchor]"),
-      ];
-      anchors = nodes
+      const header = mobile ? 76 : 90;
+      rootEnd = root.getBoundingClientRect().bottom + sample;
+      const footer = document.querySelector(".motion-footer");
+      footerStart = footer.getBoundingClientRect().top + sample;
+      anchors = [...root.querySelectorAll("[data-memory-scene]"), footer]
         .filter(
           (node) =>
-            node.getClientRects().length && poses[node.dataset.memoryAnchor],
+            node.getClientRects().length && poses[node.dataset.memoryScene],
         )
         .map((node) => {
+          const key = node.dataset.memoryScene;
           const rect = node.getBoundingClientRect();
-          const sectionRect = node
-            .closest("[data-memory-scene]")
-            .getBoundingClientRect();
-          const key = node.dataset.memoryAnchor;
-          const maximumScroll = Math.max(0, bodyHeight - window.innerHeight);
-          const start =
-            key === "hero"
-              ? 0
-              : key === "footer"
-                ? Math.max(
-                    0,
-                    Math.min(
-                      sectionRect.top + sample - header,
-                      maximumScroll - 180,
-                    ),
-                  )
-                : Math.max(0, sectionRect.top + sample - header);
+          const slot = node.querySelector(`[data-memory-anchor="${key}"]`);
+          const slotRect = slot?.getBoundingClientRect();
           return {
-            key,
-            start,
-            size: rect.width,
-            x: rect.left + rect.width / 2,
-            // Each breakpoint's reserved slot supplies a viewport pose. Long sections
-            // never send the frame off screen while waiting for a document anchor.
-            y:
-              key === "hero"
-                ? rect.top + sample + rect.height / 2
-                : key === "footer"
-                  ? window.innerHeight * 0.48
-                  : rect.top - sectionRect.top + header + rect.height / 2,
             ...poses[key],
+            key,
+            top: rect.top + sample,
+            start: key === "hero" ? 0 : rect.top + sample - header,
+            bottom: rect.bottom + sample,
+            size: slotRect?.width || 180,
+            x: slotRect
+              ? slotRect.left + slotRect.width / 2
+              : window.innerWidth / 2,
+            y: slotRect
+              ? slotRect.top + sample + slotRect.height / 2
+              : rect.top + sample,
           };
         })
         .sort((a, b) => a.start - b.start);
-      const last = anchors.at(-1);
-      if (last?.key === "footer") {
-        anchors.push({
-          ...last,
-          ...poses.ending,
-          key: "ending",
-          start: Math.max(last.start + 1, bodyHeight - window.innerHeight),
-          y: (() => {
-            const rect = footer
-              .querySelector('[data-memory-anchor="footer"]')
-              .getBoundingClientRect();
-            return (
-              rect.top +
-              sample +
-              rect.height / 2 -
-              (bodyHeight - window.innerHeight)
-            );
-          })(),
-          size: last.size,
-        });
-      }
       update();
     }
     function update() {
       if (!anchors.length) return;
-      const viewport = window.innerHeight;
       const sample = window.scrollY;
-      let left = anchors[0];
-      let right = left;
-      for (let index = 0; index < anchors.length - 1; index++) {
-        if (sample >= anchors[index].start) {
-          left = anchors[index];
-          right = anchors[index + 1];
-        }
+      const viewport = window.innerHeight;
+      const header = mobile ? 76 : 90;
+      let index = 0;
+      while (
+        index < anchors.length - 1 &&
+        sample >= anchors[index + 1].start - 16
+      )
+        index++;
+      const current = anchors[index];
+      const next = anchors[index + 1];
+      const span = Math.max(1, (next?.start ?? current.bottom) - current.start);
+      const sectionProgress = clamp((sample - current.start) / span, 0, 1);
+      const [from, to] = current.transitionRange;
+      const transition = clamp((sectionProgress - from) / (to - from), 0, 1);
+      let opacity = current.visible ? current.opacity : 0;
+      let scale = current.scale;
+      let depth = current.zDepth;
+      // Exit before a typography-only scene enters the viewport. Re-entry stays
+      // hidden until its own scene, then emerges directly from scroll progress.
+      if (current.visible && next && !next.visible) {
+        const deadline = ["giftFeeling", "onePhotoChapter", "footer"].includes(
+          next.key,
+        )
+          ? next.top - viewport
+          : next.start;
+        const exit = clamp((sample - (deadline - 150)) / 150, 0, 1);
+        opacity *= 1 - exit;
+        scale *= interpolate(1, 0.72, exit);
+        depth = interpolate(depth, -200, exit);
+      } else if (current.visible && next?.visible) {
+        opacity = interpolate(current.opacity, next.opacity, transition);
       }
-      if (sample >= anchors.at(-1).start) left = right = anchors.at(-1);
-      const sectionProgress =
-        left === right
-          ? 0
-          : clamp((sample - left.start) / (right.start - left.start), 0, 1);
-      const progress = media.matches
-        ? sectionProgress >= 0.5
-          ? 1
-          : 0
-        : sectionProgress;
-      const current = progress >= 0.5 ? right : left;
-      const x = interpolate(left.x, right.x, progress);
+      if (current.visible && index && !anchors[index - 1].visible) {
+        const entry = clamp(
+          (sample - current.start + header) / Math.max(1, header),
+          0,
+          1,
+        );
+        opacity *= entry;
+        scale *= interpolate(0.72, 1, entry);
+        depth = interpolate(-200, depth, entry);
+      }
+      // Footer owns the closing screen. Its first viewport intersection is the
+      // hard visibility boundary, including reverse scrolling and deep links.
+      const footerExit = clamp(
+        (sample - (footerStart - viewport - 150)) / 150,
+        0,
+        1,
+      );
+      if (current.key === "finalMemory") {
+        opacity *= 1 - footerExit;
+        scale *= interpolate(1, 0.72, footerExit);
+        depth = interpolate(depth, -200, footerExit);
+      }
+      if (sample + viewport >= footerStart) opacity = 0;
+      const travel =
+        current.visible &&
+        next?.visible &&
+        current.layer === "front" &&
+        next.layer === "front"
+          ? transition
+          : 0;
+      const x = interpolate(current.x, next?.x ?? current.x, travel);
       const size =
-        interpolate(left.size, right.size, progress) *
-        (mobile && viewport < 700 ? viewport / 760 : 1);
-      const depth = media.matches ? 0 : interpolate(left.z, right.z, progress);
+        interpolate(current.size, next?.size ?? current.size, travel) * scale;
+      const y = interpolate(current.y, next?.y ?? current.y, travel) - sample;
       const apparentScale = ((size / 260) * 1200) / (1200 - depth);
       const halfHeight = 165 * apparentScale;
-      const y = clamp(
-        interpolate(left.y, right.y, progress),
-        78 + halfHeight,
-        Math.max(78 + halfHeight, viewport - (mobile ? 72 : 18) - halfHeight),
-      );
-      const visible = sample + viewport > rootStart && sample < bodyHeight;
-      const opacity = visible
-        ? interpolate(left.opacity, right.opacity, progress)
-        : 0;
-      const tilt =
-        interpolate(left.tilt, right.tilt, progress) +
-        (current.key === "brand" ? (pillar - 1) * 2 : 0);
-      object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) perspective(1200px) translateZ(${depth}px) scale(${size / 260}) rotateZ(${media.matches ? 0 : interpolate(left.rotate, right.rotate, progress)}deg) rotateY(${media.matches ? 0 : tilt}deg) rotateX(${media.matches ? 0 : interpolate(left.pitch, right.pitch, progress)}deg)`;
+      // Natural anchor motion prevents a fixed pose lingering over later copy.
+      if (
+        y - halfHeight < header - 5 ||
+        y + halfHeight > viewport - (mobile ? 62 : 8)
+      )
+        opacity = 0;
+      if (media.matches) depth = 0;
+      object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) perspective(1200px) translateZ(${depth}px) scale(${size / 260}) rotateZ(${media.matches ? 0 : interpolate(current.rotateZ, next?.rotateZ ?? current.rotateZ, travel)}deg) rotateY(${media.matches ? 0 : current.rotateY + (current.key === "infinityDifference" ? pillar - 1 : 0)}deg) rotateX(${media.matches ? 0 : current.rotateX}deg)`;
       object.style.opacity = opacity;
+      object.style.visibility = opacity > 0.001 ? "visible" : "hidden";
       object.style.zIndex = current.layer === "back" ? "1" : "6";
-      object.dataset.scene = current.key;
-      object.dataset.form = current.form;
+      object.dataset.scene =
+        sample + viewport >= footerStart ? "footer" : current.key;
+      object.dataset.form = "frame";
       object.dataset.memory = current.photo;
-      object.dataset.depth = depth >= 0 ? "near" : "far";
       object.dataset.z = depth;
       object.dataset.scrollSample = sample;
       object.style.setProperty(
         "--shadow-scale",
-        interpolate(1.14, 0.6, clamp(-depth / 760, 0, 1)),
+        interpolate(1.14, 0.6, clamp(-depth / 200, 0, 1)),
       );
       object.style.setProperty(
         "--shadow-opacity",
-        interpolate(0.32, 0.09, clamp(-depth / 760, 0, 1)),
+        interpolate(0.32, 0.09, clamp(-depth / 200, 0, 1)),
       );
       frameBody.current.style.setProperty(
         "--scroll-light",
-        `${interpolate(-12, 12, progress)}%`,
-      );
-      root.style.setProperty(
-        "--type-parallax",
-        `${media.matches || mobile ? 0 : Math.min(sample, anchors[1]?.start || 0) * 0.04}px`,
-      );
-      root.style.setProperty(
-        "--paper-parallax",
-        `${media.matches || mobile ? 0 : Math.min(sample, anchors[1]?.start || 0) * -0.04}px`,
+        `${interpolate(-12, 12, sectionProgress)}%`,
       );
       atmosphere.style.opacity = sample < rootEnd ? 1 : 0;
       atmosphere.style.clipPath = `inset(0 0 ${Math.max(0, viewport - (rootEnd - sample))}px 0)`;
       atmosphere.style.setProperty(
         "--world-dark",
-        interpolate(left.light, right.light, progress),
+        current.key === "infinityDifference" ? 1 : 0,
       );
       root.style.setProperty("--scene-progress", sectionProgress);
-      story?.style.setProperty(
-        "--story-progress",
-        current.key === "transformation" ? sectionProgress : 0,
-      );
-      footer?.style.setProperty(
-        "--footer-parallax",
-        `${media.matches ? 0 : clamp(sample - (anchors.find((a) => a.key === "footer")?.start || bodyHeight), 0, 400) * -0.035}px`,
-      );
     }
     function move(event) {
       if (media.matches || document.hidden) return;
