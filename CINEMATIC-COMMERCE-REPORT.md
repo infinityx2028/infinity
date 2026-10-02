@@ -72,6 +72,17 @@ Screenshots and machine-readable results are in ignored `qa/local/`. Reproduce w
 
 ## Git and production
 
-The production branch was verified from Vercel's GitHub deployment records: deployment `6792665177`, created by `vercel[bot]`, is labeled Production and points to `f20b44cefd24035ee8a1a7ce27a998c715d54d70`, the fetched `origin/main` head. Redesign branch deployments are labeled Preview. `origin/main` is an ancestor of the current work, allowing a normal fast-forward without a force push. Deployment results and implementation commit are recorded after push.
+The production branch was verified from Vercel's GitHub deployment records: deployment `6792665177`, created by `vercel[bot]`, is labeled Production and points to `f20b44cefd24035ee8a1a7ce27a998c715d54d70`, the fetched `origin/main` head. Redesign branch deployments are labeled Preview. Implementation commit **`81a343325608ef60e6eee850cf1c8c90549d6f66`** was pushed successfully to both `main` and `redesign/memory-film` as normal fast-forwards.
+
+Vercel created Production deployment `6805538306` for that exact commit and reported **failure**. Its deployment identifier is `dpl_HrYuqWwCXC4NkpdX7cw38JvhKnRt`; the dashboard is [Vercel Production deployment](https://vercel.com/infinityx2028/i/HrYuqWwCXC4NkpdX7cw38JvhKnRt). The Preview deployment also failed. The public deployment-log API returned HTTP 403 with `missingToken: true`, so the underlying error cannot be diagnosed from the authenticated logs in this workspace. GitHub exposes no build-error details. Vercel authentication or the owner's deployment error text is required to continue this part.
+
+Live bundle verification on 2 October 2026 confirmed that neither public domain serves this build:
+
+| Site | Actual JavaScript | Actual CSS | New bundle present |
+| --- | --- | --- | --- |
+| www.infinitycustomizations.com | `index-gVFY4kzs.js` | `index-CWT2oU5a.css` | No |
+| i.infinitycustomizationz.com | `index-MZaSSesk.js` | `index-BMqasS5B.css` | No |
+
+The expected production assets are `index-Cx4QLsM8.js` and `index-D90MXt_s.css`. Live mobile/desktop acceptance of this implementation therefore remains incomplete; the 102 successful browser checks apply to the local compiled bundle. Three additional final-menu checks passed after the last wording/style adjustment. This report follow-up changes documentation only.
 
 Local development: `http://localhost:5173`. Tested production bundle: `http://127.0.0.1:4173`. Live acceptance requires a matching bundle on the custom domain, followed by mobile and desktop checks; Git push alone is not deployment verification.
