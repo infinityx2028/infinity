@@ -64,6 +64,8 @@ Viewport-edge visibility now interpolates over 24px of native scroll instead of 
 
 The local servers were found stopped and restarted. Detached background startup was blocked by the environment; normal foreground development/QA sessions were used successfully instead.
 
+Follow-up implementation: **`e8c3f113abfe27076d58c7c07f60d67aa42427fd`**, pushed to `main` and `redesign/memory-film`. Its Vercel Production deployment **`6807217641`** reports **failure**, deployment `dpl_AK77fhUux6THJ5zgxUnGanUwtsGn` ([dashboard](https://vercel.com/infinityx2028/i/AK77fhUux6THJ5zgxUnGanUwtsGn)). Both live domains still serve the older asset pairs listed below. The current expected bundle is `index-B14-Rwst.js` / `index-DuChxfjL.css`. The follow-up is verified locally; live acceptance remains incomplete pending access to Vercel's authenticated error logs.
+
 Production build **passes**. Changed components/pages/director pass ESLint. Full-project lint still has **73 inherited errors, zero introduced findings** compared by file/rule/message. Typecheck was attempted: this JavaScript project has no typecheck script or TypeScript configuration. Existing chunk-size and Browserslist warnings remain.
 
 Initial strict-pass implementation commit **`067084a82c6275b03ff30d77dce2a46cd930d4ee`** was pushed successfully to the verified Production branch `main` and `redesign/memory-film` using normal fast-forwards. This report follow-up changes documentation only.
