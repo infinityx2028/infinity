@@ -143,15 +143,18 @@ export default function PersistentMemoryScene({ experienceRef, pillar }) {
       const size =
         interpolate(current.size, next?.size ?? current.size, travel) * scale;
       const y = interpolate(current.y, next?.y ?? current.y, travel) - sample;
+      if (media.matches) depth = 0;
       const apparentScale = ((size / 260) * 1200) / (1200 - depth);
       const halfHeight = 165 * apparentScale;
       // Natural anchor motion prevents a fixed pose lingering over later copy.
-      if (
-        y - halfHeight < header - 5 ||
-        y + halfHeight > viewport - (mobile ? 62 : 8)
-      )
-        opacity = 0;
-      if (media.matches) depth = 0;
+      const topClearance = y - halfHeight - (header - 5);
+      const bottomClearance = viewport - (mobile ? 62 : 8) - (y + halfHeight);
+      const edgeVisibility = clamp(
+        Math.min(topClearance, bottomClearance) / 24,
+        0,
+        1,
+      );
+      opacity *= media.matches ? (edgeVisibility > 0 ? 1 : 0) : edgeVisibility;
       object.style.transform = `translate3d(${x - 130}px, ${y - 165}px, 0) perspective(1200px) translateZ(${depth}px) scale(${size / 260}) rotateZ(${media.matches ? 0 : interpolate(current.rotateZ, next?.rotateZ ?? current.rotateZ, travel)}deg) rotateY(${media.matches ? 0 : current.rotateY + (current.key === "infinityDifference" ? pillar - 1 : 0)}deg) rotateX(${media.matches ? 0 : current.rotateX}deg)`;
       object.style.opacity = opacity;
       object.style.visibility = opacity > 0.001 ? "visible" : "hidden";

@@ -56,12 +56,20 @@ Screenshots and reports are ignored local artifacts in `qa/strict/` and `qa/loca
 
 ## Build, Git and live
 
+### Follow-up visual review
+
+After the "still not good" feedback, the mobile AI header was rebuilt as a real two-column grid. Its heading and photo occupy the first rows; body copy, input, prompts and status occupy full-width rows below. Empty intent tokens no longer reserve a blank block, and automatic prompt rows avoid an empty grid track. The second and third mobile Difference rows now span the full content width; only the first shares a row with the quiet frame.
+
+Viewport-edge visibility now interpolates over 24px of native scroll instead of switching instantly to zero when the object crosses a boundary. Reduced motion keeps the static visibility boundary. Reduced-motion depth is resolved before bounds calculations. A focused browser check confirms multiple intermediate opacity values and no full-to-zero snap. The scene visibility map and footer's zero-frame rule remain intact. The build, 289 direction/layout checks and 105 regression checks pass for this follow-up; changed frame code also passes ESLint.
+
+The local servers were found stopped and restarted. Detached background startup was blocked by the environment; normal foreground development/QA sessions were used successfully instead.
+
 Production build **passes**. Changed components/pages/director pass ESLint. Full-project lint still has **73 inherited errors, zero introduced findings** compared by file/rule/message. Typecheck was attempted: this JavaScript project has no typecheck script or TypeScript configuration. Existing chunk-size and Browserslist warnings remain.
 
-Implementation commit **`067084a82c6275b03ff30d77dce2a46cd930d4ee`** was pushed successfully to the verified Production branch `main` and `redesign/memory-film` using normal fast-forwards. This report follow-up changes documentation only.
+Initial strict-pass implementation commit **`067084a82c6275b03ff30d77dce2a46cd930d4ee`** was pushed successfully to the verified Production branch `main` and `redesign/memory-film` using normal fast-forwards. This report follow-up changes documentation only.
 
-Vercel Production deployment **`6806849259`** for that exact commit reports **failure**. Deployment identifier: `dpl_GzVghUQ9T5a9Cri1rqR3ShDYDUHK`; [Production dashboard](https://vercel.com/infinityx2028/i/GzVghUQ9T5a9Cri1rqR3ShDYDUHK). Preview also failed. Deployment logs require Vercel authentication (API returns 403 for a missing token), which is unavailable in this workspace. Vercel login or the owner's build-error text is needed to diagnose the failure.
+The initial Vercel Production deployment **`6806849259`** for that exact commit reports **failure**. Deployment identifier: `dpl_GzVghUQ9T5a9Cri1rqR3ShDYDUHK`; [Production dashboard](https://vercel.com/infinityx2028/i/GzVghUQ9T5a9Cri1rqR3ShDYDUHK). Preview also failed. Deployment logs require Vercel authentication (API returns 403 for a missing token), which is unavailable in this workspace. Vercel login or the owner's build-error text is needed to diagnose the failure.
 
-Actual domain checks show **neither live site serves this implementation**. Expected assets are `index-DSDiDtqC.js` and `index-Cl4_esZV.css`. www.infinitycustomizations.com still serves `index-gVFY4kzs.js` / `index-CWT2oU5a.css`; i.infinitycustomizationz.com still serves `index-MZaSSesk.js` / `index-BMqasS5B.css`. **Live mobile/desktop acceptance remains incomplete.** The passing checks above are against the local compiled production bundle, not the old deployed sites.
+Initial domain checks showed **neither live site served that implementation**. Its expected assets were `index-DSDiDtqC.js` and `index-Cl4_esZV.css`. www.infinitycustomizations.com still serves `index-gVFY4kzs.js` / `index-CWT2oU5a.css`; i.infinitycustomizationz.com still serves `index-MZaSSesk.js` / `index-BMqasS5B.css`. **Live mobile/desktop acceptance remains incomplete.** The passing checks above are against the local compiled production bundle, not the old deployed sites.
 
 Local review: [localhost:5173](http://localhost:5173), confirmed HTTP 200. Compiled QA bundle: [127.0.0.1:4173](http://127.0.0.1:4173).
