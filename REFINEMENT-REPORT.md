@@ -18,13 +18,13 @@ The rim sits at Z=18px, the rear at Z=-12px, giving 30px physical depth. The fac
 
 Desktop reflections follow pointer position through requestAnimationFrame. Mobile reflection follows scroll progress; low quality mode uses a quieter static reflection. All photos are upright and normalized for EXIF orientation during extraction.
 
-The three memories come from existing Infinity product photographs, preserving the originals:
+The three memories now use the user's supplied images, preserving their complete compositions:
 
-- `4 x 6 white frame 199.jpg`: the original candid friendship memory.
-- `4 x 6 p2.jpg`: a real family photograph.
-- `4 x 6 p4.jpg`: a real group celebration photograph.
+- `frontend/assets/memories/rukmini-red-saree.png`: primary image in the hero, final scene and footer.
+- `frontend/assets/memories/monika-collage.png`: concierge and brand scenes.
+- `frontend/assets/memories/yellow-saree-collage.png`: collection and camera-roll story scenes, including the mobile story.
 
-The crop script records each exact crop. These are actual photographs from the existing assets, not invented people or replacement product pictures. Hero and story supporting photos reuse the same memories. Background, typography, paper and frame move at distinct rates; mobile uses fewer supporting elements.
+The optimization script generates responsive AVIF/WebP versions without cropping the supplied compositions. The primary frame uses contain so faces and collage lettering remain intact. Hero and story supporting photos reuse the same memories. Background, typography, paper and frame move at distinct rates; mobile uses fewer supporting elements. New asset filenames prevent previously cached memory images from appearing after deployment.
 
 ## Mobile Quick View
 
@@ -47,7 +47,7 @@ The new wordmark is live text: “Infinity” in the existing Playfair Display i
 
 ## Performance and verification
 
-The main memory uses an AVIF responsive preload. All three selected memories are eager loaded, asynchronously decoded and permanently available as current/previous/next images. AVIF and WebP variants are provided at 480px and 1024px; the 480px AVIF photos total about 49KB. Original product assets remain intact.
+The main red-saree memory uses an AVIF responsive preload. All three selected memories are eager loaded, asynchronously decoded and permanently available as current/previous/next images. AVIF and WebP variants are provided at 480px and 1024px; the 480px AVIF photos total about 83KB. Original product assets remain intact.
 
 Mobile, coarse pointers, save-data connections and lower CPU counts select low quality mode: fewer supporting photos and simpler reflections, with physical frame depth retained. Scroll does not trigger a React render for each event. Position and shadows avoid animated blur. The existing large main JavaScript chunk remains a build warning; this change adds no animation library or 3D runtime.
 
@@ -57,10 +57,10 @@ All 47 Chrome production-bundle checks pass, with no runtime errors. QA covers s
 
 ## Git and production
 
-Implementation commit `0a3222191cf30998478ce839a508c0e43bceab46` was pushed successfully to `origin/redesign/memory-film`. This report is updated in a subsequent documentation commit.
+The original scroll refinement commit `0a3222191cf30998478ce839a508c0e43bceab46` was pushed successfully to `origin/redesign/memory-film`. The subsequent user-selected photo update replaces the three memories and the main preload, preserving the scrolling system. Its commit is available at the branch head.
 
 GitHub's Vercel integration attempted deployment `dpl_8uGyFN8jpjswkGNb5SifpEY4Mwoa`, then reported failure. [Deployment details](https://vercel.com/infinityx2028/i/8uGyFN8jpjswkGNb5SifpEY4Mwoa). The available Vercel CLI session lacks authentication, preventing access to the build logs or an authenticated redeploy. The failure's underlying cause has not been established; local build success does not resolve that deployment failure.
 
-Both `https://www.infinitycustomizations.com` and `https://i.infinitycustomizationz.com` returned HTTP 200 but served older assets. Neither served the expected `/assets/index-BOE6mDiW.js` and `/assets/index-DzjRqw5m.css`. The refinements are **not production-deployed**. Live mobile and desktop verification of these refinements therefore remains incomplete. Local production-bundle mobile and desktop checks passed.
+At the original scroll refinement verification, both `https://www.infinitycustomizations.com` and `https://i.infinitycustomizationz.com` returned HTTP 200 but served older assets. Neither served the expected `/assets/index-BOE6mDiW.js` and `/assets/index-DzjRqw5m.css`. The refinements were **not production-deployed**. Live mobile and desktop verification therefore remained incomplete. The photo update produces `/assets/index-UPwf-KI8.js` and `/assets/index-CH5NlmOE.css`; recheck deployment against these assets. Local production-bundle mobile and desktop checks passed.
 
-An authenticated Vercel project owner must inspect this failed deployment and deploy the branch to the existing project. After deployment, run `node qa/verify-deployment.cjs 0a32221` and verify the live mobile and desktop experience. The local development server is running at `http://localhost:5173` (HTTP 200 checked after push); the tested production bundle is available at `http://127.0.0.1:4173`.
+An authenticated Vercel project owner must inspect this failed deployment and deploy the branch to the existing project. After deployment, run `node qa/verify-deployment.cjs redesign/memory-film` and verify the live mobile and desktop experience. The local development server is running at `http://localhost:5173`; the tested production bundle is available at `http://127.0.0.1:4173`.

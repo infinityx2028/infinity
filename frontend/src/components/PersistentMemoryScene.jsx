@@ -15,13 +15,13 @@ const STATES = {
   footer: { rotate: 3, tilt: 7, opacity: 0.3, dark: 1 },
 };
 const interpolate = (a, b, progress) => a + (b - a) * progress;
-const MEMORIES = ["memory-core", "memory-family", "memory-celebration"];
+const MEMORIES = ["memory-rukmini", "memory-monika", "memory-yellow-saree"];
 const MEMORY_BY_SCENE = {
   hero: 0,
   ai: 1,
   categories: 2,
   products: 2,
-  story: 0,
+  story: 2,
   brand: 1,
   process: 1,
   final: 0,

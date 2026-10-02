@@ -111,6 +111,8 @@
 .memory-film .memory-frame-face img {
   animation: none;
   transform: none;
+  object-fit: contain;
+  background: #fff;
   backface-visibility: hidden;
 }
 [data-memory="0"] .memory-photo-layer[data-photo="0"],

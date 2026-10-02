@@ -199,7 +199,7 @@ function HomeExperience() {
             data-memory-anchor="story"
           />
           <div className="film-story-memories" aria-hidden="true">
-            {["memory-family", "memory-celebration"].map((memory) => (
+            {["memory-monika", "memory-yellow-saree"].map((memory) => (
               <picture key={memory}>
                 <source
                   type="image/avif"
